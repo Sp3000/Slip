@@ -163,25 +163,34 @@ class Slip():
         state = state_stack.pop()
         construct, *regex_rest = state.regex_queue[0]
 
-        if construct == Constructs.LITERAL:
+        if construct in [Constructs.LITERAL, Constructs.NEGLITERAL]:
             char = regex_rest[0]
             state.move()
+            state_char = state.get_char()
 
-            if self.case_insensitive:
-                cond = (state.get_char().lower() == char.lower())
+            if construct == Constructs.LITERAL:
+                if self.case_insensitive:
+                    cond = (state_char.lower() == char.lower())
+
+                else:
+                    cond = (state_char == char)
 
             else:
-                cond = (state.get_char() == char)
+                if self.case_insensitive:
+                    cond = (state_char.lower() != char.lower())
+
+                else:
+                    cond = (state_char != char)
            
-            if cond:
-                state.match[state.pos[1]][state.pos[0]] = char
+            if state_char and cond:
+                state.match[state.pos[1]][state.pos[0]] = state_char
                 state.regex_queue.pop(0)
                 state_stack.append(state)
                 return self._match(state_stack)
 
             else:
                 return self._match(state_stack)
-
+            
 
         elif construct == Constructs.ANYCHAR:
             state.move()
@@ -194,14 +203,19 @@ class Slip():
                 
             return self._match(state_stack)
 
-        elif construct == Constructs.CHARCLASS:
+
+        elif construct in [Constructs.CHARCLASS, Constructs.NEGCHARCLASS]:
             for literal in regex_rest[0]:
                 new_state = deepcopy(state)
-                new_state.regex_queue[0] = literal
+                
+                type_ = (Constructs.LITERAL if construct == Constructs.CHARCLASS
+                         else Constructs.NEGLITERAL)                
+                new_state.regex_queue[0] = [type_, literal[1]]
 
                 state_stack.append(new_state)
 
             return self._match(state_stack)
+
 
         elif construct == Constructs.COMMAND:
             command = regex_rest[0]

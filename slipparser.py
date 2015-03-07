@@ -13,7 +13,7 @@ class Constructs(Enum):
      COMMAND,
      LITERAL,
      CHARCLASS,
-     NEG_CHARCLASS,
+     NEGCHARCLASS,
      ASTERISK,
      PLUS,
      OPTIONAL,
@@ -24,7 +24,8 @@ class Constructs(Enum):
      LENGTHCHECK,
      LENGTHVERIFY,
      DIRECTIONSET,
-     ANYCHAR) = range(17)
+     ANYCHAR,
+     NEGLITERAL) = range(18)
     
     
 class SlipLexer():
@@ -213,7 +214,7 @@ class SlipParser():
 
     def p_ncharclass(self, p):
         """ncharclass : LSQBRACKET CARET classitems RSQBRACKET"""
-        p[0] = [Constructs.NEG_CHARCLASS, p[3]]
+        p[0] = [Constructs.NEGCHARCLASS, p[3]]
 
 
     def p_classitems(self, p):
