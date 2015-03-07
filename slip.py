@@ -365,26 +365,46 @@ class Slip():
             digit = regex_rest[0]
 
             if digit == 8:
-                for dir_ in DIRECTIONS[::-1]:
-                    new_state = deepcopy(state)
-                    new_state.dir = dir_
-                    new_state.regex_queue.pop(0)
-                    state_stack.append(new_state)
+                dir_list = DIRECTIONS[::-1]
 
             elif digit == 9:
-                for dir_ in DIRECTIONS[::2][::-1]:
-                    new_state = deepcopy(state)
-                    new_state.dir = dir_
-                    new_state.regex_queue.pop(0)
-                    state_stack.append(new_state)
+                dir_list = DIRECTIONS[::2][::-1]
 
             else:
-                state.dir = DIRECTIONS[regex_rest[0]]
-                state.regex_queue.pop(0)
-                state_stack.append(state)
+                dir_list = [DIRECTIONS[regex_rest[0]]]
+
+            for dir_ in dir_list:
+                new_state = deepcopy(state)
+                new_state.dir = dir_
+                new_state.regex_queue.pop(0)
+                state_stack.append(new_state)
 
             return self._match(state_stack)
 
+        elif construct == Constructs.ANCHOR:
+            digit = regex_rest[0]
+            state.regex_queue.pop(0)
+
+            width = max(max(state.board[y]) for y in state.board)
+            height = max(state.board)
+
+            anchor_checks = [state.pos[1] == 0,
+                             state.pos[0] == width and state.pos[1] == 0,
+                             state.pos[0] == width,
+                             state.pos[0] == width and state.pos[1] == height,
+                             state.pos[1] == height,
+                             state.pos[0] == 0 and state.pos[1] == height,
+                             state.pos[0] == 0,
+                             state.pos[0] == 0 and state.pos[1] == 0]
+
+            if ((digit == 8 and any(anchor_checks)) or
+                (digit == 9 and any(anchor_checks[::2])) or
+                (anchor_checks[digit])):
+                
+                state_stack.append(state)
+
+            return self._match(state_stack)
+        
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

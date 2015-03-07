@@ -25,7 +25,8 @@ class Constructs(Enum):
      LENGTHVERIFY,
      DIRECTIONSET,
      ANYCHAR,
-     NEGLITERAL) = range(18)
+     NEGLITERAL,
+     ANCHOR) = range(19)
     
     
 class SlipLexer():
@@ -45,6 +46,7 @@ class SlipLexer():
               "PLUS",
               "UNDERSCORE",
               "DOT",
+              "DOLLAR",
               "COMMAND",
               "DIGIT",
               "LITERAL")
@@ -64,7 +66,7 @@ class SlipLexer():
     t_UNDERSCORE = r"_"
     t_DOT = r"\."
     t_DIGIT = r"\d"
-    
+    t_DOLLAR = r"\$"
 
     def t_COMMAND(self, t):
         r"[<>/\\]"
@@ -72,7 +74,7 @@ class SlipLexer():
 
 
     def t_LITERAL(self, t):
-        r"`.|[^][|()^?!=*+_.0-9]"
+        r"`.|[^][|()^?!=*+_.$0-9]"
         t.value = t.value[t.value[0] == "`"]
         return t
 
@@ -126,7 +128,8 @@ class SlipParser():
                       | command
                       | literal
                       | charclass
-                      | any"""
+                      | any
+                      | anchor"""
         p[0] = p[1]
 
 
@@ -231,6 +234,11 @@ class SlipParser():
     def p_directionset(self, p):
         """directionset : CARET DIGIT"""
         p[0] = [Constructs.DIRECTIONSET, int(p[2])]
+
+
+    def p_anchor(self, p):
+        """anchor : DOLLAR DIGIT"""
+        p[0] = [Constructs.ANCHOR, int(p[2])]
             
 
     def p_command(self, p):

@@ -24,77 +24,81 @@ Rule 13    elementary -> command
 Rule 14    elementary -> literal
 Rule 15    elementary -> charclass
 Rule 16    elementary -> any
-Rule 17    asterisk -> elementary ASTERISK
-Rule 18    plus -> elementary PLUS
-Rule 19    optional -> elementary QMARK
-Rule 20    any -> DOT
-Rule 21    number -> DIGIT
-Rule 22    number -> DIGIT number
-Rule 23    group -> LPARENS groupbody RPARENS
-Rule 24    groupbody -> QMARK specialgroup
-Rule 25    groupbody -> basicgroup
-Rule 26    specialgroup -> UNDERSCORE lengthcheck
-Rule 27    specialgroup -> PIPE stationarygroup
-Rule 28    lengthcheck -> LPARENS number RPARENS re
-Rule 29    stationarygroup -> re
-Rule 30    basicgroup -> re
-Rule 31    charclass -> pcharclass
-Rule 32    charclass -> ncharclass
-Rule 33    pcharclass -> LSQBRACKET classitems RSQBRACKET
-Rule 34    ncharclass -> LSQBRACKET CARET classitems RSQBRACKET
-Rule 35    classitems -> literal
-Rule 36    classitems -> literal classitems
-Rule 37    directionset -> CARET DIGIT
-Rule 38    command -> COMMAND
-Rule 39    literal -> LITERAL
-Rule 40    literal -> DIGIT
+Rule 17    elementary -> anchor
+Rule 18    asterisk -> elementary ASTERISK
+Rule 19    plus -> elementary PLUS
+Rule 20    optional -> elementary QMARK
+Rule 21    any -> DOT
+Rule 22    number -> DIGIT
+Rule 23    number -> DIGIT number
+Rule 24    group -> LPARENS groupbody RPARENS
+Rule 25    groupbody -> QMARK specialgroup
+Rule 26    groupbody -> basicgroup
+Rule 27    specialgroup -> UNDERSCORE lengthcheck
+Rule 28    specialgroup -> PIPE stationarygroup
+Rule 29    lengthcheck -> LPARENS number RPARENS re
+Rule 30    stationarygroup -> re
+Rule 31    basicgroup -> re
+Rule 32    charclass -> pcharclass
+Rule 33    charclass -> ncharclass
+Rule 34    pcharclass -> LSQBRACKET classitems RSQBRACKET
+Rule 35    ncharclass -> LSQBRACKET CARET classitems RSQBRACKET
+Rule 36    classitems -> literal
+Rule 37    classitems -> literal classitems
+Rule 38    directionset -> CARET DIGIT
+Rule 39    anchor -> DOLLAR DIGIT
+Rule 40    command -> COMMAND
+Rule 41    literal -> LITERAL
+Rule 42    literal -> DIGIT
 
 Terminals, with rules where they appear
 
-ASTERISK             : 17
-CARET                : 34 37
-COMMAND              : 38
-DIGIT                : 21 22 37 40
-DOT                  : 20
+ASTERISK             : 18
+CARET                : 35 38
+COMMAND              : 40
+DIGIT                : 22 23 38 39 42
+DOLLAR               : 39
+DOT                  : 21
 EMARK                : 
 EQUALS               : 
-LITERAL              : 39
-LPARENS              : 23 28
-LSQBRACKET           : 33 34
-PIPE                 : 3 27
-PLUS                 : 18
-QMARK                : 19 24
-RPARENS              : 23 28
-RSQBRACKET           : 33 34
-UNDERSCORE           : 26
+LITERAL              : 41
+LPARENS              : 24 29
+LSQBRACKET           : 34 35
+PIPE                 : 3 28
+PLUS                 : 19
+QMARK                : 20 25
+RPARENS              : 24 29
+RSQBRACKET           : 34 35
+UNDERSCORE           : 27
 error                : 
 
 Nonterminals, with rules where they appear
 
 alternation          : 1
+anchor               : 17
 any                  : 16
 asterisk             : 8
 basic                : 5 6
-basicgroup           : 25
+basicgroup           : 26
 charclass            : 15
-classitems           : 33 34 36
+classitems           : 34 35 37
 command              : 13
 concatenation        : 4
 directionset         : 12
-elementary           : 7 17 18 19
+elementary           : 7 18 19 20
 group                : 11
-groupbody            : 23
-lengthcheck          : 26
-literal              : 14 35 36
-ncharclass           : 32
-number               : 22 28
+groupbody            : 24
+lengthcheck          : 27
+literal              : 14 36 37
+ncharclass           : 33
+number               : 23 29
 optional             : 10
-pcharclass           : 31
+pcharclass           : 32
 plus                 : 9
-re                   : 3 28 29 30 0
+re                   : 3 29 30 31 0
 simple               : 2 3 6
-specialgroup         : 24
-stationarygroup      : 27
+specialgroup         : 25
+stationarygroup      : 28
 
 Parsing method: LALR
 
@@ -117,111 +121,51 @@ state 0
     (14) elementary -> . literal
     (15) elementary -> . charclass
     (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
 
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
     LSQBRACKET      shift and go to state 15
 
-    literal                        shift and go to state 9
-    simple                         shift and go to state 12
-    re                             shift and go to state 13
-    elementary                     shift and go to state 14
-    asterisk                       shift and go to state 16
-    plus                           shift and go to state 5
-    alternation                    shift and go to state 6
-    pcharclass                     shift and go to state 18
-    any                            shift and go to state 8
-    command                        shift and go to state 4
-    concatenation                  shift and go to state 19
-    charclass                      shift and go to state 10
-    ncharclass                     shift and go to state 21
-    basic                          shift and go to state 22
-    directionset                   shift and go to state 23
-    group                          shift and go to state 24
-    optional                       shift and go to state 11
+    optional                       shift and go to state 16
+    basic                          shift and go to state 8
+    command                        shift and go to state 18
+    pcharclass                     shift and go to state 3
+    ncharclass                     shift and go to state 23
+    alternation                    shift and go to state 19
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    concatenation                  shift and go to state 17
+    simple                         shift and go to state 24
+    charclass                      shift and go to state 11
+    literal                        shift and go to state 26
+    group                          shift and go to state 9
+    re                             shift and go to state 12
+    directionset                   shift and go to state 14
+    plus                           shift and go to state 1
 
 state 1
-
-    (38) command -> COMMAND .
-
-    ASTERISK        reduce using rule 38 (command -> COMMAND .)
-    PLUS            reduce using rule 38 (command -> COMMAND .)
-    QMARK           reduce using rule 38 (command -> COMMAND .)
-    LPARENS         reduce using rule 38 (command -> COMMAND .)
-    CARET           reduce using rule 38 (command -> COMMAND .)
-    COMMAND         reduce using rule 38 (command -> COMMAND .)
-    LITERAL         reduce using rule 38 (command -> COMMAND .)
-    DIGIT           reduce using rule 38 (command -> COMMAND .)
-    DOT             reduce using rule 38 (command -> COMMAND .)
-    LSQBRACKET      reduce using rule 38 (command -> COMMAND .)
-    PIPE            reduce using rule 38 (command -> COMMAND .)
-    RPARENS         reduce using rule 38 (command -> COMMAND .)
-    $end            reduce using rule 38 (command -> COMMAND .)
-
-
-state 2
-
-    (37) directionset -> CARET . DIGIT
-
-    DIGIT           shift and go to state 25
-
-
-state 3
-
-    (20) any -> DOT .
-
-    ASTERISK        reduce using rule 20 (any -> DOT .)
-    PLUS            reduce using rule 20 (any -> DOT .)
-    QMARK           reduce using rule 20 (any -> DOT .)
-    LPARENS         reduce using rule 20 (any -> DOT .)
-    CARET           reduce using rule 20 (any -> DOT .)
-    COMMAND         reduce using rule 20 (any -> DOT .)
-    LITERAL         reduce using rule 20 (any -> DOT .)
-    DIGIT           reduce using rule 20 (any -> DOT .)
-    DOT             reduce using rule 20 (any -> DOT .)
-    LSQBRACKET      reduce using rule 20 (any -> DOT .)
-    PIPE            reduce using rule 20 (any -> DOT .)
-    RPARENS         reduce using rule 20 (any -> DOT .)
-    $end            reduce using rule 20 (any -> DOT .)
-
-
-state 4
-
-    (13) elementary -> command .
-
-    ASTERISK        reduce using rule 13 (elementary -> command .)
-    PLUS            reduce using rule 13 (elementary -> command .)
-    QMARK           reduce using rule 13 (elementary -> command .)
-    LPARENS         reduce using rule 13 (elementary -> command .)
-    CARET           reduce using rule 13 (elementary -> command .)
-    COMMAND         reduce using rule 13 (elementary -> command .)
-    LITERAL         reduce using rule 13 (elementary -> command .)
-    DIGIT           reduce using rule 13 (elementary -> command .)
-    DOT             reduce using rule 13 (elementary -> command .)
-    LSQBRACKET      reduce using rule 13 (elementary -> command .)
-    PIPE            reduce using rule 13 (elementary -> command .)
-    RPARENS         reduce using rule 13 (elementary -> command .)
-    $end            reduce using rule 13 (elementary -> command .)
-
-
-state 5
 
     (9) basic -> plus .
 
@@ -231,181 +175,60 @@ state 5
     LITERAL         reduce using rule 9 (basic -> plus .)
     DIGIT           reduce using rule 9 (basic -> plus .)
     DOT             reduce using rule 9 (basic -> plus .)
+    DOLLAR          reduce using rule 9 (basic -> plus .)
     LSQBRACKET      reduce using rule 9 (basic -> plus .)
     PIPE            reduce using rule 9 (basic -> plus .)
     $end            reduce using rule 9 (basic -> plus .)
     RPARENS         reduce using rule 9 (basic -> plus .)
 
 
-state 6
+state 2
 
-    (1) re -> alternation .
+    (42) literal -> DIGIT .
 
-    PIPE            reduce using rule 1 (re -> alternation .)
-    RPARENS         reduce using rule 1 (re -> alternation .)
-    $end            reduce using rule 1 (re -> alternation .)
-
-
-state 7
-
-    (40) literal -> DIGIT .
-
-    ASTERISK        reduce using rule 40 (literal -> DIGIT .)
-    PLUS            reduce using rule 40 (literal -> DIGIT .)
-    QMARK           reduce using rule 40 (literal -> DIGIT .)
-    LPARENS         reduce using rule 40 (literal -> DIGIT .)
-    CARET           reduce using rule 40 (literal -> DIGIT .)
-    COMMAND         reduce using rule 40 (literal -> DIGIT .)
-    LITERAL         reduce using rule 40 (literal -> DIGIT .)
-    DIGIT           reduce using rule 40 (literal -> DIGIT .)
-    DOT             reduce using rule 40 (literal -> DIGIT .)
-    LSQBRACKET      reduce using rule 40 (literal -> DIGIT .)
-    PIPE            reduce using rule 40 (literal -> DIGIT .)
-    RPARENS         reduce using rule 40 (literal -> DIGIT .)
-    RSQBRACKET      reduce using rule 40 (literal -> DIGIT .)
-    $end            reduce using rule 40 (literal -> DIGIT .)
+    LITERAL         reduce using rule 42 (literal -> DIGIT .)
+    DIGIT           reduce using rule 42 (literal -> DIGIT .)
+    RSQBRACKET      reduce using rule 42 (literal -> DIGIT .)
+    ASTERISK        reduce using rule 42 (literal -> DIGIT .)
+    PLUS            reduce using rule 42 (literal -> DIGIT .)
+    QMARK           reduce using rule 42 (literal -> DIGIT .)
+    LPARENS         reduce using rule 42 (literal -> DIGIT .)
+    CARET           reduce using rule 42 (literal -> DIGIT .)
+    COMMAND         reduce using rule 42 (literal -> DIGIT .)
+    DOT             reduce using rule 42 (literal -> DIGIT .)
+    DOLLAR          reduce using rule 42 (literal -> DIGIT .)
+    LSQBRACKET      reduce using rule 42 (literal -> DIGIT .)
+    PIPE            reduce using rule 42 (literal -> DIGIT .)
+    $end            reduce using rule 42 (literal -> DIGIT .)
+    RPARENS         reduce using rule 42 (literal -> DIGIT .)
 
 
-state 8
+state 3
 
-    (16) elementary -> any .
+    (32) charclass -> pcharclass .
 
-    ASTERISK        reduce using rule 16 (elementary -> any .)
-    PLUS            reduce using rule 16 (elementary -> any .)
-    QMARK           reduce using rule 16 (elementary -> any .)
-    LPARENS         reduce using rule 16 (elementary -> any .)
-    CARET           reduce using rule 16 (elementary -> any .)
-    COMMAND         reduce using rule 16 (elementary -> any .)
-    LITERAL         reduce using rule 16 (elementary -> any .)
-    DIGIT           reduce using rule 16 (elementary -> any .)
-    DOT             reduce using rule 16 (elementary -> any .)
-    LSQBRACKET      reduce using rule 16 (elementary -> any .)
-    PIPE            reduce using rule 16 (elementary -> any .)
-    RPARENS         reduce using rule 16 (elementary -> any .)
-    $end            reduce using rule 16 (elementary -> any .)
-
-
-state 9
-
-    (14) elementary -> literal .
-
-    ASTERISK        reduce using rule 14 (elementary -> literal .)
-    PLUS            reduce using rule 14 (elementary -> literal .)
-    QMARK           reduce using rule 14 (elementary -> literal .)
-    LPARENS         reduce using rule 14 (elementary -> literal .)
-    CARET           reduce using rule 14 (elementary -> literal .)
-    COMMAND         reduce using rule 14 (elementary -> literal .)
-    LITERAL         reduce using rule 14 (elementary -> literal .)
-    DIGIT           reduce using rule 14 (elementary -> literal .)
-    DOT             reduce using rule 14 (elementary -> literal .)
-    LSQBRACKET      reduce using rule 14 (elementary -> literal .)
-    PIPE            reduce using rule 14 (elementary -> literal .)
-    RPARENS         reduce using rule 14 (elementary -> literal .)
-    $end            reduce using rule 14 (elementary -> literal .)
+    ASTERISK        reduce using rule 32 (charclass -> pcharclass .)
+    PLUS            reduce using rule 32 (charclass -> pcharclass .)
+    QMARK           reduce using rule 32 (charclass -> pcharclass .)
+    LPARENS         reduce using rule 32 (charclass -> pcharclass .)
+    CARET           reduce using rule 32 (charclass -> pcharclass .)
+    COMMAND         reduce using rule 32 (charclass -> pcharclass .)
+    LITERAL         reduce using rule 32 (charclass -> pcharclass .)
+    DIGIT           reduce using rule 32 (charclass -> pcharclass .)
+    DOT             reduce using rule 32 (charclass -> pcharclass .)
+    DOLLAR          reduce using rule 32 (charclass -> pcharclass .)
+    LSQBRACKET      reduce using rule 32 (charclass -> pcharclass .)
+    PIPE            reduce using rule 32 (charclass -> pcharclass .)
+    $end            reduce using rule 32 (charclass -> pcharclass .)
+    RPARENS         reduce using rule 32 (charclass -> pcharclass .)
 
 
-state 10
-
-    (15) elementary -> charclass .
-
-    ASTERISK        reduce using rule 15 (elementary -> charclass .)
-    PLUS            reduce using rule 15 (elementary -> charclass .)
-    QMARK           reduce using rule 15 (elementary -> charclass .)
-    LPARENS         reduce using rule 15 (elementary -> charclass .)
-    CARET           reduce using rule 15 (elementary -> charclass .)
-    COMMAND         reduce using rule 15 (elementary -> charclass .)
-    LITERAL         reduce using rule 15 (elementary -> charclass .)
-    DIGIT           reduce using rule 15 (elementary -> charclass .)
-    DOT             reduce using rule 15 (elementary -> charclass .)
-    LSQBRACKET      reduce using rule 15 (elementary -> charclass .)
-    PIPE            reduce using rule 15 (elementary -> charclass .)
-    RPARENS         reduce using rule 15 (elementary -> charclass .)
-    $end            reduce using rule 15 (elementary -> charclass .)
-
-
-state 11
-
-    (10) basic -> optional .
-
-    LPARENS         reduce using rule 10 (basic -> optional .)
-    CARET           reduce using rule 10 (basic -> optional .)
-    COMMAND         reduce using rule 10 (basic -> optional .)
-    LITERAL         reduce using rule 10 (basic -> optional .)
-    DIGIT           reduce using rule 10 (basic -> optional .)
-    DOT             reduce using rule 10 (basic -> optional .)
-    LSQBRACKET      reduce using rule 10 (basic -> optional .)
-    PIPE            reduce using rule 10 (basic -> optional .)
-    $end            reduce using rule 10 (basic -> optional .)
-    RPARENS         reduce using rule 10 (basic -> optional .)
-
-
-state 12
-
-    (2) re -> simple .
-    (6) concatenation -> simple . basic
-    (7) basic -> . elementary
-    (8) basic -> . asterisk
-    (9) basic -> . plus
-    (10) basic -> . optional
-    (11) elementary -> . group
-    (12) elementary -> . directionset
-    (13) elementary -> . command
-    (14) elementary -> . literal
-    (15) elementary -> . charclass
-    (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
-
-    PIPE            reduce using rule 2 (re -> simple .)
-    RPARENS         reduce using rule 2 (re -> simple .)
-    $end            reduce using rule 2 (re -> simple .)
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
-    LSQBRACKET      shift and go to state 15
-
-    elementary                     shift and go to state 14
-    command                        shift and go to state 4
-    plus                           shift and go to state 5
-    asterisk                       shift and go to state 16
-    pcharclass                     shift and go to state 18
-    any                            shift and go to state 8
-    literal                        shift and go to state 9
-    charclass                      shift and go to state 10
-    ncharclass                     shift and go to state 21
-    basic                          shift and go to state 26
-    directionset                   shift and go to state 23
-    group                          shift and go to state 24
-    optional                       shift and go to state 11
-
-state 13
-
-    (0) S' -> re .
-    (3) alternation -> re . PIPE simple
-
-    PIPE            shift and go to state 27
-
-
-state 14
+state 4
 
     (7) basic -> elementary .
-    (17) asterisk -> elementary . ASTERISK
-    (18) plus -> elementary . PLUS
-    (19) optional -> elementary . QMARK
+    (18) asterisk -> elementary . ASTERISK
+    (19) plus -> elementary . PLUS
+    (20) optional -> elementary . QMARK
 
     LPARENS         reduce using rule 7 (basic -> elementary .)
     CARET           reduce using rule 7 (basic -> elementary .)
@@ -413,53 +236,42 @@ state 14
     LITERAL         reduce using rule 7 (basic -> elementary .)
     DIGIT           reduce using rule 7 (basic -> elementary .)
     DOT             reduce using rule 7 (basic -> elementary .)
+    DOLLAR          reduce using rule 7 (basic -> elementary .)
     LSQBRACKET      reduce using rule 7 (basic -> elementary .)
     PIPE            reduce using rule 7 (basic -> elementary .)
     $end            reduce using rule 7 (basic -> elementary .)
     RPARENS         reduce using rule 7 (basic -> elementary .)
-    ASTERISK        shift and go to state 28
-    PLUS            shift and go to state 29
-    QMARK           shift and go to state 30
+    ASTERISK        shift and go to state 27
+    PLUS            shift and go to state 28
+    QMARK           shift and go to state 29
 
 
-state 15
+state 5
 
-    (33) pcharclass -> LSQBRACKET . classitems RSQBRACKET
-    (34) ncharclass -> LSQBRACKET . CARET classitems RSQBRACKET
-    (35) classitems -> . literal
-    (36) classitems -> . literal classitems
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
+    (21) any -> DOT .
 
-    CARET           shift and go to state 32
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-
-    literal                        shift and go to state 31
-    classitems                     shift and go to state 33
-
-state 16
-
-    (8) basic -> asterisk .
-
-    LPARENS         reduce using rule 8 (basic -> asterisk .)
-    CARET           reduce using rule 8 (basic -> asterisk .)
-    COMMAND         reduce using rule 8 (basic -> asterisk .)
-    LITERAL         reduce using rule 8 (basic -> asterisk .)
-    DIGIT           reduce using rule 8 (basic -> asterisk .)
-    DOT             reduce using rule 8 (basic -> asterisk .)
-    LSQBRACKET      reduce using rule 8 (basic -> asterisk .)
-    PIPE            reduce using rule 8 (basic -> asterisk .)
-    $end            reduce using rule 8 (basic -> asterisk .)
-    RPARENS         reduce using rule 8 (basic -> asterisk .)
+    ASTERISK        reduce using rule 21 (any -> DOT .)
+    PLUS            reduce using rule 21 (any -> DOT .)
+    QMARK           reduce using rule 21 (any -> DOT .)
+    LPARENS         reduce using rule 21 (any -> DOT .)
+    CARET           reduce using rule 21 (any -> DOT .)
+    COMMAND         reduce using rule 21 (any -> DOT .)
+    LITERAL         reduce using rule 21 (any -> DOT .)
+    DIGIT           reduce using rule 21 (any -> DOT .)
+    DOT             reduce using rule 21 (any -> DOT .)
+    DOLLAR          reduce using rule 21 (any -> DOT .)
+    LSQBRACKET      reduce using rule 21 (any -> DOT .)
+    PIPE            reduce using rule 21 (any -> DOT .)
+    $end            reduce using rule 21 (any -> DOT .)
+    RPARENS         reduce using rule 21 (any -> DOT .)
 
 
-state 17
+state 6
 
-    (23) group -> LPARENS . groupbody RPARENS
-    (24) groupbody -> . QMARK specialgroup
-    (25) groupbody -> . basicgroup
-    (30) basicgroup -> . re
+    (24) group -> LPARENS . groupbody RPARENS
+    (25) groupbody -> . QMARK specialgroup
+    (26) groupbody -> . basicgroup
+    (31) basicgroup -> . re
     (1) re -> . alternation
     (2) re -> . simple
     (3) alternation -> . re PIPE simple
@@ -476,124 +288,74 @@ state 17
     (14) elementary -> . literal
     (15) elementary -> . charclass
     (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
 
-    QMARK           shift and go to state 35
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
+    QMARK           shift and go to state 33
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
     LSQBRACKET      shift and go to state 15
 
-    literal                        shift and go to state 9
-    simple                         shift and go to state 12
-    re                             shift and go to state 34
-    elementary                     shift and go to state 14
-    asterisk                       shift and go to state 16
-    alternation                    shift and go to state 6
-    plus                           shift and go to state 5
-    optional                       shift and go to state 11
-    any                            shift and go to state 8
-    command                        shift and go to state 4
-    concatenation                  shift and go to state 19
-    basicgroup                     shift and go to state 36
-    pcharclass                     shift and go to state 18
-    ncharclass                     shift and go to state 21
-    basic                          shift and go to state 22
-    directionset                   shift and go to state 23
-    group                          shift and go to state 24
-    groupbody                      shift and go to state 37
-    charclass                      shift and go to state 10
+    charclass                      shift and go to state 11
+    basicgroup                     shift and go to state 30
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    basic                          shift and go to state 8
+    group                          shift and go to state 9
+    pcharclass                     shift and go to state 3
+    groupbody                      shift and go to state 31
+    re                             shift and go to state 32
+    directionset                   shift and go to state 14
+    optional                       shift and go to state 16
+    concatenation                  shift and go to state 17
+    command                        shift and go to state 18
+    alternation                    shift and go to state 19
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    ncharclass                     shift and go to state 23
+    simple                         shift and go to state 24
+    plus                           shift and go to state 1
+    literal                        shift and go to state 26
 
-state 18
+state 7
 
-    (31) charclass -> pcharclass .
+    (16) elementary -> any .
 
-    ASTERISK        reduce using rule 31 (charclass -> pcharclass .)
-    PLUS            reduce using rule 31 (charclass -> pcharclass .)
-    QMARK           reduce using rule 31 (charclass -> pcharclass .)
-    LPARENS         reduce using rule 31 (charclass -> pcharclass .)
-    CARET           reduce using rule 31 (charclass -> pcharclass .)
-    COMMAND         reduce using rule 31 (charclass -> pcharclass .)
-    LITERAL         reduce using rule 31 (charclass -> pcharclass .)
-    DIGIT           reduce using rule 31 (charclass -> pcharclass .)
-    DOT             reduce using rule 31 (charclass -> pcharclass .)
-    LSQBRACKET      reduce using rule 31 (charclass -> pcharclass .)
-    PIPE            reduce using rule 31 (charclass -> pcharclass .)
-    $end            reduce using rule 31 (charclass -> pcharclass .)
-    RPARENS         reduce using rule 31 (charclass -> pcharclass .)
-
-
-state 19
-
-    (4) simple -> concatenation .
-
-    LPARENS         reduce using rule 4 (simple -> concatenation .)
-    CARET           reduce using rule 4 (simple -> concatenation .)
-    COMMAND         reduce using rule 4 (simple -> concatenation .)
-    LITERAL         reduce using rule 4 (simple -> concatenation .)
-    DIGIT           reduce using rule 4 (simple -> concatenation .)
-    DOT             reduce using rule 4 (simple -> concatenation .)
-    LSQBRACKET      reduce using rule 4 (simple -> concatenation .)
-    PIPE            reduce using rule 4 (simple -> concatenation .)
-    $end            reduce using rule 4 (simple -> concatenation .)
-    RPARENS         reduce using rule 4 (simple -> concatenation .)
+    ASTERISK        reduce using rule 16 (elementary -> any .)
+    PLUS            reduce using rule 16 (elementary -> any .)
+    QMARK           reduce using rule 16 (elementary -> any .)
+    LPARENS         reduce using rule 16 (elementary -> any .)
+    CARET           reduce using rule 16 (elementary -> any .)
+    COMMAND         reduce using rule 16 (elementary -> any .)
+    LITERAL         reduce using rule 16 (elementary -> any .)
+    DIGIT           reduce using rule 16 (elementary -> any .)
+    DOT             reduce using rule 16 (elementary -> any .)
+    DOLLAR          reduce using rule 16 (elementary -> any .)
+    LSQBRACKET      reduce using rule 16 (elementary -> any .)
+    PIPE            reduce using rule 16 (elementary -> any .)
+    RPARENS         reduce using rule 16 (elementary -> any .)
+    $end            reduce using rule 16 (elementary -> any .)
 
 
-state 20
-
-    (39) literal -> LITERAL .
-
-    ASTERISK        reduce using rule 39 (literal -> LITERAL .)
-    PLUS            reduce using rule 39 (literal -> LITERAL .)
-    QMARK           reduce using rule 39 (literal -> LITERAL .)
-    LPARENS         reduce using rule 39 (literal -> LITERAL .)
-    CARET           reduce using rule 39 (literal -> LITERAL .)
-    COMMAND         reduce using rule 39 (literal -> LITERAL .)
-    LITERAL         reduce using rule 39 (literal -> LITERAL .)
-    DIGIT           reduce using rule 39 (literal -> LITERAL .)
-    DOT             reduce using rule 39 (literal -> LITERAL .)
-    LSQBRACKET      reduce using rule 39 (literal -> LITERAL .)
-    PIPE            reduce using rule 39 (literal -> LITERAL .)
-    RPARENS         reduce using rule 39 (literal -> LITERAL .)
-    RSQBRACKET      reduce using rule 39 (literal -> LITERAL .)
-    $end            reduce using rule 39 (literal -> LITERAL .)
-
-
-state 21
-
-    (32) charclass -> ncharclass .
-
-    ASTERISK        reduce using rule 32 (charclass -> ncharclass .)
-    PLUS            reduce using rule 32 (charclass -> ncharclass .)
-    QMARK           reduce using rule 32 (charclass -> ncharclass .)
-    LPARENS         reduce using rule 32 (charclass -> ncharclass .)
-    CARET           reduce using rule 32 (charclass -> ncharclass .)
-    COMMAND         reduce using rule 32 (charclass -> ncharclass .)
-    LITERAL         reduce using rule 32 (charclass -> ncharclass .)
-    DIGIT           reduce using rule 32 (charclass -> ncharclass .)
-    DOT             reduce using rule 32 (charclass -> ncharclass .)
-    LSQBRACKET      reduce using rule 32 (charclass -> ncharclass .)
-    PIPE            reduce using rule 32 (charclass -> ncharclass .)
-    $end            reduce using rule 32 (charclass -> ncharclass .)
-    RPARENS         reduce using rule 32 (charclass -> ncharclass .)
-
-
-state 22
+state 8
 
     (5) simple -> basic .
 
@@ -603,32 +365,14 @@ state 22
     LITERAL         reduce using rule 5 (simple -> basic .)
     DIGIT           reduce using rule 5 (simple -> basic .)
     DOT             reduce using rule 5 (simple -> basic .)
+    DOLLAR          reduce using rule 5 (simple -> basic .)
     LSQBRACKET      reduce using rule 5 (simple -> basic .)
     PIPE            reduce using rule 5 (simple -> basic .)
     $end            reduce using rule 5 (simple -> basic .)
     RPARENS         reduce using rule 5 (simple -> basic .)
 
 
-state 23
-
-    (12) elementary -> directionset .
-
-    ASTERISK        reduce using rule 12 (elementary -> directionset .)
-    PLUS            reduce using rule 12 (elementary -> directionset .)
-    QMARK           reduce using rule 12 (elementary -> directionset .)
-    LPARENS         reduce using rule 12 (elementary -> directionset .)
-    CARET           reduce using rule 12 (elementary -> directionset .)
-    COMMAND         reduce using rule 12 (elementary -> directionset .)
-    LITERAL         reduce using rule 12 (elementary -> directionset .)
-    DIGIT           reduce using rule 12 (elementary -> directionset .)
-    DOT             reduce using rule 12 (elementary -> directionset .)
-    LSQBRACKET      reduce using rule 12 (elementary -> directionset .)
-    PIPE            reduce using rule 12 (elementary -> directionset .)
-    RPARENS         reduce using rule 12 (elementary -> directionset .)
-    $end            reduce using rule 12 (elementary -> directionset .)
-
-
-state 24
+state 9
 
     (11) elementary -> group .
 
@@ -641,48 +385,415 @@ state 24
     LITERAL         reduce using rule 11 (elementary -> group .)
     DIGIT           reduce using rule 11 (elementary -> group .)
     DOT             reduce using rule 11 (elementary -> group .)
+    DOLLAR          reduce using rule 11 (elementary -> group .)
     LSQBRACKET      reduce using rule 11 (elementary -> group .)
     PIPE            reduce using rule 11 (elementary -> group .)
     RPARENS         reduce using rule 11 (elementary -> group .)
     $end            reduce using rule 11 (elementary -> group .)
 
 
+state 10
+
+    (41) literal -> LITERAL .
+
+    LITERAL         reduce using rule 41 (literal -> LITERAL .)
+    DIGIT           reduce using rule 41 (literal -> LITERAL .)
+    RSQBRACKET      reduce using rule 41 (literal -> LITERAL .)
+    ASTERISK        reduce using rule 41 (literal -> LITERAL .)
+    PLUS            reduce using rule 41 (literal -> LITERAL .)
+    QMARK           reduce using rule 41 (literal -> LITERAL .)
+    LPARENS         reduce using rule 41 (literal -> LITERAL .)
+    CARET           reduce using rule 41 (literal -> LITERAL .)
+    COMMAND         reduce using rule 41 (literal -> LITERAL .)
+    DOT             reduce using rule 41 (literal -> LITERAL .)
+    DOLLAR          reduce using rule 41 (literal -> LITERAL .)
+    LSQBRACKET      reduce using rule 41 (literal -> LITERAL .)
+    PIPE            reduce using rule 41 (literal -> LITERAL .)
+    $end            reduce using rule 41 (literal -> LITERAL .)
+    RPARENS         reduce using rule 41 (literal -> LITERAL .)
+
+
+state 11
+
+    (15) elementary -> charclass .
+
+    ASTERISK        reduce using rule 15 (elementary -> charclass .)
+    PLUS            reduce using rule 15 (elementary -> charclass .)
+    QMARK           reduce using rule 15 (elementary -> charclass .)
+    LPARENS         reduce using rule 15 (elementary -> charclass .)
+    CARET           reduce using rule 15 (elementary -> charclass .)
+    COMMAND         reduce using rule 15 (elementary -> charclass .)
+    LITERAL         reduce using rule 15 (elementary -> charclass .)
+    DIGIT           reduce using rule 15 (elementary -> charclass .)
+    DOT             reduce using rule 15 (elementary -> charclass .)
+    DOLLAR          reduce using rule 15 (elementary -> charclass .)
+    LSQBRACKET      reduce using rule 15 (elementary -> charclass .)
+    PIPE            reduce using rule 15 (elementary -> charclass .)
+    RPARENS         reduce using rule 15 (elementary -> charclass .)
+    $end            reduce using rule 15 (elementary -> charclass .)
+
+
+state 12
+
+    (0) S' -> re .
+    (3) alternation -> re . PIPE simple
+
+    PIPE            shift and go to state 34
+
+
+state 13
+
+    (39) anchor -> DOLLAR . DIGIT
+
+    DIGIT           shift and go to state 35
+
+
+state 14
+
+    (12) elementary -> directionset .
+
+    ASTERISK        reduce using rule 12 (elementary -> directionset .)
+    PLUS            reduce using rule 12 (elementary -> directionset .)
+    QMARK           reduce using rule 12 (elementary -> directionset .)
+    LPARENS         reduce using rule 12 (elementary -> directionset .)
+    CARET           reduce using rule 12 (elementary -> directionset .)
+    COMMAND         reduce using rule 12 (elementary -> directionset .)
+    LITERAL         reduce using rule 12 (elementary -> directionset .)
+    DIGIT           reduce using rule 12 (elementary -> directionset .)
+    DOT             reduce using rule 12 (elementary -> directionset .)
+    DOLLAR          reduce using rule 12 (elementary -> directionset .)
+    LSQBRACKET      reduce using rule 12 (elementary -> directionset .)
+    PIPE            reduce using rule 12 (elementary -> directionset .)
+    RPARENS         reduce using rule 12 (elementary -> directionset .)
+    $end            reduce using rule 12 (elementary -> directionset .)
+
+
+state 15
+
+    (34) pcharclass -> LSQBRACKET . classitems RSQBRACKET
+    (35) ncharclass -> LSQBRACKET . CARET classitems RSQBRACKET
+    (36) classitems -> . literal
+    (37) classitems -> . literal classitems
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+
+    CARET           shift and go to state 36
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+
+    classitems                     shift and go to state 37
+    literal                        shift and go to state 38
+
+state 16
+
+    (10) basic -> optional .
+
+    LPARENS         reduce using rule 10 (basic -> optional .)
+    CARET           reduce using rule 10 (basic -> optional .)
+    COMMAND         reduce using rule 10 (basic -> optional .)
+    LITERAL         reduce using rule 10 (basic -> optional .)
+    DIGIT           reduce using rule 10 (basic -> optional .)
+    DOT             reduce using rule 10 (basic -> optional .)
+    DOLLAR          reduce using rule 10 (basic -> optional .)
+    LSQBRACKET      reduce using rule 10 (basic -> optional .)
+    PIPE            reduce using rule 10 (basic -> optional .)
+    $end            reduce using rule 10 (basic -> optional .)
+    RPARENS         reduce using rule 10 (basic -> optional .)
+
+
+state 17
+
+    (4) simple -> concatenation .
+
+    LPARENS         reduce using rule 4 (simple -> concatenation .)
+    CARET           reduce using rule 4 (simple -> concatenation .)
+    COMMAND         reduce using rule 4 (simple -> concatenation .)
+    LITERAL         reduce using rule 4 (simple -> concatenation .)
+    DIGIT           reduce using rule 4 (simple -> concatenation .)
+    DOT             reduce using rule 4 (simple -> concatenation .)
+    DOLLAR          reduce using rule 4 (simple -> concatenation .)
+    LSQBRACKET      reduce using rule 4 (simple -> concatenation .)
+    PIPE            reduce using rule 4 (simple -> concatenation .)
+    $end            reduce using rule 4 (simple -> concatenation .)
+    RPARENS         reduce using rule 4 (simple -> concatenation .)
+
+
+state 18
+
+    (13) elementary -> command .
+
+    ASTERISK        reduce using rule 13 (elementary -> command .)
+    PLUS            reduce using rule 13 (elementary -> command .)
+    QMARK           reduce using rule 13 (elementary -> command .)
+    LPARENS         reduce using rule 13 (elementary -> command .)
+    CARET           reduce using rule 13 (elementary -> command .)
+    COMMAND         reduce using rule 13 (elementary -> command .)
+    LITERAL         reduce using rule 13 (elementary -> command .)
+    DIGIT           reduce using rule 13 (elementary -> command .)
+    DOT             reduce using rule 13 (elementary -> command .)
+    DOLLAR          reduce using rule 13 (elementary -> command .)
+    LSQBRACKET      reduce using rule 13 (elementary -> command .)
+    PIPE            reduce using rule 13 (elementary -> command .)
+    RPARENS         reduce using rule 13 (elementary -> command .)
+    $end            reduce using rule 13 (elementary -> command .)
+
+
+state 19
+
+    (1) re -> alternation .
+
+    PIPE            reduce using rule 1 (re -> alternation .)
+    RPARENS         reduce using rule 1 (re -> alternation .)
+    $end            reduce using rule 1 (re -> alternation .)
+
+
+state 20
+
+    (17) elementary -> anchor .
+
+    ASTERISK        reduce using rule 17 (elementary -> anchor .)
+    PLUS            reduce using rule 17 (elementary -> anchor .)
+    QMARK           reduce using rule 17 (elementary -> anchor .)
+    LPARENS         reduce using rule 17 (elementary -> anchor .)
+    CARET           reduce using rule 17 (elementary -> anchor .)
+    COMMAND         reduce using rule 17 (elementary -> anchor .)
+    LITERAL         reduce using rule 17 (elementary -> anchor .)
+    DIGIT           reduce using rule 17 (elementary -> anchor .)
+    DOT             reduce using rule 17 (elementary -> anchor .)
+    DOLLAR          reduce using rule 17 (elementary -> anchor .)
+    LSQBRACKET      reduce using rule 17 (elementary -> anchor .)
+    PIPE            reduce using rule 17 (elementary -> anchor .)
+    RPARENS         reduce using rule 17 (elementary -> anchor .)
+    $end            reduce using rule 17 (elementary -> anchor .)
+
+
+state 21
+
+    (40) command -> COMMAND .
+
+    ASTERISK        reduce using rule 40 (command -> COMMAND .)
+    PLUS            reduce using rule 40 (command -> COMMAND .)
+    QMARK           reduce using rule 40 (command -> COMMAND .)
+    LPARENS         reduce using rule 40 (command -> COMMAND .)
+    CARET           reduce using rule 40 (command -> COMMAND .)
+    COMMAND         reduce using rule 40 (command -> COMMAND .)
+    LITERAL         reduce using rule 40 (command -> COMMAND .)
+    DIGIT           reduce using rule 40 (command -> COMMAND .)
+    DOT             reduce using rule 40 (command -> COMMAND .)
+    DOLLAR          reduce using rule 40 (command -> COMMAND .)
+    LSQBRACKET      reduce using rule 40 (command -> COMMAND .)
+    PIPE            reduce using rule 40 (command -> COMMAND .)
+    $end            reduce using rule 40 (command -> COMMAND .)
+    RPARENS         reduce using rule 40 (command -> COMMAND .)
+
+
+state 22
+
+    (8) basic -> asterisk .
+
+    LPARENS         reduce using rule 8 (basic -> asterisk .)
+    CARET           reduce using rule 8 (basic -> asterisk .)
+    COMMAND         reduce using rule 8 (basic -> asterisk .)
+    LITERAL         reduce using rule 8 (basic -> asterisk .)
+    DIGIT           reduce using rule 8 (basic -> asterisk .)
+    DOT             reduce using rule 8 (basic -> asterisk .)
+    DOLLAR          reduce using rule 8 (basic -> asterisk .)
+    LSQBRACKET      reduce using rule 8 (basic -> asterisk .)
+    PIPE            reduce using rule 8 (basic -> asterisk .)
+    $end            reduce using rule 8 (basic -> asterisk .)
+    RPARENS         reduce using rule 8 (basic -> asterisk .)
+
+
+state 23
+
+    (33) charclass -> ncharclass .
+
+    ASTERISK        reduce using rule 33 (charclass -> ncharclass .)
+    PLUS            reduce using rule 33 (charclass -> ncharclass .)
+    QMARK           reduce using rule 33 (charclass -> ncharclass .)
+    LPARENS         reduce using rule 33 (charclass -> ncharclass .)
+    CARET           reduce using rule 33 (charclass -> ncharclass .)
+    COMMAND         reduce using rule 33 (charclass -> ncharclass .)
+    LITERAL         reduce using rule 33 (charclass -> ncharclass .)
+    DIGIT           reduce using rule 33 (charclass -> ncharclass .)
+    DOT             reduce using rule 33 (charclass -> ncharclass .)
+    DOLLAR          reduce using rule 33 (charclass -> ncharclass .)
+    LSQBRACKET      reduce using rule 33 (charclass -> ncharclass .)
+    PIPE            reduce using rule 33 (charclass -> ncharclass .)
+    $end            reduce using rule 33 (charclass -> ncharclass .)
+    RPARENS         reduce using rule 33 (charclass -> ncharclass .)
+
+
+state 24
+
+    (2) re -> simple .
+    (6) concatenation -> simple . basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) elementary -> . group
+    (12) elementary -> . directionset
+    (13) elementary -> . command
+    (14) elementary -> . literal
+    (15) elementary -> . charclass
+    (16) elementary -> . any
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+
+    PIPE            reduce using rule 2 (re -> simple .)
+    RPARENS         reduce using rule 2 (re -> simple .)
+    $end            reduce using rule 2 (re -> simple .)
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
+    LSQBRACKET      shift and go to state 15
+
+    optional                       shift and go to state 16
+    basic                          shift and go to state 39
+    command                        shift and go to state 18
+    pcharclass                     shift and go to state 3
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    ncharclass                     shift and go to state 23
+    charclass                      shift and go to state 11
+    group                          shift and go to state 9
+    plus                           shift and go to state 1
+    directionset                   shift and go to state 14
+    literal                        shift and go to state 26
+
 state 25
 
-    (37) directionset -> CARET DIGIT .
+    (38) directionset -> CARET . DIGIT
 
-    ASTERISK        reduce using rule 37 (directionset -> CARET DIGIT .)
-    PLUS            reduce using rule 37 (directionset -> CARET DIGIT .)
-    QMARK           reduce using rule 37 (directionset -> CARET DIGIT .)
-    LPARENS         reduce using rule 37 (directionset -> CARET DIGIT .)
-    CARET           reduce using rule 37 (directionset -> CARET DIGIT .)
-    COMMAND         reduce using rule 37 (directionset -> CARET DIGIT .)
-    LITERAL         reduce using rule 37 (directionset -> CARET DIGIT .)
-    DIGIT           reduce using rule 37 (directionset -> CARET DIGIT .)
-    DOT             reduce using rule 37 (directionset -> CARET DIGIT .)
-    LSQBRACKET      reduce using rule 37 (directionset -> CARET DIGIT .)
-    PIPE            reduce using rule 37 (directionset -> CARET DIGIT .)
-    $end            reduce using rule 37 (directionset -> CARET DIGIT .)
-    RPARENS         reduce using rule 37 (directionset -> CARET DIGIT .)
+    DIGIT           shift and go to state 40
 
 
 state 26
 
-    (6) concatenation -> simple basic .
+    (14) elementary -> literal .
 
-    LPARENS         reduce using rule 6 (concatenation -> simple basic .)
-    CARET           reduce using rule 6 (concatenation -> simple basic .)
-    COMMAND         reduce using rule 6 (concatenation -> simple basic .)
-    LITERAL         reduce using rule 6 (concatenation -> simple basic .)
-    DIGIT           reduce using rule 6 (concatenation -> simple basic .)
-    DOT             reduce using rule 6 (concatenation -> simple basic .)
-    LSQBRACKET      reduce using rule 6 (concatenation -> simple basic .)
-    PIPE            reduce using rule 6 (concatenation -> simple basic .)
-    $end            reduce using rule 6 (concatenation -> simple basic .)
-    RPARENS         reduce using rule 6 (concatenation -> simple basic .)
+    ASTERISK        reduce using rule 14 (elementary -> literal .)
+    PLUS            reduce using rule 14 (elementary -> literal .)
+    QMARK           reduce using rule 14 (elementary -> literal .)
+    LPARENS         reduce using rule 14 (elementary -> literal .)
+    CARET           reduce using rule 14 (elementary -> literal .)
+    COMMAND         reduce using rule 14 (elementary -> literal .)
+    LITERAL         reduce using rule 14 (elementary -> literal .)
+    DIGIT           reduce using rule 14 (elementary -> literal .)
+    DOT             reduce using rule 14 (elementary -> literal .)
+    DOLLAR          reduce using rule 14 (elementary -> literal .)
+    LSQBRACKET      reduce using rule 14 (elementary -> literal .)
+    PIPE            reduce using rule 14 (elementary -> literal .)
+    RPARENS         reduce using rule 14 (elementary -> literal .)
+    $end            reduce using rule 14 (elementary -> literal .)
 
 
 state 27
+
+    (18) asterisk -> elementary ASTERISK .
+
+    LPARENS         reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    CARET           reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    COMMAND         reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    LITERAL         reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    DIGIT           reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    DOT             reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    DOLLAR          reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    LSQBRACKET      reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    PIPE            reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    RPARENS         reduce using rule 18 (asterisk -> elementary ASTERISK .)
+    $end            reduce using rule 18 (asterisk -> elementary ASTERISK .)
+
+
+state 28
+
+    (19) plus -> elementary PLUS .
+
+    LPARENS         reduce using rule 19 (plus -> elementary PLUS .)
+    CARET           reduce using rule 19 (plus -> elementary PLUS .)
+    COMMAND         reduce using rule 19 (plus -> elementary PLUS .)
+    LITERAL         reduce using rule 19 (plus -> elementary PLUS .)
+    DIGIT           reduce using rule 19 (plus -> elementary PLUS .)
+    DOT             reduce using rule 19 (plus -> elementary PLUS .)
+    DOLLAR          reduce using rule 19 (plus -> elementary PLUS .)
+    LSQBRACKET      reduce using rule 19 (plus -> elementary PLUS .)
+    PIPE            reduce using rule 19 (plus -> elementary PLUS .)
+    $end            reduce using rule 19 (plus -> elementary PLUS .)
+    RPARENS         reduce using rule 19 (plus -> elementary PLUS .)
+
+
+state 29
+
+    (20) optional -> elementary QMARK .
+
+    LPARENS         reduce using rule 20 (optional -> elementary QMARK .)
+    CARET           reduce using rule 20 (optional -> elementary QMARK .)
+    COMMAND         reduce using rule 20 (optional -> elementary QMARK .)
+    LITERAL         reduce using rule 20 (optional -> elementary QMARK .)
+    DIGIT           reduce using rule 20 (optional -> elementary QMARK .)
+    DOT             reduce using rule 20 (optional -> elementary QMARK .)
+    DOLLAR          reduce using rule 20 (optional -> elementary QMARK .)
+    LSQBRACKET      reduce using rule 20 (optional -> elementary QMARK .)
+    PIPE            reduce using rule 20 (optional -> elementary QMARK .)
+    $end            reduce using rule 20 (optional -> elementary QMARK .)
+    RPARENS         reduce using rule 20 (optional -> elementary QMARK .)
+
+
+state 30
+
+    (26) groupbody -> basicgroup .
+
+    RPARENS         reduce using rule 26 (groupbody -> basicgroup .)
+
+
+state 31
+
+    (24) group -> LPARENS groupbody . RPARENS
+
+    RPARENS         shift and go to state 41
+
+
+state 32
+
+    (31) basicgroup -> re .
+    (3) alternation -> re . PIPE simple
+
+    RPARENS         reduce using rule 31 (basicgroup -> re .)
+    PIPE            shift and go to state 34
+
+
+state 33
+
+    (25) groupbody -> QMARK . specialgroup
+    (27) specialgroup -> . UNDERSCORE lengthcheck
+    (28) specialgroup -> . PIPE stationarygroup
+
+    UNDERSCORE      shift and go to state 43
+    PIPE            shift and go to state 44
+
+    specialgroup                   shift and go to state 42
+
+state 34
 
     (3) alternation -> re PIPE . simple
     (4) simple -> . concatenation
@@ -698,164 +809,244 @@ state 27
     (14) elementary -> . literal
     (15) elementary -> . charclass
     (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
 
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
     LSQBRACKET      shift and go to state 15
 
-    simple                         shift and go to state 38
-    elementary                     shift and go to state 14
-    command                        shift and go to state 4
-    plus                           shift and go to state 5
-    asterisk                       shift and go to state 16
-    pcharclass                     shift and go to state 18
-    any                            shift and go to state 8
-    literal                        shift and go to state 9
-    concatenation                  shift and go to state 19
-    charclass                      shift and go to state 10
-    ncharclass                     shift and go to state 21
-    basic                          shift and go to state 22
-    directionset                   shift and go to state 23
-    group                          shift and go to state 24
-    optional                       shift and go to state 11
-
-state 28
-
-    (17) asterisk -> elementary ASTERISK .
-
-    LPARENS         reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    CARET           reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    COMMAND         reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    LITERAL         reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    DIGIT           reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    DOT             reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    LSQBRACKET      reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    PIPE            reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    $end            reduce using rule 17 (asterisk -> elementary ASTERISK .)
-    RPARENS         reduce using rule 17 (asterisk -> elementary ASTERISK .)
-
-
-state 29
-
-    (18) plus -> elementary PLUS .
-
-    LPARENS         reduce using rule 18 (plus -> elementary PLUS .)
-    CARET           reduce using rule 18 (plus -> elementary PLUS .)
-    COMMAND         reduce using rule 18 (plus -> elementary PLUS .)
-    LITERAL         reduce using rule 18 (plus -> elementary PLUS .)
-    DIGIT           reduce using rule 18 (plus -> elementary PLUS .)
-    DOT             reduce using rule 18 (plus -> elementary PLUS .)
-    LSQBRACKET      reduce using rule 18 (plus -> elementary PLUS .)
-    PIPE            reduce using rule 18 (plus -> elementary PLUS .)
-    RPARENS         reduce using rule 18 (plus -> elementary PLUS .)
-    $end            reduce using rule 18 (plus -> elementary PLUS .)
-
-
-state 30
-
-    (19) optional -> elementary QMARK .
-
-    LPARENS         reduce using rule 19 (optional -> elementary QMARK .)
-    CARET           reduce using rule 19 (optional -> elementary QMARK .)
-    COMMAND         reduce using rule 19 (optional -> elementary QMARK .)
-    LITERAL         reduce using rule 19 (optional -> elementary QMARK .)
-    DIGIT           reduce using rule 19 (optional -> elementary QMARK .)
-    DOT             reduce using rule 19 (optional -> elementary QMARK .)
-    LSQBRACKET      reduce using rule 19 (optional -> elementary QMARK .)
-    PIPE            reduce using rule 19 (optional -> elementary QMARK .)
-    RPARENS         reduce using rule 19 (optional -> elementary QMARK .)
-    $end            reduce using rule 19 (optional -> elementary QMARK .)
-
-
-state 31
-
-    (35) classitems -> literal .
-    (36) classitems -> literal . classitems
-    (35) classitems -> . literal
-    (36) classitems -> . literal classitems
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-
-    RSQBRACKET      reduce using rule 35 (classitems -> literal .)
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-
-    literal                        shift and go to state 31
-    classitems                     shift and go to state 39
-
-state 32
-
-    (34) ncharclass -> LSQBRACKET CARET . classitems RSQBRACKET
-    (35) classitems -> . literal
-    (36) classitems -> . literal classitems
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-
-    literal                        shift and go to state 31
-    classitems                     shift and go to state 40
-
-state 33
-
-    (33) pcharclass -> LSQBRACKET classitems . RSQBRACKET
-
-    RSQBRACKET      shift and go to state 41
-
-
-state 34
-
-    (30) basicgroup -> re .
-    (3) alternation -> re . PIPE simple
-
-    RPARENS         reduce using rule 30 (basicgroup -> re .)
-    PIPE            shift and go to state 27
-
+    optional                       shift and go to state 16
+    basic                          shift and go to state 8
+    command                        shift and go to state 18
+    pcharclass                     shift and go to state 3
+    ncharclass                     shift and go to state 23
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    concatenation                  shift and go to state 17
+    simple                         shift and go to state 45
+    charclass                      shift and go to state 11
+    literal                        shift and go to state 26
+    group                          shift and go to state 9
+    directionset                   shift and go to state 14
+    plus                           shift and go to state 1
 
 state 35
 
-    (24) groupbody -> QMARK . specialgroup
-    (26) specialgroup -> . UNDERSCORE lengthcheck
-    (27) specialgroup -> . PIPE stationarygroup
+    (39) anchor -> DOLLAR DIGIT .
 
-    UNDERSCORE      shift and go to state 42
-    PIPE            shift and go to state 43
+    ASTERISK        reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    PLUS            reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    QMARK           reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    LPARENS         reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    CARET           reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    COMMAND         reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    LITERAL         reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    DIGIT           reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    DOT             reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    DOLLAR          reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    LSQBRACKET      reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    PIPE            reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    RPARENS         reduce using rule 39 (anchor -> DOLLAR DIGIT .)
+    $end            reduce using rule 39 (anchor -> DOLLAR DIGIT .)
 
-    specialgroup                   shift and go to state 44
 
 state 36
 
-    (25) groupbody -> basicgroup .
+    (35) ncharclass -> LSQBRACKET CARET . classitems RSQBRACKET
+    (36) classitems -> . literal
+    (37) classitems -> . literal classitems
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
 
-    RPARENS         reduce using rule 25 (groupbody -> basicgroup .)
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
 
+    classitems                     shift and go to state 46
+    literal                        shift and go to state 38
 
 state 37
 
-    (23) group -> LPARENS groupbody . RPARENS
+    (34) pcharclass -> LSQBRACKET classitems . RSQBRACKET
 
-    RPARENS         shift and go to state 45
+    RSQBRACKET      shift and go to state 47
 
 
 state 38
+
+    (36) classitems -> literal .
+    (37) classitems -> literal . classitems
+    (36) classitems -> . literal
+    (37) classitems -> . literal classitems
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+
+    RSQBRACKET      reduce using rule 36 (classitems -> literal .)
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+
+    classitems                     shift and go to state 48
+    literal                        shift and go to state 38
+
+state 39
+
+    (6) concatenation -> simple basic .
+
+    LPARENS         reduce using rule 6 (concatenation -> simple basic .)
+    CARET           reduce using rule 6 (concatenation -> simple basic .)
+    COMMAND         reduce using rule 6 (concatenation -> simple basic .)
+    LITERAL         reduce using rule 6 (concatenation -> simple basic .)
+    DIGIT           reduce using rule 6 (concatenation -> simple basic .)
+    DOT             reduce using rule 6 (concatenation -> simple basic .)
+    DOLLAR          reduce using rule 6 (concatenation -> simple basic .)
+    LSQBRACKET      reduce using rule 6 (concatenation -> simple basic .)
+    PIPE            reduce using rule 6 (concatenation -> simple basic .)
+    $end            reduce using rule 6 (concatenation -> simple basic .)
+    RPARENS         reduce using rule 6 (concatenation -> simple basic .)
+
+
+state 40
+
+    (38) directionset -> CARET DIGIT .
+
+    ASTERISK        reduce using rule 38 (directionset -> CARET DIGIT .)
+    PLUS            reduce using rule 38 (directionset -> CARET DIGIT .)
+    QMARK           reduce using rule 38 (directionset -> CARET DIGIT .)
+    LPARENS         reduce using rule 38 (directionset -> CARET DIGIT .)
+    CARET           reduce using rule 38 (directionset -> CARET DIGIT .)
+    COMMAND         reduce using rule 38 (directionset -> CARET DIGIT .)
+    LITERAL         reduce using rule 38 (directionset -> CARET DIGIT .)
+    DIGIT           reduce using rule 38 (directionset -> CARET DIGIT .)
+    DOT             reduce using rule 38 (directionset -> CARET DIGIT .)
+    DOLLAR          reduce using rule 38 (directionset -> CARET DIGIT .)
+    LSQBRACKET      reduce using rule 38 (directionset -> CARET DIGIT .)
+    PIPE            reduce using rule 38 (directionset -> CARET DIGIT .)
+    RPARENS         reduce using rule 38 (directionset -> CARET DIGIT .)
+    $end            reduce using rule 38 (directionset -> CARET DIGIT .)
+
+
+state 41
+
+    (24) group -> LPARENS groupbody RPARENS .
+
+    ASTERISK        reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    PLUS            reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    QMARK           reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    LPARENS         reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    CARET           reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    COMMAND         reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    LITERAL         reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    DIGIT           reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    DOT             reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    DOLLAR          reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    LSQBRACKET      reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    PIPE            reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    $end            reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+    RPARENS         reduce using rule 24 (group -> LPARENS groupbody RPARENS .)
+
+
+state 42
+
+    (25) groupbody -> QMARK specialgroup .
+
+    RPARENS         reduce using rule 25 (groupbody -> QMARK specialgroup .)
+
+
+state 43
+
+    (27) specialgroup -> UNDERSCORE . lengthcheck
+    (29) lengthcheck -> . LPARENS number RPARENS re
+
+    LPARENS         shift and go to state 49
+
+    lengthcheck                    shift and go to state 50
+
+state 44
+
+    (28) specialgroup -> PIPE . stationarygroup
+    (30) stationarygroup -> . re
+    (1) re -> . alternation
+    (2) re -> . simple
+    (3) alternation -> . re PIPE simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) elementary -> . group
+    (12) elementary -> . directionset
+    (13) elementary -> . command
+    (14) elementary -> . literal
+    (15) elementary -> . charclass
+    (16) elementary -> . any
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
+    LSQBRACKET      shift and go to state 15
+
+    optional                       shift and go to state 16
+    concatenation                  shift and go to state 17
+    command                        shift and go to state 18
+    pcharclass                     shift and go to state 3
+    ncharclass                     shift and go to state 23
+    alternation                    shift and go to state 19
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    stationarygroup                shift and go to state 52
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    basic                          shift and go to state 8
+    simple                         shift and go to state 24
+    charclass                      shift and go to state 11
+    literal                        shift and go to state 26
+    group                          shift and go to state 9
+    re                             shift and go to state 51
+    directionset                   shift and go to state 14
+    plus                           shift and go to state 1
+
+state 45
 
     (3) alternation -> re PIPE simple .
     (6) concatenation -> simple . basic
@@ -869,248 +1060,158 @@ state 38
     (14) elementary -> . literal
     (15) elementary -> . charclass
     (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
 
     PIPE            reduce using rule 3 (alternation -> re PIPE simple .)
-    RPARENS         reduce using rule 3 (alternation -> re PIPE simple .)
     $end            reduce using rule 3 (alternation -> re PIPE simple .)
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
+    RPARENS         reduce using rule 3 (alternation -> re PIPE simple .)
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
     LSQBRACKET      shift and go to state 15
 
-    elementary                     shift and go to state 14
-    command                        shift and go to state 4
-    plus                           shift and go to state 5
-    asterisk                       shift and go to state 16
-    pcharclass                     shift and go to state 18
-    any                            shift and go to state 8
-    literal                        shift and go to state 9
-    charclass                      shift and go to state 10
-    ncharclass                     shift and go to state 21
-    basic                          shift and go to state 26
-    directionset                   shift and go to state 23
-    group                          shift and go to state 24
-    optional                       shift and go to state 11
-
-state 39
-
-    (36) classitems -> literal classitems .
-
-    RSQBRACKET      reduce using rule 36 (classitems -> literal classitems .)
-
-
-state 40
-
-    (34) ncharclass -> LSQBRACKET CARET classitems . RSQBRACKET
-
-    RSQBRACKET      shift and go to state 46
-
-
-state 41
-
-    (33) pcharclass -> LSQBRACKET classitems RSQBRACKET .
-
-    ASTERISK        reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    PLUS            reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    QMARK           reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    LPARENS         reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    CARET           reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    COMMAND         reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    LITERAL         reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    DIGIT           reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    DOT             reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    LSQBRACKET      reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    PIPE            reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    RPARENS         reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-    $end            reduce using rule 33 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
-
-
-state 42
-
-    (26) specialgroup -> UNDERSCORE . lengthcheck
-    (28) lengthcheck -> . LPARENS number RPARENS re
-
-    LPARENS         shift and go to state 48
-
-    lengthcheck                    shift and go to state 47
-
-state 43
-
-    (27) specialgroup -> PIPE . stationarygroup
-    (29) stationarygroup -> . re
-    (1) re -> . alternation
-    (2) re -> . simple
-    (3) alternation -> . re PIPE simple
-    (4) simple -> . concatenation
-    (5) simple -> . basic
-    (6) concatenation -> . simple basic
-    (7) basic -> . elementary
-    (8) basic -> . asterisk
-    (9) basic -> . plus
-    (10) basic -> . optional
-    (11) elementary -> . group
-    (12) elementary -> . directionset
-    (13) elementary -> . command
-    (14) elementary -> . literal
-    (15) elementary -> . charclass
-    (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
-
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
-    LSQBRACKET      shift and go to state 15
-
-    literal                        shift and go to state 9
-    simple                         shift and go to state 12
-    re                             shift and go to state 49
-    elementary                     shift and go to state 14
-    asterisk                       shift and go to state 16
-    plus                           shift and go to state 5
-    alternation                    shift and go to state 6
-    pcharclass                     shift and go to state 18
-    any                            shift and go to state 8
-    command                        shift and go to state 4
-    ncharclass                     shift and go to state 21
-    concatenation                  shift and go to state 19
-    charclass                      shift and go to state 10
-    stationarygroup                shift and go to state 50
-    basic                          shift and go to state 22
-    directionset                   shift and go to state 23
-    group                          shift and go to state 24
-    optional                       shift and go to state 11
-
-state 44
-
-    (24) groupbody -> QMARK specialgroup .
-
-    RPARENS         reduce using rule 24 (groupbody -> QMARK specialgroup .)
-
-
-state 45
-
-    (23) group -> LPARENS groupbody RPARENS .
-
-    ASTERISK        reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    PLUS            reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    QMARK           reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    LPARENS         reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    CARET           reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    COMMAND         reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    LITERAL         reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    DIGIT           reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    DOT             reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    LSQBRACKET      reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    PIPE            reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    $end            reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-    RPARENS         reduce using rule 23 (group -> LPARENS groupbody RPARENS .)
-
+    plus                           shift and go to state 1
+    optional                       shift and go to state 16
+    basic                          shift and go to state 39
+    command                        shift and go to state 18
+    pcharclass                     shift and go to state 3
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    ncharclass                     shift and go to state 23
+    charclass                      shift and go to state 11
+    group                          shift and go to state 9
+    directionset                   shift and go to state 14
+    literal                        shift and go to state 26
 
 state 46
 
-    (34) ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .
+    (35) ncharclass -> LSQBRACKET CARET classitems . RSQBRACKET
 
-    ASTERISK        reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    PLUS            reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    QMARK           reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    LPARENS         reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    CARET           reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    COMMAND         reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    LITERAL         reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    DIGIT           reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    DOT             reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    LSQBRACKET      reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    PIPE            reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    RPARENS         reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
-    $end            reduce using rule 34 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    RSQBRACKET      shift and go to state 53
 
 
 state 47
 
-    (26) specialgroup -> UNDERSCORE lengthcheck .
+    (34) pcharclass -> LSQBRACKET classitems RSQBRACKET .
 
-    RPARENS         reduce using rule 26 (specialgroup -> UNDERSCORE lengthcheck .)
+    ASTERISK        reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    PLUS            reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    QMARK           reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    LPARENS         reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    CARET           reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    COMMAND         reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    LITERAL         reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    DIGIT           reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    DOT             reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    DOLLAR          reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    LSQBRACKET      reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    PIPE            reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    $end            reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
+    RPARENS         reduce using rule 34 (pcharclass -> LSQBRACKET classitems RSQBRACKET .)
 
 
 state 48
 
-    (28) lengthcheck -> LPARENS . number RPARENS re
-    (21) number -> . DIGIT
-    (22) number -> . DIGIT number
+    (37) classitems -> literal classitems .
 
-    DIGIT           shift and go to state 52
+    RSQBRACKET      reduce using rule 37 (classitems -> literal classitems .)
 
-    number                         shift and go to state 51
 
 state 49
 
-    (29) stationarygroup -> re .
-    (3) alternation -> re . PIPE simple
+    (29) lengthcheck -> LPARENS . number RPARENS re
+    (22) number -> . DIGIT
+    (23) number -> . DIGIT number
 
-    RPARENS         reduce using rule 29 (stationarygroup -> re .)
-    PIPE            shift and go to state 27
+    DIGIT           shift and go to state 55
 
+    number                         shift and go to state 54
 
 state 50
 
-    (27) specialgroup -> PIPE stationarygroup .
+    (27) specialgroup -> UNDERSCORE lengthcheck .
 
-    RPARENS         reduce using rule 27 (specialgroup -> PIPE stationarygroup .)
+    RPARENS         reduce using rule 27 (specialgroup -> UNDERSCORE lengthcheck .)
 
 
 state 51
 
-    (28) lengthcheck -> LPARENS number . RPARENS re
+    (30) stationarygroup -> re .
+    (3) alternation -> re . PIPE simple
 
-    RPARENS         shift and go to state 53
+    RPARENS         reduce using rule 30 (stationarygroup -> re .)
+    PIPE            shift and go to state 34
 
 
 state 52
 
-    (21) number -> DIGIT .
-    (22) number -> DIGIT . number
-    (21) number -> . DIGIT
-    (22) number -> . DIGIT number
+    (28) specialgroup -> PIPE stationarygroup .
 
-    RPARENS         reduce using rule 21 (number -> DIGIT .)
-    DIGIT           shift and go to state 52
+    RPARENS         reduce using rule 28 (specialgroup -> PIPE stationarygroup .)
 
-    number                         shift and go to state 54
 
 state 53
 
-    (28) lengthcheck -> LPARENS number RPARENS . re
+    (35) ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .
+
+    ASTERISK        reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    PLUS            reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    QMARK           reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    LPARENS         reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    CARET           reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    COMMAND         reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    LITERAL         reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    DIGIT           reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    DOT             reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    DOLLAR          reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    LSQBRACKET      reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    PIPE            reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    RPARENS         reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+    $end            reduce using rule 35 (ncharclass -> LSQBRACKET CARET classitems RSQBRACKET .)
+
+
+state 54
+
+    (29) lengthcheck -> LPARENS number . RPARENS re
+
+    RPARENS         shift and go to state 56
+
+
+state 55
+
+    (22) number -> DIGIT .
+    (23) number -> DIGIT . number
+    (22) number -> . DIGIT
+    (23) number -> . DIGIT number
+
+    RPARENS         reduce using rule 22 (number -> DIGIT .)
+    DIGIT           shift and go to state 55
+
+    number                         shift and go to state 57
+
+state 56
+
+    (29) lengthcheck -> LPARENS number RPARENS . re
     (1) re -> . alternation
     (2) re -> . simple
     (3) alternation -> . re PIPE simple
@@ -1127,58 +1228,62 @@ state 53
     (14) elementary -> . literal
     (15) elementary -> . charclass
     (16) elementary -> . any
-    (17) asterisk -> . elementary ASTERISK
-    (18) plus -> . elementary PLUS
-    (19) optional -> . elementary QMARK
-    (23) group -> . LPARENS groupbody RPARENS
-    (37) directionset -> . CARET DIGIT
-    (38) command -> . COMMAND
-    (39) literal -> . LITERAL
-    (40) literal -> . DIGIT
-    (31) charclass -> . pcharclass
-    (32) charclass -> . ncharclass
-    (20) any -> . DOT
-    (33) pcharclass -> . LSQBRACKET classitems RSQBRACKET
-    (34) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
+    (17) elementary -> . anchor
+    (18) asterisk -> . elementary ASTERISK
+    (19) plus -> . elementary PLUS
+    (20) optional -> . elementary QMARK
+    (24) group -> . LPARENS groupbody RPARENS
+    (38) directionset -> . CARET DIGIT
+    (40) command -> . COMMAND
+    (41) literal -> . LITERAL
+    (42) literal -> . DIGIT
+    (32) charclass -> . pcharclass
+    (33) charclass -> . ncharclass
+    (21) any -> . DOT
+    (39) anchor -> . DOLLAR DIGIT
+    (34) pcharclass -> . LSQBRACKET classitems RSQBRACKET
+    (35) ncharclass -> . LSQBRACKET CARET classitems RSQBRACKET
 
-    LPARENS         shift and go to state 17
-    CARET           shift and go to state 2
-    COMMAND         shift and go to state 1
-    LITERAL         shift and go to state 20
-    DIGIT           shift and go to state 7
-    DOT             shift and go to state 3
+    LPARENS         shift and go to state 6
+    CARET           shift and go to state 25
+    COMMAND         shift and go to state 21
+    LITERAL         shift and go to state 10
+    DIGIT           shift and go to state 2
+    DOT             shift and go to state 5
+    DOLLAR          shift and go to state 13
     LSQBRACKET      shift and go to state 15
 
-    literal                        shift and go to state 9
-    simple                         shift and go to state 12
-    re                             shift and go to state 55
-    elementary                     shift and go to state 14
-    directionset                   shift and go to state 23
-    asterisk                       shift and go to state 16
-    plus                           shift and go to state 5
-    alternation                    shift and go to state 6
-    pcharclass                     shift and go to state 18
-    any                            shift and go to state 8
-    command                        shift and go to state 4
-    concatenation                  shift and go to state 19
-    charclass                      shift and go to state 10
-    ncharclass                     shift and go to state 21
-    basic                          shift and go to state 22
-    group                          shift and go to state 24
-    optional                       shift and go to state 11
+    optional                       shift and go to state 16
+    concatenation                  shift and go to state 17
+    pcharclass                     shift and go to state 3
+    ncharclass                     shift and go to state 23
+    alternation                    shift and go to state 19
+    elementary                     shift and go to state 4
+    any                            shift and go to state 7
+    anchor                         shift and go to state 20
+    asterisk                       shift and go to state 22
+    basic                          shift and go to state 8
+    simple                         shift and go to state 24
+    charclass                      shift and go to state 11
+    literal                        shift and go to state 26
+    group                          shift and go to state 9
+    re                             shift and go to state 58
+    command                        shift and go to state 18
+    directionset                   shift and go to state 14
+    plus                           shift and go to state 1
 
-state 54
+state 57
 
-    (22) number -> DIGIT number .
+    (23) number -> DIGIT number .
 
-    RPARENS         reduce using rule 22 (number -> DIGIT number .)
+    RPARENS         reduce using rule 23 (number -> DIGIT number .)
 
 
-state 55
+state 58
 
-    (28) lengthcheck -> LPARENS number RPARENS re .
+    (29) lengthcheck -> LPARENS number RPARENS re .
     (3) alternation -> re . PIPE simple
 
-    RPARENS         reduce using rule 28 (lengthcheck -> LPARENS number RPARENS re .)
-    PIPE            shift and go to state 27
+    RPARENS         reduce using rule 29 (lengthcheck -> LPARENS number RPARENS re .)
+    PIPE            shift and go to state 34
 
