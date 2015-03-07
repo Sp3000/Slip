@@ -1,5 +1,5 @@
 """
-Slip v0.1 alpha by Sp3000
+Slip v0.1.1 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -10,7 +10,7 @@ import sys
 
 from slipparser import Constructs, SlipParser
 
-DIRECTIONS = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
+DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
 sys.setrecursionlimit(100000)
 
 class State():
@@ -307,6 +307,13 @@ class Slip():
             if state.group_length(group_num) == length:
                 state.regex_queue.pop(0)
                 state_stack.append(state)
+
+            return self._match(state_stack)
+
+        elif construct == Constructs.DIRECTIONSET:
+            state.dir = DIRECTIONS[regex_rest[0]]
+            state.regex_queue.pop(0)
+            state_stack.append(state)
 
             return self._match(state_stack)
 

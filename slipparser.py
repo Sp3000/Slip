@@ -21,7 +21,8 @@ class Constructs(Enum):
      STATIONARY,
      STATIONARYRESET,
      LENGTHCHECK,
-     LENGTHVERIFY) = range(14)
+     LENGTHVERIFY,
+     DIRECTIONSET) = range(15)
     
     
 class SlipLexer():
@@ -117,6 +118,7 @@ class SlipParser():
 
     def p_elementary(self, p):
         """elementary : group
+                      | directionset
                       | command
                       | literal
                       | charclass"""
@@ -209,6 +211,11 @@ class SlipParser():
 
         else:
             p[0] = [p[1]] + p[2]
+
+
+    def p_directionset(self, p):
+        """directionset : CARET DIGIT"""
+        p[0] = [Constructs.DIRECTIONSET, int(p[2])]
             
 
     def p_command(self, p):
