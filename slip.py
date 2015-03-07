@@ -397,11 +397,17 @@ class Slip():
                              state.pos[0] == 0,
                              state.pos[0] == 0 and state.pos[1] == 0]
 
-            if ((digit == 8 and any(anchor_checks[::2])) or
-                (digit == 9 and any(anchor_checks[1::2])) or
-                (anchor_checks[digit])):
-                
-                state_stack.append(state)
+            if digit == 8:
+                if any(anchor_checks[::2]):
+                    state_stack.append(state)
+
+            elif digit == 9:
+                if any(anchor_checks[1::2]):
+                    state_stack.append(state)
+
+            else:
+                if anchor_checks[digit]:
+                    state_stack.append(state)
 
             return self._match(state_stack)
         
