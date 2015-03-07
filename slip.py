@@ -11,6 +11,7 @@ import sys
 from slipparser import Constructs, SlipParser
 
 DIRECTIONS = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
+sys.setrecursionlimit(100000)
 
 class State():
     def __init__(self, pos, dir_, regex_queue, board, match):
@@ -88,6 +89,8 @@ class Slip():
 
 
     def match(self):
+        found = set()
+        
         for y in self.board:
             for x in self.board[y]:
                 state_stack = [State([x-1, y], (1, 0), [self.regex], self.board,
@@ -99,8 +102,12 @@ class Slip():
                     min_x = min_y = max_x = max_y = None
                     match = state_stack.pop().match
 
+                    matched_squares = set()
+
                     for y in match:
                         for x in match[y]:
+                            matched_squares.add((x, y))
+                            
                             if min_x is None or x < min_x:
                                 min_x = x
 
@@ -113,12 +120,22 @@ class Slip():
                             if max_y is None or y > max_y:
                                 max_y = y
 
+                    sorted_matches = tuple(sorted(matched_squares))
+
+                    if sorted_matches in found:
+                        continue
+
+                    else:
+                        found.add(sorted_matches)
+
                     if min_x is None:
                         print("Empty match found from ({}, {})".format(x, y))
+                        print()
 
                     else:
                         print("Match found in rectangle: ({}, {}), ({}, {})".format(
                                min_x, min_y, max_x, max_y))
+                        print()
 
                         array = [[" "]*(max_x - min_x + 1)
                                  for _ in range(min_y, max_y+1)]
@@ -129,6 +146,8 @@ class Slip():
 
                         for row in array:
                             print("".join(row))
+
+                        print()
 
 
     def _match(self, state_stack):
