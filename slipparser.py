@@ -23,7 +23,8 @@ class Constructs(Enum):
      STATIONARYRESET,
      LENGTHCHECK,
      LENGTHVERIFY,
-     DIRECTIONSET) = range(16)
+     DIRECTIONSET,
+     ANYCHAR) = range(17)
     
     
 class SlipLexer():
@@ -123,7 +124,8 @@ class SlipParser():
                       | directionset
                       | command
                       | literal
-                      | charclass"""
+                      | charclass
+                      | any"""
         p[0] = p[1]
 
 
@@ -140,6 +142,11 @@ class SlipParser():
     def p_optional(self, p):
         """optional : elementary QMARK"""
         p[0] = [Constructs.OPTIONAL, p[1]]
+
+
+    def p_any(self, p):
+        """any : DOT"""
+        p[0] = [Constructs.ANYCHAR]
 
 
     def p_number(self, p):
@@ -238,6 +245,7 @@ class SlipParser():
 
     def p_error(self, p):
         print("Syntax error at '%s'" % p.value)
+        exit()
 
 
 if __name__ == "__main__":

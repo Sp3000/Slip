@@ -1,5 +1,5 @@
 """
-Slip v0.1.1 alpha by Sp3000
+Slip v0.1.2 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -182,6 +182,26 @@ class Slip():
             else:
                 return self._match(state_stack)
 
+
+        elif construct == Constructs.ANYCHAR:
+            state.move()
+            
+            if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
+                char = state.board[state.pos[1]][state.pos[0]]
+                state.match[state.pos[1]][state.pos[0]] = char
+                state.regex_queue.pop(0)
+                state_stack.append(state)
+                
+            return self._match(state_stack)
+
+        elif construct == Constructs.CHARCLASS:
+            for literal in regex_rest[0]:
+                new_state = deepcopy(state)
+                new_state.regex_queue[0] = literal
+
+                state_stack.append(new_state)
+
+            return self._match(state_stack)
 
         elif construct == Constructs.COMMAND:
             command = regex_rest[0]

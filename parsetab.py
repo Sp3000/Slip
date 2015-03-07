@@ -5,9 +5,9 @@ _tabversion = '3.2'
 
 _lr_method = 'LALR'
 
-_lr_signature = b'\x1f\x98\xcb\xe5\xa7\xc2\xe4\xc6\x91\xdeGBW\xba\x9aX'
+_lr_signature = b'\xc3W\xb0RtF\xaa4\x9f\xd6P?#39\x87'
     
-_lr_action_items = {'RSQBRACKET':([3,4,24,25,36,38,],[-38,-37,-33,37,-34,44,]),'ASTERISK':([1,2,3,4,5,8,12,14,17,20,22,23,37,39,44,],[-13,-30,-38,-37,-36,-15,-29,-12,-14,34,-11,-35,-31,-21,-32,]),'UNDERSCORE':([29,],[40,]),'CARET':([0,1,2,3,4,5,6,8,9,11,12,13,14,15,16,17,19,20,21,22,23,27,32,33,34,35,37,39,41,43,44,51,],[7,-13,-30,-38,-37,-36,-8,-15,-4,26,-29,7,-12,7,-5,-14,-9,-7,-10,-11,-35,-6,7,-17,-16,-18,-31,-21,7,7,-32,7,]),'DIGIT':([0,1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,19,20,21,22,23,24,26,27,32,33,34,35,37,39,41,43,44,45,50,51,],[3,-13,-30,-38,-37,-36,-8,23,-15,-4,3,-29,3,-12,3,-5,-14,-9,-7,-10,-11,-35,3,3,-6,3,-17,-16,-18,-31,-21,3,3,-32,50,50,3,]),'LITERAL':([0,1,2,3,4,5,6,8,9,11,12,13,14,15,16,17,19,20,21,22,23,24,26,27,32,33,34,35,37,39,41,43,44,51,],[4,-13,-30,-38,-37,-36,-8,-15,-4,4,-29,4,-12,4,-5,-14,-9,-7,-10,-11,-35,4,4,-6,4,-17,-16,-18,-31,-21,4,4,-32,4,]),'$end':([1,2,3,4,5,6,8,9,10,12,13,14,16,17,18,19,20,21,22,23,27,33,34,35,37,39,43,44,],[-13,-30,-38,-37,-36,-8,-15,-4,-1,-29,-2,-12,-5,-14,0,-9,-7,-10,-11,-35,-6,-17,-16,-18,-31,-21,-3,-32,]),'QMARK':([1,2,3,4,5,8,12,14,15,17,20,22,23,37,39,44,],[-13,-30,-38,-37,-36,-15,-29,-12,29,-14,35,-11,-35,-31,-21,-32,]),'LPARENS':([0,1,2,3,4,5,6,8,9,12,13,14,15,16,17,19,20,21,22,23,27,32,33,34,35,37,39,40,41,43,44,51,],[15,-13,-30,-38,-37,-36,-8,-15,-4,-29,15,-12,15,-5,-14,-9,-7,-10,-11,-35,-6,15,-17,-16,-18,-31,-21,45,15,15,-32,15,]),'PLUS':([1,2,3,4,5,8,12,14,17,20,22,23,37,39,44,],[-13,-30,-38,-37,-36,-15,-29,-12,-14,33,-11,-35,-31,-21,-32,]),'PIPE':([1,2,3,4,5,6,8,9,10,12,13,14,16,17,18,19,20,21,22,23,27,29,31,33,34,35,37,39,43,44,48,53,],[-13,-30,-38,-37,-36,-8,-15,-4,-1,-29,-2,-12,-5,-14,32,-9,-7,-10,-11,-35,-6,41,32,-17,-16,-18,-31,-21,-3,-32,32,32,]),'COMMAND':([0,1,2,3,4,5,6,8,9,12,13,14,15,16,17,19,20,21,22,23,27,32,33,34,35,37,39,41,43,44,51,],[5,-13,-30,-38,-37,-36,-8,-15,-4,-29,5,-12,5,-5,-14,-9,-7,-10,-11,-35,-6,5,-17,-16,-18,-31,-21,5,5,-32,5,]),'LSQBRACKET':([0,1,2,3,4,5,6,8,9,12,13,14,15,16,17,19,20,21,22,23,27,32,33,34,35,37,39,41,43,44,51,],[11,-13,-30,-38,-37,-36,-8,-15,-4,-29,11,-12,11,-5,-14,-9,-7,-10,-11,-35,-6,11,-17,-16,-18,-31,-21,11,11,-32,11,]),'RPARENS':([1,2,3,4,5,6,8,9,10,12,13,14,16,17,19,20,21,22,23,27,28,30,31,33,34,35,37,39,42,43,44,46,47,48,49,50,52,53,],[-13,-30,-38,-37,-36,-8,-15,-4,-1,-29,-2,-12,-5,-14,-9,-7,-10,-11,-35,-6,39,-23,-28,-17,-16,-18,-31,-21,-22,-3,-32,-24,-25,-27,51,-19,-20,-26,]),}
+_lr_action_items = {'ASTERISK':([1,3,4,7,8,9,10,14,18,20,21,23,24,25,41,45,46,],[-38,-20,-13,-40,-16,-14,-15,28,-31,-39,-32,-12,-11,-37,-33,-23,-34,]),'COMMAND':([0,1,3,4,5,7,8,9,10,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,38,41,43,45,46,53,],[1,-38,-20,-13,-9,-40,-16,-14,-15,-10,1,-7,-8,1,-31,-4,-39,-32,-5,-12,-11,-37,-6,1,-17,-18,-19,1,-33,1,-23,-34,1,]),'PLUS':([1,3,4,7,8,9,10,14,18,20,21,23,24,25,41,45,46,],[-38,-20,-13,-40,-16,-14,-15,29,-31,-39,-32,-12,-11,-37,-33,-23,-34,]),'CARET':([0,1,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,38,41,43,45,46,53,],[2,-38,-20,-13,-9,-40,-16,-14,-15,-10,2,-7,32,-8,2,-31,-4,-39,-32,-5,-12,-11,-37,-6,2,-17,-18,-19,2,-33,2,-23,-34,2,]),'DOT':([0,1,3,4,5,7,8,9,10,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,38,41,43,45,46,53,],[3,-38,-20,-13,-9,-40,-16,-14,-15,-10,3,-7,-8,3,-31,-4,-39,-32,-5,-12,-11,-37,-6,3,-17,-18,-19,3,-33,3,-23,-34,3,]),'PIPE':([1,3,4,5,6,7,8,9,10,11,12,13,14,16,18,19,20,21,22,23,24,25,26,28,29,30,34,35,38,41,45,46,49,55,],[-38,-20,-13,-9,-1,-40,-16,-14,-15,-10,-2,27,-7,-8,-31,-4,-39,-32,-5,-12,-11,-37,-6,-17,-18,-19,27,43,-3,-33,-23,-34,27,27,]),'LPARENS':([0,1,3,4,5,7,8,9,10,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,38,41,42,43,45,46,53,],[17,-38,-20,-13,-9,-40,-16,-14,-15,-10,17,-7,-8,17,-31,-4,-39,-32,-5,-12,-11,-37,-6,17,-17,-18,-19,17,-33,48,17,-23,-34,17,]),'DIGIT':([0,1,2,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,38,41,43,45,46,48,52,53,],[7,-38,25,-20,-13,-9,-40,-16,-14,-15,-10,7,-7,7,-8,7,-31,-4,-39,-32,-5,-12,-11,-37,-6,7,-17,-18,-19,7,7,7,-33,7,-23,-34,52,52,7,]),'UNDERSCORE':([35,],[42,]),'LITERAL':([0,1,3,4,5,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,38,41,43,45,46,53,],[20,-38,-20,-13,-9,-40,-16,-14,-15,-10,20,-7,20,-8,20,-31,-4,-39,-32,-5,-12,-11,-37,-6,20,-17,-18,-19,20,20,20,-33,20,-23,-34,20,]),'$end':([1,3,4,5,6,7,8,9,10,11,12,13,14,16,18,19,20,21,22,23,24,25,26,28,29,30,38,41,45,46,],[-38,-20,-13,-9,-1,-40,-16,-14,-15,-10,-2,0,-7,-8,-31,-4,-39,-32,-5,-12,-11,-37,-6,-17,-18,-19,-3,-33,-23,-34,]),'RSQBRACKET':([7,20,31,33,39,40,],[-40,-39,-35,41,-36,46,]),'RPARENS':([1,3,4,5,6,7,8,9,10,11,12,14,16,18,19,20,21,22,23,24,25,26,28,29,30,34,36,37,38,41,44,45,46,47,49,50,51,52,54,55,],[-38,-20,-13,-9,-1,-40,-16,-14,-15,-10,-2,-7,-8,-31,-4,-39,-32,-5,-12,-11,-37,-6,-17,-18,-19,-30,-25,45,-3,-33,-24,-23,-34,-26,-29,-27,53,-21,-22,-28,]),'LSQBRACKET':([0,1,3,4,5,7,8,9,10,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,38,41,43,45,46,53,],[15,-38,-20,-13,-9,-40,-16,-14,-15,-10,15,-7,-8,15,-31,-4,-39,-32,-5,-12,-11,-37,-6,15,-17,-18,-19,15,-33,15,-23,-34,15,]),'QMARK':([1,3,4,7,8,9,10,14,17,18,20,21,23,24,25,41,45,46,],[-38,-20,-13,-40,-16,-14,-15,30,35,-31,-39,-32,-12,-11,-37,-33,-23,-34,]),}
 
 _lr_action = { }
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'command':([0,13,15,32,41,43,51,],[1,1,1,1,1,1,1,]),'ncharclass':([0,13,15,32,41,43,51,],[2,2,2,2,2,2,2,]),'asterisk':([0,13,15,32,41,43,51,],[6,6,6,6,6,6,6,]),'pcharclass':([0,13,15,32,41,43,51,],[12,12,12,12,12,12,12,]),'charclass':([0,13,15,32,41,43,51,],[8,8,8,8,8,8,8,]),'concatenation':([0,15,32,41,51,],[9,9,9,9,9,]),'lengthcheck':([40,],[46,]),'alternation':([0,15,41,51,],[10,10,10,10,]),'simple':([0,15,32,41,51,],[13,13,43,13,13,]),'basicgroup':([15,],[30,]),'classitems':([11,24,26,],[25,36,38,]),'directionset':([0,13,15,32,41,43,51,],[14,14,14,14,14,14,14,]),'groupbody':([15,],[28,]),'basic':([0,13,15,32,41,43,51,],[16,27,16,16,16,27,16,]),'literal':([0,11,13,15,24,26,32,41,43,51,],[17,24,17,17,24,24,17,17,17,17,]),'plus':([0,13,15,32,41,43,51,],[19,19,19,19,19,19,19,]),'stationarygroup':([41,],[47,]),'elementary':([0,13,15,32,41,43,51,],[20,20,20,20,20,20,20,]),'specialgroup':([29,],[42,]),'optional':([0,13,15,32,41,43,51,],[21,21,21,21,21,21,21,]),'number':([45,50,],[49,52,]),'group':([0,13,15,32,41,43,51,],[22,22,22,22,22,22,22,]),'re':([0,15,41,51,],[18,31,48,53,]),}
+_lr_goto_items = {'specialgroup':([35,],[44,]),'plus':([0,12,17,27,38,43,53,],[5,5,5,5,5,5,5,]),'alternation':([0,17,43,53,],[6,6,6,6,]),'classitems':([15,31,32,],[33,39,40,]),'any':([0,12,17,27,38,43,53,],[8,8,8,8,8,8,8,]),'literal':([0,12,15,17,27,31,32,38,43,53,],[9,9,31,9,9,31,31,9,9,9,]),'lengthcheck':([42,],[47,]),'charclass':([0,12,17,27,38,43,53,],[10,10,10,10,10,10,10,]),'stationarygroup':([43,],[50,]),'number':([48,52,],[51,54,]),'basicgroup':([17,],[36,]),'simple':([0,17,27,43,53,],[12,12,38,12,12,]),'re':([0,17,43,53,],[13,34,49,55,]),'elementary':([0,12,17,27,38,43,53,],[14,14,14,14,14,14,14,]),'asterisk':([0,12,17,27,38,43,53,],[16,16,16,16,16,16,16,]),'command':([0,12,17,27,38,43,53,],[4,4,4,4,4,4,4,]),'pcharclass':([0,12,17,27,38,43,53,],[18,18,18,18,18,18,18,]),'concatenation':([0,17,27,43,53,],[19,19,19,19,19,]),'optional':([0,12,17,27,38,43,53,],[11,11,11,11,11,11,11,]),'ncharclass':([0,12,17,27,38,43,53,],[21,21,21,21,21,21,21,]),'basic':([0,12,17,27,38,43,53,],[22,26,22,22,26,22,22,]),'directionset':([0,12,17,27,38,43,53,],[23,23,23,23,23,23,23,]),'group':([0,12,17,27,38,43,53,],[24,24,24,24,24,24,24,]),'groupbody':([17,],[37,]),}
 
 _lr_goto = { }
 for _k, _v in _lr_goto_items.items():
@@ -26,42 +26,44 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> re","S'",1,None,None,None),
-  ('re -> alternation','re',1,'p_re','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',92),
-  ('re -> simple','re',1,'p_re','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',93),
-  ('alternation -> re PIPE simple','alternation',3,'p_alternation','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',98),
-  ('simple -> concatenation','simple',1,'p_simple','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',103),
-  ('simple -> basic','simple',1,'p_simple','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',104),
-  ('concatenation -> simple basic','concatenation',2,'p_concatenation','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',109),
-  ('basic -> elementary','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',114),
-  ('basic -> asterisk','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',115),
-  ('basic -> plus','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',116),
-  ('basic -> optional','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',117),
-  ('elementary -> group','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',122),
-  ('elementary -> directionset','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',123),
-  ('elementary -> command','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',124),
-  ('elementary -> literal','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',125),
-  ('elementary -> charclass','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',126),
-  ('asterisk -> elementary ASTERISK','asterisk',2,'p_asterisk','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',131),
-  ('plus -> elementary PLUS','plus',2,'p_plus','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',136),
-  ('optional -> elementary QMARK','optional',2,'p_optional','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',141),
-  ('number -> DIGIT','number',1,'p_number','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',146),
-  ('number -> DIGIT number','number',2,'p_number','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',147),
-  ('group -> LPARENS groupbody RPARENS','group',3,'p_group','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',157),
-  ('groupbody -> QMARK specialgroup','groupbody',2,'p_groupbody','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',162),
-  ('groupbody -> basicgroup','groupbody',1,'p_groupbody','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',163),
-  ('specialgroup -> UNDERSCORE lengthcheck','specialgroup',2,'p_specialgroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',173),
-  ('specialgroup -> PIPE stationarygroup','specialgroup',2,'p_specialgroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',174),
-  ('lengthcheck -> LPARENS number RPARENS re','lengthcheck',4,'p_lengthcheck','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',179),
-  ('stationarygroup -> re','stationarygroup',1,'p_stationarygroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',185),
-  ('basicgroup -> re','basicgroup',1,'p_basicgroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',191),
-  ('charclass -> pcharclass','charclass',1,'p_charclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',197),
-  ('charclass -> ncharclass','charclass',1,'p_charclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',198),
-  ('pcharclass -> LSQBRACKET classitems RSQBRACKET','pcharclass',3,'p_pcharclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',203),
-  ('ncharclass -> LSQBRACKET CARET classitems RSQBRACKET','ncharclass',4,'p_ncharclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',208),
-  ('classitems -> literal','classitems',1,'p_classitems','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',213),
-  ('classitems -> literal classitems','classitems',2,'p_classitems','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',214),
-  ('directionset -> CARET DIGIT','directionset',2,'p_directionset','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',224),
-  ('command -> COMMAND','command',1,'p_command','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',229),
-  ('literal -> LITERAL','literal',1,'p_literal','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',234),
-  ('literal -> DIGIT','literal',1,'p_literal','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',235),
+  ('re -> alternation','re',1,'p_re','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',93),
+  ('re -> simple','re',1,'p_re','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',94),
+  ('alternation -> re PIPE simple','alternation',3,'p_alternation','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',99),
+  ('simple -> concatenation','simple',1,'p_simple','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',104),
+  ('simple -> basic','simple',1,'p_simple','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',105),
+  ('concatenation -> simple basic','concatenation',2,'p_concatenation','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',110),
+  ('basic -> elementary','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',115),
+  ('basic -> asterisk','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',116),
+  ('basic -> plus','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',117),
+  ('basic -> optional','basic',1,'p_basic','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',118),
+  ('elementary -> group','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',123),
+  ('elementary -> directionset','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',124),
+  ('elementary -> command','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',125),
+  ('elementary -> literal','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',126),
+  ('elementary -> charclass','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',127),
+  ('elementary -> any','elementary',1,'p_elementary','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',128),
+  ('asterisk -> elementary ASTERISK','asterisk',2,'p_asterisk','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',133),
+  ('plus -> elementary PLUS','plus',2,'p_plus','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',138),
+  ('optional -> elementary QMARK','optional',2,'p_optional','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',143),
+  ('any -> DOT','any',1,'p_any','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',148),
+  ('number -> DIGIT','number',1,'p_number','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',153),
+  ('number -> DIGIT number','number',2,'p_number','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',154),
+  ('group -> LPARENS groupbody RPARENS','group',3,'p_group','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',164),
+  ('groupbody -> QMARK specialgroup','groupbody',2,'p_groupbody','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',169),
+  ('groupbody -> basicgroup','groupbody',1,'p_groupbody','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',170),
+  ('specialgroup -> UNDERSCORE lengthcheck','specialgroup',2,'p_specialgroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',180),
+  ('specialgroup -> PIPE stationarygroup','specialgroup',2,'p_specialgroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',181),
+  ('lengthcheck -> LPARENS number RPARENS re','lengthcheck',4,'p_lengthcheck','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',186),
+  ('stationarygroup -> re','stationarygroup',1,'p_stationarygroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',192),
+  ('basicgroup -> re','basicgroup',1,'p_basicgroup','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',198),
+  ('charclass -> pcharclass','charclass',1,'p_charclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',204),
+  ('charclass -> ncharclass','charclass',1,'p_charclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',205),
+  ('pcharclass -> LSQBRACKET classitems RSQBRACKET','pcharclass',3,'p_pcharclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',210),
+  ('ncharclass -> LSQBRACKET CARET classitems RSQBRACKET','ncharclass',4,'p_ncharclass','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',215),
+  ('classitems -> literal','classitems',1,'p_classitems','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',220),
+  ('classitems -> literal classitems','classitems',2,'p_classitems','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',221),
+  ('directionset -> CARET DIGIT','directionset',2,'p_directionset','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',231),
+  ('command -> COMMAND','command',1,'p_command','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',236),
+  ('literal -> LITERAL','literal',1,'p_literal','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',241),
+  ('literal -> DIGIT','literal',1,'p_literal','C:\\Users\\Sp3k\\Desktop\\Slip\\slipparser.py',242),
 ]
