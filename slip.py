@@ -362,9 +362,26 @@ class Slip():
             return self._match(state_stack)
 
         elif construct == Constructs.DIRECTIONSET:
-            state.dir = DIRECTIONS[regex_rest[0]]
-            state.regex_queue.pop(0)
-            state_stack.append(state)
+            digit = regex_rest[0]
+
+            if digit == 8:
+                for dir_ in DIRECTIONS[::-1]:
+                    new_state = deepcopy(state)
+                    new_state.dir = dir_
+                    new_state.regex_queue.pop(0)
+                    state_stack.append(new_state)
+
+            elif digit == 9:
+                for dir_ in DIRECTIONS[::2][::-1]:
+                    new_state = deepcopy(state)
+                    new_state.dir = dir_
+                    new_state.regex_queue.pop(0)
+                    state_stack.append(new_state)
+
+            else:
+                state.dir = DIRECTIONS[regex_rest[0]]
+                state.regex_queue.pop(0)
+                state_stack.append(state)
 
             return self._match(state_stack)
 
