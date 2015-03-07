@@ -16,13 +16,14 @@ class Constructs(Enum):
      NEG_CHARCLASS,
      ASTERISK,
      PLUS,
+     OPTIONAL,
      GROUP,
      GROUPSTORE,
      STATIONARY,
      STATIONARYRESET,
      LENGTHCHECK,
      LENGTHVERIFY,
-     DIRECTIONSET) = range(15)
+     DIRECTIONSET) = range(16)
     
     
 class SlipLexer():
@@ -112,7 +113,8 @@ class SlipParser():
     def p_basic(self, p):
         """basic : elementary
                  | asterisk
-                 | plus"""
+                 | plus
+                 | optional"""
         p[0] = p[1]
 
 
@@ -133,6 +135,11 @@ class SlipParser():
     def p_plus(self, p):
         """plus : elementary PLUS"""
         p[0] = [Constructs.PLUS, p[1]]
+
+
+    def p_optional(self, p):
+        """optional : elementary QMARK"""
+        p[0] = [Constructs.OPTIONAL, p[1]]
 
 
     def p_number(self, p):

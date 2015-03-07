@@ -234,6 +234,17 @@ class Slip():
             
             state_stack.append(state)
             return self._match(state_stack)
+        
+
+        elif construct == Constructs.OPTIONAL:           
+            state2 = deepcopy(state)
+            state2.regex_queue[0] = regex_rest[0]
+            state.regex_queue.pop(0)
+            
+            state_stack.append(state)
+            state_stack.append(state2)
+            
+            return self._match(state_stack)
 
 
         elif construct == Constructs.ALTERNATION:
