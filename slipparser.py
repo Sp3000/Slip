@@ -143,7 +143,7 @@ class SlipParser():
             p[0] = int(p[1])
 
         else:
-            p[0] = 10 * p[2] + int(p[1])
+            p[0] = p[2] + 10 * int(p[1])
 
 
     def p_group(self, p):
@@ -235,4 +235,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("(?_(1)abc)"))
+    print(parser.parse("(?_(10)abc)"))
