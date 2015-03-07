@@ -104,21 +104,21 @@ class Slip():
 
                     matched_squares = set()
 
-                    for y in match:
-                        for x in match[y]:
+                    for my in match:
+                        for mx in match[my]:
                             matched_squares.add((x, y))
                             
-                            if min_x is None or x < min_x:
-                                min_x = x
+                            if min_x is None or mx < min_x:
+                                min_x = mx
 
-                            if max_x is None or x > max_x:
-                                max_x = x
+                            if max_x is None or mx > max_x:
+                                max_x = mx
 
-                            if min_y is None or y < min_y:
-                                min_y = y
+                            if min_y is None or my < min_y:
+                                min_y = my
 
-                            if max_y is None or y > max_y:
-                                max_y = y
+                            if max_y is None or my > max_y:
+                                max_y = my
 
                     sorted_matches = tuple(sorted(matched_squares))
 
@@ -130,22 +130,20 @@ class Slip():
 
                     if min_x is None:
                         print("Empty match found from ({}, {})".format(x, y))
-                        print()
 
                     else:
                         print("Match found in rectangle: ({}, {}), ({}, {})".format(
                                min_x, min_y, max_x, max_y))
-                        print()
 
                         array = [[" "]*(max_x - min_x + 1)
-                                 for _ in range(min_y, max_y+1)]
+                                 for _ in range(min_y, max_y + 1)]
 
-                        for y in match:
-                            for x in match[y]:
-                                array[y-min_y][x-min_x] = match[y][x]
+                        for my in match:
+                            for mx in match[my]:
+                                array[my-min_y][mx-min_x] = match[my][mx]
 
                         for row in array:
-                            print("".join(row))
+                            print("".join(row).rstrip())
 
                         print()
 
