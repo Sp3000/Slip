@@ -397,8 +397,8 @@ class Slip():
                              state.pos[0] == 0,
                              state.pos[0] == 0 and state.pos[1] == 0]
 
-            if ((digit == 8 and any(anchor_checks)) or
-                (digit == 9 and any(anchor_checks[::2])) or
+            if ((digit == 8 and any(anchor_checks[::2])) or
+                (digit == 9 and any(anchor_checks[1::2])) or
                 (anchor_checks[digit])):
                 
                 state_stack.append(state)
