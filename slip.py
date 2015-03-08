@@ -278,14 +278,16 @@ class Slip():
             regex, *nums = regex_rest
 
             if len(nums) == 1: # {n}
+                new_state = deepcopy(state)
+                
                 if nums[0] == 0:
-                    state.regex_queue.pop(0)
+                    new_state.regex_queue.pop(0)
 
                 else:
-                    state.regex_queue[0][2] -= 1
-                    state.regex_queue.insert(0, regex)
+                    new_state.regex_queue[0][2] -= 1
+                    new_state.regex_queue.insert(0, regex)
                     
-                state_stack.append(state)
+                state_stack.append(new_state)
                 
             return self._match(state_stack)
         
