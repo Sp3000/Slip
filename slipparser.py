@@ -27,7 +27,9 @@ class Constructs(Enum):
      ANYCHAR,
      NEGLITERAL,
      ANCHOR,
-     NREPEAT) = range(20)
+     NREPEAT,
+     NOCAPTURE,
+     MATCHREMOVE) = range(22)
     
     
 class SlipLexer():
@@ -51,6 +53,7 @@ class SlipLexer():
               "DOT",
               "COMMA",
               "DOLLAR",
+              "COLON",
               "COMMAND",
               "DIGIT",
               "LITERAL")
@@ -72,8 +75,10 @@ class SlipLexer():
     t_UNDERSCORE = r"_"
     t_DOT = r"\."
     t_COMMA = r","
-    t_DIGIT = r"\d"
     t_DOLLAR = r"\$"
+    t_COLON = r":"
+    t_DIGIT = r"\d"
+
 
     def t_COMMAND(self, t):
         r"[<>/\\]"
@@ -81,7 +86,7 @@ class SlipLexer():
 
 
     def t_LITERAL(self, t):
-        r"`.|[^][|()^?!=*+_.$,{}0-9]"
+        r"`.|[^][|()^?!=*+_.$,{}:0-9]"
         t.value = t.value[t.value[0] == "`"]
         return t
 
@@ -126,7 +131,7 @@ class SlipParser():
                  | asterisk
                  | plus
                  | optional
-                 | nrepeat """
+                 | nrepeat"""
         p[0] = p[1]
 
 
@@ -174,7 +179,7 @@ class SlipParser():
 
         else:
             p[0] = [Constructs.NREPEAT, p[1], p[3], p[5]]
-                   
+        
 
     def p_any(self, p):
         """any : DOT"""
@@ -210,7 +215,8 @@ class SlipParser():
 
     def p_specialgroup(self, p):
         """specialgroup : UNDERSCORE lengthcheck
-                        | PIPE stationarygroup"""
+                        | PIPE stationarygroup
+                        | COLON nocapture"""
         p[0] = p[2]
 
 
@@ -224,6 +230,11 @@ class SlipParser():
         """stationarygroup : re"""
         p[0] = [Constructs.STATIONARY, self.groupnum, p[1]]
         self.groupnum += 1
+
+
+    def p_nocapture(self, p):
+        """nocapture : re"""
+        p[0] = [Constructs.NOCAPTURE, p[1]]
         
 
     def p_basicgroup(self, p):
@@ -287,4 +298,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("a{5}"))
+    print(parser.parse("^4?`#(?:.*)`#"))

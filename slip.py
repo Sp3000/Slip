@@ -303,6 +303,25 @@ class Slip():
             return self._match(state_stack)
 
 
+        elif construct == Constructs.NOCAPTURE:
+            match = deepcopy(state.match)
+            groups = deepcopy(state.groups)
+            state.regex_queue[:1] = [regex_rest[0], [Constructs.MATCHREMOVE, match, groups]]
+            state_stack.append(state)
+
+            return self._match(state_stack)
+
+
+        elif construct == Constructs.MATCHREMOVE:
+            match, groups = regex_rest
+            state.match = match
+            state.groups = groups
+            state.regex_queue.pop(0)
+            state_stack.append(state)
+
+            return self._match(state_stack)
+
+
         elif construct == Constructs.ALTERNATION:
             for regex_part in regex_rest[::-1]:
                 new_state = deepcopy(state)
