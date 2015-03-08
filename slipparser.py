@@ -157,23 +157,23 @@ class SlipParser():
 
 
     def p_nrepeat(self, p):
-        """nrepeat : LBRACE number RBRACE
-                   | LBRACE COMMA number RBRACE
-                   | LBRACE number COMMA RBRACE
-                   | LBRACE number COMMA number RBRACE"""
+        """nrepeat : elementary LBRACE number RBRACE
+                   | elementary LBRACE COMMA number RBRACE
+                   | elementary LBRACE number COMMA RBRACE
+                   | elementary LBRACE number COMMA number RBRACE"""
 
-        if len(p) == 4:
-            p[0] = [Constructs.NREPEAT, p[2]]
+        if len(p) == 5:
+            p[0] = [Constructs.NREPEAT, p[1], p[3]]
 
-        elif len(p) == 5:
+        elif len(p) == 6:
             if p[2] == ",":
-                p[0] = [Constructs.NREPEAT, None, p[3]]
+                p[0] = [Constructs.NREPEAT, p[1], None, p[4]]
 
             else:
-                p[0] = [Constructs.NREPEAT, p[2], None]
+                p[0] = [Constructs.NREPEAT, p[1], p[3], None]
 
         else:
-            p[0] = [Constructs.NREPEAT, p[2], p[4]]
+            p[0] = [Constructs.NREPEAT, p[1], p[3], p[5]]
                    
 
     def p_any(self, p):
@@ -287,4 +287,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("a{5,2}"))
+    print(parser.parse("a{5}"))

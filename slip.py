@@ -1,5 +1,5 @@
 """
-Slip v0.1.2 alpha by Sp3000
+Slip v0.2 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -94,7 +94,7 @@ class Slip():
         
         for y in self.board:
             for x in self.board[y]:
-                state_stack = [State([x, y], (1, 0), [self.regex], self.board, set(),
+                state_stack = [State([x, y], (1, 0), [deepcopy(self.regex)], self.board, set(),
                                      traversed=set())]
                 
                 is_match, state_stack = self._match(state_stack)
@@ -271,6 +271,22 @@ class Slip():
                                         [Constructs.ASTERISK, regex_rest[0]]]
             
             state_stack.append(state)
+            return self._match(state_stack)
+
+
+        elif construct == Constructs.NREPEAT:
+            regex, *nums = regex_rest
+
+            if len(nums) == 1: # {n}
+                if nums[0] == 0:
+                    state.regex_queue.pop(0)
+
+                else:
+                    state.regex_queue[0][2] -= 1
+                    state.regex_queue.insert(0, regex)
+                    
+                state_stack.append(state)
+                
             return self._match(state_stack)
         
 
