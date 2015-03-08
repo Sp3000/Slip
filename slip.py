@@ -14,25 +14,25 @@ DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -
 sys.setrecursionlimit(100000)
 
 class State():
-    def __init__(self, pos, dir_, regex_queue, board, match, to_move=False, traversed=None):
+    def __init__(self, pos, dir_, regex_queue, board, match, no_move=True, traversed=None):
         self.pos = pos
         self.dir = dir_
         self.regex_queue = regex_queue
         self.board = board
         self.match = match
 
-        self.to_move = to_move
+        self.no_move = no_move
         self.groups = {}
 
         self.traversed = traversed
 
     def move(self):
-        if self.to_move:
-            self.pos[0] += self.dir[0]
-            self.pos[1] += self.dir[1]
+        if self.no_move:
+            self.no_move = False
 
         else:
-            self.to_move = True
+            self.pos[0] += self.dir[0]
+            self.pos[1] += self.dir[1]           
 
 
     def rotate(self, offset):
@@ -236,6 +236,9 @@ class Slip():
             elif command == "\\":
                 state.slip_right()
 
+            elif command == "#":
+                state.no_move = not state.no_move
+
             state.regex_queue.pop(0)
 
             if (0 <= state.pos[1] <= max(state.board)
@@ -367,7 +370,7 @@ class Slip():
 
             state.pos = prev_state.pos
             state.dir = prev_state.dir
-            state.to_move = prev_state.to_move
+            state.no_move = prev_state.no_move
 
             state_stack.append(state)
             return self._match(state_stack)

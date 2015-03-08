@@ -81,12 +81,12 @@ class SlipLexer():
 
 
     def t_COMMAND(self, t):
-        r"[<>/\\]"
+        r"[<>/\\#]"
         return t
 
 
     def t_LITERAL(self, t):
-        r"`.|[^][|()^?!=*+_.$,{}:0-9]"
+        r"`.|[^][|()^?!=*+_.$,{}:#0-9]"
         t.value = t.value[t.value[0] == "`"]
         return t
 
