@@ -14,7 +14,7 @@ DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -
 sys.setrecursionlimit(100000)
 
 class State():
-    def __init__(self, pos, dir_, regex_queue, board, match, to_move=False):
+    def __init__(self, pos, dir_, regex_queue, board, match, to_move=False, traversed=None):
         self.pos = pos
         self.dir = dir_
         self.regex_queue = regex_queue
@@ -24,6 +24,7 @@ class State():
         self.to_move = to_move
         self.groups = {}
 
+        self.traversed = traversed
 
     def move(self):
         if self.to_move:
@@ -60,14 +61,8 @@ class State():
     def group_length(self, group_num):
         if group_num not in self.groups:
             return -1
-        
-        length = 0
 
-        for y in self.groups[group_num]:
-            for x in self.groups[group_num][y]:
-                length += 1
-
-        return length
+        return len(self.groups[group_num])
 
 
 class Slip():    
@@ -77,6 +72,7 @@ class Slip():
         x = y = 0
 
         self.case_insensitive = "i" in config
+        self.no_repeat = "n" in config
         
         for char in input_string:
             if char == "\n":
@@ -98,32 +94,27 @@ class Slip():
         
         for y in self.board:
             for x in self.board[y]:
-                state_stack = [State([x, y], (1, 0), [self.regex], self.board,
-                                     defaultdict(lambda: defaultdict(str)))]
+                state_stack = [State([x, y], (1, 0), [self.regex], self.board, set(),
+                                     traversed=set())]
                 
                 is_match, state_stack = self._match(state_stack)
 
                 if is_match:
                     min_x = min_y = max_x = max_y = None
-                    match = state_stack.pop().match
+                    matched_squares = state_stack.pop().match
 
-                    matched_squares = set()
+                    for mx, my in matched_squares:                            
+                        if min_x is None or mx < min_x:
+                            min_x = mx
 
-                    for my in match:
-                        for mx in match[my]:
-                            matched_squares.add((x, y))
-                            
-                            if min_x is None or mx < min_x:
-                                min_x = mx
+                        if max_x is None or mx > max_x:
+                            max_x = mx
 
-                            if max_x is None or mx > max_x:
-                                max_x = mx
+                        if min_y is None or my < min_y:
+                            min_y = my
 
-                            if min_y is None or my < min_y:
-                                min_y = my
-
-                            if max_y is None or my > max_y:
-                                max_y = my
+                        if max_y is None or my > max_y:
+                            max_y = my
 
                     sorted_matches = tuple(sorted(matched_squares))
 
@@ -143,9 +134,8 @@ class Slip():
                         array = [[" "]*(max_x - min_x + 1)
                                  for _ in range(min_y, max_y + 1)]
 
-                        for my in match:
-                            for mx in match[my]:
-                                array[my-min_y][mx-min_x] = match[my][mx]
+                        for mx, my in matched_squares:
+                            array[my-min_y][mx-min_x] = self.board[my][mx]
 
                         for row in array:
                             print("".join(row).rstrip())
@@ -166,38 +156,52 @@ class Slip():
         if construct in [Constructs.LITERAL, Constructs.NEGLITERAL]:
             char = regex_rest[0]
             state.move()
-            state_char = state.get_char()
 
-            if construct == Constructs.LITERAL:
-                if self.case_insensitive:
-                    cond = (state_char.lower() == char.lower())
-
-                else:
-                    cond = (state_char == char)
-
-            else:
-                if self.case_insensitive:
-                    cond = (state_char.lower() != char.lower())
+            if self.no_repeat:
+                if tuple(state.pos) in state.traversed:
+                    return self._match(state_stack)
 
                 else:
-                    cond = (state_char != char)
-           
-            if state_char and cond:
-                state.match[state.pos[1]][state.pos[0]] = state_char
-                state.regex_queue.pop(0)
-                state_stack.append(state)
-                return self._match(state_stack)
+                    state.traversed.add(tuple(state.pos))
 
-            else:
-                return self._match(state_stack)
-            
+            if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
+                state_char = state.get_char()
+
+                if construct == Constructs.LITERAL:
+                    if self.case_insensitive:
+                        cond = (state_char.lower() == char.lower())
+
+                    else:
+                        cond = (state_char == char)
+
+                else:
+                    if self.case_insensitive:
+                        cond = (state_char.lower() != char.lower())
+
+                    else:
+                        cond = (state_char != char)
+               
+                if state_char and cond:
+                    state.match.add(tuple(state.pos))
+                    state.regex_queue.pop(0)
+                    state_stack.append(state)
+
+            return self._match(state_stack)
+        
 
         elif construct == Constructs.ANYCHAR:
             state.move()
+
+            if self.no_repeat:
+                if tuple(state.pos) in state.traversed:
+                    return self._match(state_stack)
+
+                else:
+                    state.traversed.add(tuple(state.pos))
             
             if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
                 char = state.board[state.pos[1]][state.pos[0]]
-                state.match[state.pos[1]][state.pos[0]] = char
+                state.match.add(tuple(state.pos))
                 state.regex_queue.pop(0)
                 state_stack.append(state)
                 
@@ -234,9 +238,9 @@ class Slip():
 
             state.regex_queue.pop(0)
 
-            if (-1 <= state.pos[1] <= max(state.board) + 1
+            if (0 <= state.pos[1] <= max(state.board)
                 and state.pos[1] in state.board
-                and -1 <= state.pos[0] <= max(state.board[state.pos[1]]) + 1):
+                and 0 <= state.pos[0] <= max(state.board[state.pos[1]])): # Todo: Autopad toggle flag
                 
                 state_stack.append(state)
 
@@ -294,7 +298,7 @@ class Slip():
         elif construct == Constructs.GROUP:
             group_num = regex_rest[0]
             match = state.match
-            state.match = defaultdict(lambda: defaultdict(str))
+            state.match = set()
             state.regex_queue[:1] = [regex_rest[1], [Constructs.GROUPSTORE, group_num, match]]
             state_stack.append(state)
             return self._match(state_stack)
@@ -303,11 +307,8 @@ class Slip():
         elif construct == Constructs.GROUPSTORE:
             group_num, match = regex_rest
             state.groups[group_num] = deepcopy(state.match)
-
-            for y in match:
-                for x in match[y]:
-                    state.match[y][x] = match[y][x]
-
+            state.match |= match
+            
             state.regex_queue.pop(0)
             state_stack.append(state)
             return self._match(state_stack)

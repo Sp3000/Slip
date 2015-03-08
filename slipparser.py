@@ -26,7 +26,8 @@ class Constructs(Enum):
      DIRECTIONSET,
      ANYCHAR,
      NEGLITERAL,
-     ANCHOR) = range(19)
+     ANCHOR,
+     NREPEAT) = range(20)
     
     
 class SlipLexer():
@@ -38,6 +39,8 @@ class SlipLexer():
               "RPARENS",
               "LSQBRACKET",
               "RSQBRACKET",
+              "LBRACE",
+              "RBRACE",
               "CARET",
               "QMARK",
               "EMARK",
@@ -46,6 +49,7 @@ class SlipLexer():
               "PLUS",
               "UNDERSCORE",
               "DOT",
+              "COMMA",
               "DOLLAR",
               "COMMAND",
               "DIGIT",
@@ -57,6 +61,8 @@ class SlipLexer():
     t_RPARENS = r"\)"
     t_LSQBRACKET = r"\["
     t_RSQBRACKET = r"\]"
+    t_LBRACE = r"\{"
+    t_RBRACE = r"\}"
     t_CARET = r"\^"
     t_QMARK = r"\?"
     t_EMARK = r"!"
@@ -65,6 +71,7 @@ class SlipLexer():
     t_PLUS = r"\+"
     t_UNDERSCORE = r"_"
     t_DOT = r"\."
+    t_COMMA = r","
     t_DIGIT = r"\d"
     t_DOLLAR = r"\$"
 
@@ -74,7 +81,7 @@ class SlipLexer():
 
 
     def t_LITERAL(self, t):
-        r"`.|[^][|()^?!=*+_.$0-9]"
+        r"`.|[^][|()^?!=*+_.$,{}0-9]"
         t.value = t.value[t.value[0] == "`"]
         return t
 
@@ -118,7 +125,8 @@ class SlipParser():
         """basic : elementary
                  | asterisk
                  | plus
-                 | optional"""
+                 | optional
+                 | nrepeat """
         p[0] = p[1]
 
 
@@ -147,6 +155,26 @@ class SlipParser():
         """optional : elementary QMARK"""
         p[0] = [Constructs.OPTIONAL, p[1]]
 
+
+    def p_nrepeat(self, p):
+        """nrepeat : LBRACE number RBRACE
+                   | LBRACE COMMA number RBRACE
+                   | LBRACE number COMMA RBRACE
+                   | LBRACE number COMMA number RBRACE"""
+
+        if len(p) == 4:
+            p[0] = [Constructs.NREPEAT, p[2]]
+
+        elif len(p) == 5:
+            if p[2] == ",":
+                p[0] = [Constructs.NREPEAT, None, p[3]]
+
+            else:
+                p[0] = [Constructs.NREPEAT, p[2], None]
+
+        else:
+            p[0] = [Constructs.NREPEAT, p[2], p[4]]
+                   
 
     def p_any(self, p):
         """any : DOT"""
@@ -259,4 +287,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("(?_(10)abc)"))
+    print(parser.parse("a{5,2}"))
