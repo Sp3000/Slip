@@ -30,7 +30,7 @@ class Constructs(Enum):
      NREPEAT,
      NOCAPTURE,
      MATCHREMOVE,
-     NOMATCH) = range(23)
+     NODISPLAY) = range(23)
     
     
 class SlipLexer():
@@ -143,7 +143,7 @@ class SlipParser():
                       | literal
                       | charclass
                       | any
-                      | nomatch
+                      | nodisplay
                       | anchor"""
         p[0] = p[1]
 
@@ -188,9 +188,9 @@ class SlipParser():
         p[0] = [Constructs.ANYCHAR]
 
 
-    def p_nomatch(self, p):
-        """nomatch : EMARK"""
-        p[0] = [Constructs.NOMATCH]
+    def p_nodisplay(self, p):
+        """nodisplay : EMARK"""
+        p[0] = [Constructs.NODISPLAY]
 
 
     def p_number(self, p):

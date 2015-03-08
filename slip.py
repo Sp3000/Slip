@@ -1,5 +1,5 @@
 """
-Slip v0.2 alpha by Sp3000
+Slip v0.2.5 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -14,12 +14,15 @@ DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -
 sys.setrecursionlimit(100000)
 
 class State():
-    def __init__(self, pos, dir_, regex_queue, board, match, no_move=True, traversed=None):
+    def __init__(self, pos, dir_, regex_queue, board, match, display,
+                 no_move=True, traversed=None):
+        
         self.pos = pos
         self.dir = dir_
         self.regex_queue = regex_queue
         self.board = board
         self.match = match
+        self.display = display
 
         self.no_move = no_move
         self.groups = {}
@@ -95,15 +98,15 @@ class Slip():
         for y in self.board:
             for x in self.board[y]:
                 state_stack = [State([x, y], (1, 0), [deepcopy(self.regex)], self.board, set(),
-                                     traversed=set())]
+                                     set(), traversed=set())]
                 
                 is_match, state_stack = self._match(state_stack)
 
                 if is_match:
                     min_x = min_y = max_x = max_y = None
-                    matched_squares = state_stack.pop().match
+                    display_squares = state_stack.pop().display
 
-                    for mx, my in matched_squares:                            
+                    for mx, my in display_squares:                            
                         if min_x is None or mx < min_x:
                             min_x = mx
 
@@ -116,7 +119,7 @@ class Slip():
                         if max_y is None or my > max_y:
                             max_y = my
 
-                    sorted_matches = tuple(sorted(matched_squares))
+                    sorted_matches = tuple(sorted(display_squares))
 
                     if sorted_matches in found:
                         continue
@@ -134,7 +137,7 @@ class Slip():
                         array = [[" "]*(max_x - min_x + 1)
                                  for _ in range(min_y, max_y + 1)]
 
-                        for mx, my in matched_squares:
+                        for mx, my in display_squares:
                             array[my-min_y][mx-min_x] = self.board[my][mx]
 
                         for row in array:
@@ -183,13 +186,14 @@ class Slip():
                
                 if state_char and cond:
                     state.match.add(tuple(state.pos))
+                    state.display.add(tuple(state.pos))
                     state.regex_queue.pop(0)
                     state_stack.append(state)
 
             return self._match(state_stack)
         
 
-        elif construct in [Constructs.ANYCHAR, Constructs.NOMATCH]:
+        elif construct in [Constructs.ANYCHAR, Constructs.NODISPLAY]:
             state.move()
 
             if self.no_repeat:
@@ -202,8 +206,10 @@ class Slip():
             if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
                 char = state.board[state.pos[1]][state.pos[0]]
 
+                state.match.add(tuple(state.pos))
+
                 if construct == Constructs.ANYCHAR:
-                    state.match.add(tuple(state.pos))
+                    state.display.add(tuple(state.pos))
                     
                 state.regex_queue.pop(0)
                 state_stack.append(state)
@@ -341,16 +347,18 @@ class Slip():
 
         elif construct == Constructs.NOCAPTURE:
             match = deepcopy(state.match)
+            display = deepcopy(state.display)
             groups = deepcopy(state.groups)
-            state.regex_queue[:1] = [regex_rest[0], [Constructs.MATCHREMOVE, match, groups]]
+            state.regex_queue[:1] = [regex_rest[0], [Constructs.MATCHREMOVE, match, display, groups]]
             state_stack.append(state)
 
             return self._match(state_stack)
 
 
         elif construct == Constructs.MATCHREMOVE:
-            match, groups = regex_rest
+            match, display, groups = regex_rest
             state.match = match
+            state.display = display
             state.groups = groups
             state.regex_queue.pop(0)
             state_stack.append(state)
