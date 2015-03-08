@@ -29,7 +29,8 @@ class Constructs(Enum):
      ANCHOR,
      NREPEAT,
      NOCAPTURE,
-     MATCHREMOVE) = range(22)
+     MATCHREMOVE,
+     NOMATCH) = range(23)
     
     
 class SlipLexer():
@@ -142,6 +143,7 @@ class SlipParser():
                       | literal
                       | charclass
                       | any
+                      | nomatch
                       | anchor"""
         p[0] = p[1]
 
@@ -171,7 +173,7 @@ class SlipParser():
             p[0] = [Constructs.NREPEAT, p[1], p[3]]
 
         elif len(p) == 6:
-            if p[2] == ",":
+            if p[3] == ",":
                 p[0] = [Constructs.NREPEAT, p[1], None, p[4]]
 
             else:
@@ -184,6 +186,11 @@ class SlipParser():
     def p_any(self, p):
         """any : DOT"""
         p[0] = [Constructs.ANYCHAR]
+
+
+    def p_nomatch(self, p):
+        """nomatch : EMARK"""
+        p[0] = [Constructs.NOMATCH]
 
 
     def p_number(self, p):
@@ -298,4 +305,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("^4?`#(?:.*)`#"))
+    print(parser.parse("!!!"))

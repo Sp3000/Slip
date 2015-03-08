@@ -189,7 +189,7 @@ class Slip():
             return self._match(state_stack)
         
 
-        elif construct == Constructs.ANYCHAR:
+        elif construct in [Constructs.ANYCHAR, Constructs.NOMATCH]:
             state.move()
 
             if self.no_repeat:
@@ -201,7 +201,10 @@ class Slip():
             
             if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
                 char = state.board[state.pos[1]][state.pos[0]]
-                state.match.add(tuple(state.pos))
+
+                if construct == Constructs.ANYCHAR:
+                    state.match.add(tuple(state.pos))
+                    
                 state.regex_queue.pop(0)
                 state_stack.append(state)
                 
@@ -283,7 +286,7 @@ class Slip():
             if len(nums) == 1: # {n}
                 new_state = deepcopy(state)
                 
-                if nums[0] == 0:
+                if nums[0] <= 0:
                     new_state.regex_queue.pop(0)
 
                 else:
@@ -292,6 +295,36 @@ class Slip():
                     
                 state_stack.append(new_state)
                 
+
+            elif nums[0] is None: # {,n}
+                new_state = deepcopy(state)
+
+                if nums[1] < 0:
+                    new_state.regex_queue.pop(0)
+                    state_stack.append(new_state)
+
+                else:
+                    new_state.regex_queue[0][3] -= 1
+
+                    new_state2 = deepcopy(state)
+                    new_state2.regex_queue[0] = [Constructs.NREPEAT, regex, nums[1]]
+
+                    state_stack.append(new_state)
+                    state_stack.append(new_state2)
+
+
+            elif nums[1] is None: # {n,}
+                state.regex_queue[:1] = [[Constructs.NREPEAT, regex, nums[0]],
+                                         [Constructs.ASTERISK, regex]]
+                state_stack.append(state)
+                
+
+            else: # {n, m}
+                state.regex_queue[:1] = [[Constructs.NREPEAT, regex, nums[0]],
+                                         [Constructs.NREPEAT, regex, None, nums[1] - nums[0]]]
+                state_stack.append(state)
+
+
             return self._match(state_stack)
         
 
