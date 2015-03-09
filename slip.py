@@ -1,5 +1,5 @@
 """
-Slip v0.2.5 alpha by Sp3000
+Slip v0.3.2 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -14,12 +14,12 @@ DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -
 sys.setrecursionlimit(100000)
 
 class State():
-    def __init__(self, pos, dir_, regex_queue, board, match, display,
+    def __init__(self, pos, dir_, regex_stack, board, match, display,
                  no_move=True, traversed=None):
         
         self.pos = pos
         self.dir = dir_
-        self.regex_queue = regex_queue
+        self.regex_stack = regex_stack
         self.board = board
         self.match = match
         self.display = display
@@ -106,7 +106,7 @@ class Slip():
                     min_x = min_y = max_x = max_y = None
                     display_squares = state_stack.pop().display
 
-                    for mx, my in display_squares:                            
+                    for mx, my in display_squares:                       
                         if min_x is None or mx < min_x:
                             min_x = mx
 
@@ -121,7 +121,7 @@ class Slip():
 
                     sorted_matches = tuple(sorted(display_squares))
 
-                    if sorted_matches in found:
+                    if sorted_matches and sorted_matches in found:
                         continue
 
                     else:
@@ -150,11 +150,11 @@ class Slip():
         if not state_stack:
             return (False, state_stack)
 
-        elif not state_stack[-1].regex_queue:
+        elif not state_stack[-1].regex_stack:
             return (True, state_stack)
         
         state = state_stack.pop()
-        construct, *regex_rest = state.regex_queue[0]
+        construct, *regex_rest = state.regex_stack[-1]
 
         if construct in [Constructs.LITERAL, Constructs.NEGLITERAL]:
             char = regex_rest[0]
@@ -187,7 +187,7 @@ class Slip():
                 if state_char and cond:
                     state.match.add(tuple(state.pos))
                     state.display.add(tuple(state.pos))
-                    state.regex_queue.pop(0)
+                    state.regex_stack.pop()
                     state_stack.append(state)
 
             return self._match(state_stack)
@@ -211,7 +211,7 @@ class Slip():
                 if construct == Constructs.ANYCHAR:
                     state.display.add(tuple(state.pos))
                     
-                state.regex_queue.pop(0)
+                state.regex_stack.pop()
                 state_stack.append(state)
                 
             return self._match(state_stack)
@@ -223,7 +223,7 @@ class Slip():
                 
                 type_ = (Constructs.LITERAL if construct == Constructs.CHARCLASS
                          else Constructs.NEGLITERAL)                
-                new_state.regex_queue[0] = [type_, literal[1]]
+                new_state.regex_stack[-1] = [type_, literal[1]]
 
                 state_stack.append(new_state)
 
@@ -248,7 +248,7 @@ class Slip():
             elif command == "#":
                 state.no_move = not state.no_move
 
-            state.regex_queue.pop(0)
+            state.regex_stack.pop()
 
             if (0 <= state.pos[1] <= max(state.board)
                 and state.pos[1] in state.board
@@ -260,7 +260,7 @@ class Slip():
                 
             
         elif construct == Constructs.CONCATENATION:
-            state.regex_queue[:1] = regex_rest
+            state.regex_stack[-1:] = regex_rest[::-1]
             state_stack.append(state)
 
             return self._match(state_stack)
@@ -268,10 +268,10 @@ class Slip():
 
         elif construct == Constructs.ASTERISK:
             new_state = deepcopy(state)
-            state.regex_queue.pop(0)
+            state.regex_stack.pop()
             state_stack.append(state)
             
-            new_state.regex_queue[0] = [Constructs.CONCATENATION, regex_rest[0],
+            new_state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[0],
                                         [Constructs.ASTERISK, regex_rest[0]]]
             
             state_stack.append(new_state)
@@ -279,7 +279,7 @@ class Slip():
 
 
         elif construct == Constructs.PLUS:           
-            state.regex_queue[0] = [Constructs.CONCATENATION, regex_rest[0],
+            state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[0],
                                         [Constructs.ASTERISK, regex_rest[0]]]
             
             state_stack.append(state)
@@ -293,11 +293,11 @@ class Slip():
                 new_state = deepcopy(state)
                 
                 if nums[0] <= 0:
-                    new_state.regex_queue.pop(0)
+                    new_state.regex_stack.pop()
 
                 else:
-                    new_state.regex_queue[0][2] -= 1
-                    new_state.regex_queue.insert(0, regex)
+                    new_state.regex_stack[-1][2] -= 1
+                    new_state.regex_stack.append(regex)
                     
                 state_stack.append(new_state)
                 
@@ -306,28 +306,28 @@ class Slip():
                 new_state = deepcopy(state)
 
                 if nums[1] < 0:
-                    new_state.regex_queue.pop(0)
+                    new_state.regex_stack.pop()
                     state_stack.append(new_state)
 
                 else:
-                    new_state.regex_queue[0][3] -= 1
+                    new_state.regex_stack[-1][3] -= 1
 
                     new_state2 = deepcopy(state)
-                    new_state2.regex_queue[0] = [Constructs.NREPEAT, regex, nums[1]]
+                    new_state2.regex_stack[-1] = [Constructs.NREPEAT, regex, nums[1]]
 
                     state_stack.append(new_state)
                     state_stack.append(new_state2)
 
 
             elif nums[1] is None: # {n,}
-                state.regex_queue[:1] = [[Constructs.NREPEAT, regex, nums[0]],
-                                         [Constructs.ASTERISK, regex]]
+                state.regex_stack[-1:] = [[Constructs.ASTERISK, regex],
+                                          [Constructs.NREPEAT, regex, nums[0]]]
                 state_stack.append(state)
                 
 
             else: # {n, m}
-                state.regex_queue[:1] = [[Constructs.NREPEAT, regex, nums[0]],
-                                         [Constructs.NREPEAT, regex, None, nums[1] - nums[0]]]
+                state.regex_stack[-1:] = [[Constructs.NREPEAT, regex, None, nums[1] - nums[0]],
+                                          [Constructs.NREPEAT, regex, nums[0]]]
                 state_stack.append(state)
 
 
@@ -336,8 +336,8 @@ class Slip():
 
         elif construct == Constructs.OPTIONAL:           
             state2 = deepcopy(state)
-            state2.regex_queue[0] = regex_rest[0]
-            state.regex_queue.pop(0)
+            state2.regex_stack[-1] = regex_rest[0]
+            state.regex_stack.pop()
             
             state_stack.append(state)
             state_stack.append(state2)
@@ -349,7 +349,7 @@ class Slip():
             match = deepcopy(state.match)
             display = deepcopy(state.display)
             groups = deepcopy(state.groups)
-            state.regex_queue[:1] = [regex_rest[0], [Constructs.MATCHREMOVE, match, display, groups]]
+            state.regex_stack[-1:] = [[Constructs.MATCHREMOVE, match, display, groups], regex_rest[0]]
             state_stack.append(state)
 
             return self._match(state_stack)
@@ -360,16 +360,16 @@ class Slip():
             state.match = match
             state.display = display
             state.groups = groups
-            state.regex_queue.pop(0)
+            state.regex_stack.pop()
             state_stack.append(state)
 
             return self._match(state_stack)
 
 
-        elif construct == Constructs.ALTERNATION:
+        elif construct == Constructs.ALTERNATION:           
             for regex_part in regex_rest[::-1]:
                 new_state = deepcopy(state)
-                new_state.regex_queue = [regex_part] + state.regex_queue[1:]
+                new_state.regex_stack = state.regex_stack[:-1] + [regex_part]
 
                 state_stack.append(new_state)
 
@@ -380,7 +380,7 @@ class Slip():
             group_num = regex_rest[0]
             match = state.match
             state.match = set()
-            state.regex_queue[:1] = [regex_rest[1], [Constructs.GROUPSTORE, group_num, match]]
+            state.regex_stack[-1:] = [[Constructs.GROUPSTORE, group_num, match], regex_rest[1]]
             state_stack.append(state)
             return self._match(state_stack)
         
@@ -390,7 +390,7 @@ class Slip():
             state.groups[group_num] = deepcopy(state.match)
             state.match |= match
             
-            state.regex_queue.pop(0)
+            state.regex_stack.pop()
             state_stack.append(state)
             return self._match(state_stack)
 
@@ -398,8 +398,8 @@ class Slip():
         elif construct == Constructs.STATIONARY:
             group_num, regex = regex_rest
 
-            state.regex_queue[:1] = [[Constructs.GROUP, group_num, regex],
-                                     [Constructs.STATIONARYRESET, deepcopy(state)]]
+            state.regex_stack[-1:] = [[Constructs.STATIONARYRESET, deepcopy(state)],
+                                      [Constructs.GROUP, group_num, regex]]
 
             state_stack.append(state)
             return self._match(state_stack)
@@ -407,7 +407,7 @@ class Slip():
 
         elif construct == Constructs.STATIONARYRESET:
             prev_state = regex_rest[0]
-            state.regex_queue.pop(0)
+            state.regex_stack.pop()
 
             state.pos = prev_state.pos
             state.dir = prev_state.dir
@@ -426,8 +426,8 @@ class Slip():
             group_num2 = regex_rest[1]
             length = state.group_length(group_num1)
 
-            state.regex_queue[:1] = [[Constructs.GROUP, group_num2, regex_rest[2]],
-                                     [Constructs.LENGTHVERIFY, group_num2, length]]
+            state.regex_stack[-1:] = [[Constructs.LENGTHVERIFY, group_num2, length],
+                                      [Constructs.GROUP, group_num2, regex_rest[2]]]
 
             state_stack.append(state)
             return self._match(state_stack)
@@ -438,34 +438,52 @@ class Slip():
             length = regex_rest[1]
 
             if state.group_length(group_num) == length:
-                state.regex_queue.pop(0)
+                state.regex_stack.pop()
                 state_stack.append(state)
 
             return self._match(state_stack)
 
+
         elif construct == Constructs.DIRECTIONSET:
             digit = regex_rest[0]
-
+            
             if digit == 8:
-                dir_list = DIRECTIONS[::-1]
+                dirs_ = [7, 6, 5, 4, 3, 2, 1, 0]
 
             elif digit == 9:
-                dir_list = DIRECTIONS[::2][::-1]
+                dirs_ = [6, 4, 2, 0]
 
             else:
-                dir_list = [DIRECTIONS[regex_rest[0]]]
+                dirs_ = [digit]
 
-            for dir_ in dir_list:
-                new_state = deepcopy(state)
-                new_state.dir = dir_
-                new_state.regex_queue.pop(0)
-                state_stack.append(new_state)
+            new_state = deepcopy(state)
+            new_state.regex_stack[-1] = [Constructs.DIRECTIONCHECK, dirs_]
+            state_stack.append(new_state)
 
             return self._match(state_stack)
+        
+
+        elif construct == Constructs.DIRECTIONCHECK:
+            nums = regex_rest[0]
+
+            new_state = deepcopy(state)
+            *new_state.regex_stack[-1][1], dir_ = new_state.regex_stack[-1][1]
+
+            new_state2 = deepcopy(state)
+            new_state2.regex_stack.pop()
+            new_state2.dir = DIRECTIONS[dir_]
+
+            if new_state.regex_stack[-1][1]:
+                state_stack.append(new_state)
+
+            state_stack.append(new_state2)
+            
+            return self._match(state_stack)
+        
 
         elif construct == Constructs.ANCHOR:
             digit = regex_rest[0]
-            state.regex_queue.pop(0)
+            state.regex_stack.pop()
 
             width = max(max(state.board[y]) for y in state.board)
             height = max(state.board)
@@ -495,21 +513,31 @@ class Slip():
         
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Please run from command line, with arguments <regex file> and <input file>")
+    if len(sys.argv) == 1:
+        input_filepath = input("Enter input filepath: ")
+        regex = input("Enter regex: ")
+        config = input("Enter config string: ")
+
+        with open(input_filepath) as inputfile:
+            input_string = inputfile.read()
+
+    elif len(sys.argv) == 2:
+        print("Missing file: Need both regex and input files")
         exit()
-        
-    with open(sys.argv[1]) as regexfile:
-        regex = regexfile.read()
-
-    with open(sys.argv[2]) as inputfile:
-        input_string = inputfile.read()
-
-    if len(sys.argv) > 3:
-        config = sys.argv[3]
 
     else:
-        config = ""
+        # Command line        
+        with open(sys.argv[1]) as regexfile:
+            regex = regexfile.read()
+
+        with open(sys.argv[2]) as inputfile:
+            input_string = inputfile.read()
+
+        if len(sys.argv) > 3:
+            config = sys.argv[3]
+
+        else:
+            config = ""
 
     slip = Slip(regex, input_string, config)
     slip.match()
