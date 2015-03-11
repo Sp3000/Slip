@@ -15,7 +15,7 @@ sys.setrecursionlimit(100000)
 
 class State():
     def __init__(self, pos, dir_, regex_stack, board, match, display,
-                 no_move=True, traversed=None):
+                 no_move=True, no_slip=False, traversed=None):
         
         self.pos = pos
         self.dir = dir_
@@ -25,6 +25,8 @@ class State():
         self.display = display
 
         self.no_move = no_move
+        self.no_slip = no_slip
+        
         self.groups = {}
 
         self.traversed = traversed
@@ -50,15 +52,23 @@ class State():
 
 
     def slip_left(self):
-        orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) - 2) % len(DIRECTIONS)]
-        self.pos[0] += orthog[0]
-        self.pos[1] += orthog[1]
+        if self.no_slip:
+            self.no_slip = False
+
+        else:
+            orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) - 2) % len(DIRECTIONS)]
+            self.pos[0] += orthog[0]
+            self.pos[1] += orthog[1]
         
 
     def slip_right(self):
-        orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) + 2) % len(DIRECTIONS)]
-        self.pos[0] += orthog[0]
-        self.pos[1] += orthog[1]
+        if self.no_slip:
+            self.no_slip = False
+
+        else:
+            orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) + 2) % len(DIRECTIONS)]
+            self.pos[0] += orthog[0]
+            self.pos[1] += orthog[1]
 
 
     def group_length(self, group_num):
@@ -246,7 +256,10 @@ class Slip():
                 state.slip_right()
 
             elif command == "#":
-                state.no_move = not state.no_move
+                state.no_move = True
+
+            elif command == "%":
+                state.no_slip = True
 
             state.regex_stack.pop()
 

@@ -83,7 +83,7 @@ class SlipLexer():
 
 
     def t_COMMAND(self, t):
-        r"[<>/\\#]"
+        r"[<>/\\#%]"
         return t
 
 
