@@ -109,51 +109,55 @@ class Slip():
             for x in self.board[y]:
                 state_stack = [State([x, y], (1, 0), [deepcopy(self.regex)], self.board, set(),
                                      set(), traversed=set())]
-                
-                is_match, state_stack = self._match(state_stack)
 
-                if is_match:
-                    min_x = min_y = max_x = max_y = None
-                    display_squares = state_stack.pop().display
+                while True:               
+                    is_match, state_stack = self._match(state_stack)
 
-                    for mx, my in display_squares:                       
-                        if min_x is None or mx < min_x:
-                            min_x = mx
+                    if is_match:
+                        min_x = min_y = max_x = max_y = None
+                        display_squares = state_stack.pop().display
 
-                        if max_x is None or mx > max_x:
-                            max_x = mx
+                        for mx, my in display_squares:                       
+                            if min_x is None or mx < min_x:
+                                min_x = mx
 
-                        if min_y is None or my < min_y:
-                            min_y = my
+                            if max_x is None or mx > max_x:
+                                max_x = mx
 
-                        if max_y is None or my > max_y:
-                            max_y = my
+                            if min_y is None or my < min_y:
+                                min_y = my
 
-                    sorted_matches = tuple(sorted(display_squares))
+                            if max_y is None or my > max_y:
+                                max_y = my
 
-                    if sorted_matches and sorted_matches in found:
-                        continue
+                        sorted_matches = tuple(sorted(display_squares))
+
+                        if sorted_matches and sorted_matches in found:
+                            continue
+
+                        else:
+                            found.add(sorted_matches)
+
+                        if min_x is None:
+                            print("Empty match found from ({}, {})".format(x, y))
+
+                        else:
+                            print("Match found in rectangle: ({}, {}), ({}, {})".format(
+                                   min_x, min_y, max_x, max_y))
+
+                            array = [[" "]*(max_x - min_x + 1)
+                                     for _ in range(min_y, max_y + 1)]
+
+                            for mx, my in display_squares:
+                                array[my-min_y][mx-min_x] = self.board[my][mx]
+
+                            for row in array:
+                                print("".join(row).rstrip())
+
+                            print()
 
                     else:
-                        found.add(sorted_matches)
-
-                    if min_x is None:
-                        print("Empty match found from ({}, {})".format(x, y))
-
-                    else:
-                        print("Match found in rectangle: ({}, {}), ({}, {})".format(
-                               min_x, min_y, max_x, max_y))
-
-                        array = [[" "]*(max_x - min_x + 1)
-                                 for _ in range(min_y, max_y + 1)]
-
-                        for mx, my in display_squares:
-                            array[my-min_y][mx-min_x] = self.board[my][mx]
-
-                        for row in array:
-                            print("".join(row).rstrip())
-
-                        print()
+                        break
 
 
     def _match(self, state_stack):
