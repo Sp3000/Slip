@@ -86,6 +86,7 @@ class Slip():
 
         self.case_insensitive = "i" in config
         self.no_repeat = "n" in config
+        self.overlapping = "o" in config
         
         for char in input_string:
             if char == "\n":
@@ -155,6 +156,9 @@ class Slip():
                                 print("".join(row).rstrip())
 
                             print()
+
+                        if not self.overlapping:
+                            break
 
                     else:
                         break
