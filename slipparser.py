@@ -26,12 +26,11 @@ class Constructs(Enum):
      DIRECTIONSET,
      DIRECTIONCHECK,
      ANYCHAR,
-     NEGLITERAL,
      ANCHOR,
      NREPEAT,
      NOCAPTURE,
      MATCHREMOVE,
-     NODISPLAY) = range(24)
+     NODISPLAY) = range(23)
     
     
 class SlipLexer():

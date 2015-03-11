@@ -174,8 +174,7 @@ class Slip():
         state = state_stack.pop()
         construct, *regex_rest = state.regex_stack[-1]
 
-        if construct in [Constructs.LITERAL, Constructs.NEGLITERAL]:
-            char = regex_rest[0]
+        if construct in [Constructs.LITERAL, Constructs.NEGCHARCLASS]:
             state.move()
 
             if self.no_repeat:
@@ -190,17 +189,17 @@ class Slip():
 
                 if construct == Constructs.LITERAL:
                     if self.case_insensitive:
-                        cond = (state_char.lower() == char.lower())
+                        cond = (state_char.lower() == regex_rest[0].lower())
 
                     else:
-                        cond = (state_char == char)
+                        cond = (state_char == regex_rest[0])
 
                 else:
                     if self.case_insensitive:
-                        cond = (state_char.lower() != char.lower())
+                        cond = (state_char.lower() not in [x[1].lower() for x in regex_rest[0]])
 
                     else:
-                        cond = (state_char != char)
+                        cond = (state_char not in [x[1] for x in regex_rest[0]])
                
                 if state_char and cond:
                     state.match.add(tuple(state.pos))
@@ -235,13 +234,10 @@ class Slip():
             return self._match(state_stack)
 
 
-        elif construct in [Constructs.CHARCLASS, Constructs.NEGCHARCLASS]:
+        elif construct == Constructs.CHARCLASS:
             for literal in regex_rest[0]:
-                new_state = deepcopy(state)
-                
-                type_ = (Constructs.LITERAL if construct == Constructs.CHARCLASS
-                         else Constructs.NEGLITERAL)                
-                new_state.regex_stack[-1] = [type_, literal[1]]
+                new_state = deepcopy(state)             
+                new_state.regex_stack[-1] = [Constructs.LITERAL, literal[1]]
 
                 state_stack.append(new_state)
 
