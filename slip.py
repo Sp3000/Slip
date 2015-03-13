@@ -42,13 +42,6 @@ class State():
         self.dir = DIRECTIONS[(DIRECTIONS.index(self.dir) + offset) % len(DIRECTIONS)]
 
 
-    def get_char(self):
-        if self.pos[1] in self.board and self.pos[0] in self.board[self.pos[1]]:
-            return self.board[self.pos[1]][self.pos[0]]
-
-        return ""
-
-
     def slip_left(self):
         if self.no_slip:
             self.no_slip = False
@@ -74,6 +67,13 @@ class State():
         return len(self.groups[group_num])
 
 
+    def out_of_bounds(self, board):
+        if 0 <= self.pos[0] < board.width and 0 <= self.pos[1] < board.height:
+            return False
+
+        return True
+
+
 class Board():
     def __init__(self, input_string):
         self.board_dict = defaultdict(str)
@@ -84,16 +84,20 @@ class Board():
             if char == "\n":
                  y += 1
                  x = 0
-                 self.height = y
+                 self.height = y + 1
 
             else:
                 self.board_dict[(x, y)] = char
+                self.width = max(x + 1, self.width)
                 x += 1
-                self.width = max(x, self.width)
 
 
     def __getitem__(self, pos):
-        return self.board_dict[pos]
+        if pos in self.board_dict:
+            return self.board_dict[pos]
+
+        else:
+            return " "
 
 
     def __contains__(self, elem):
@@ -166,7 +170,7 @@ class Slip():
                             array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
 
                         for row in array:
-                            print("".join(row).rstrip(), flush=True)
+                            print("".join(row), flush=True)
 
                     if not self.overlapping:
                         break
@@ -187,6 +191,9 @@ class Slip():
 
         if construct in [Constructs.LITERAL, Constructs.NEGCHARCLASS]:
             state.move()
+
+            if state.out_of_bounds(self.board):
+                return self._match(state_stack)
 
             if self.no_repeat:
                 if tuple(state.pos) in state.traversed:
@@ -224,6 +231,9 @@ class Slip():
         elif construct in [Constructs.ANYCHAR, Constructs.NODISPLAY]:
             state.move()
 
+            if state.out_of_bounds(self.board):
+                return self._match(state_stack)
+
             if self.no_repeat:
                 if tuple(state.pos) in state.traversed:
                     return self._match(state_stack)
@@ -231,16 +241,13 @@ class Slip():
                 else:
                     state.traversed.add(tuple(state.pos))
             
-            if state.pos in self.board:
-                char = self.board[state.pos]
+            state.match.add(tuple(state.pos))
 
-                state.match.add(tuple(state.pos))
-
-                if construct == Constructs.ANYCHAR:
-                    state.display.add(tuple(state.pos))
-                    
-                state.regex_stack.pop()
-                state_stack.append(state)
+            if construct == Constructs.ANYCHAR:
+                state.display.add(tuple(state.pos))
+                
+            state.regex_stack.pop()
+            state_stack.append(state)
                 
             return self._match(state_stack)
 
@@ -278,9 +285,7 @@ class Slip():
 
             state.regex_stack.pop()
 
-            if (0 <= state.pos[0] <= self.board.width
-                and 0 <= state.pos[1] <= self.board.height): # Todo: Autopad toggle flag
-                
+            if not state.out_of_bounds(self.board): # Todo: Autopad toggle flag
                 state_stack.append(state)
 
             return self._match(state_stack)
