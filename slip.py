@@ -14,13 +14,12 @@ DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -
 sys.setrecursionlimit(100000)
 
 class State():
-    def __init__(self, pos, dir_, regex_stack, board, match, display,
+    def __init__(self, pos, dir_, regex_stack, match, display,
                  no_move=True, no_slip=False, traversed=None):
         
         self.pos = pos
         self.dir = dir_
         self.regex_stack = regex_stack
-        self.board = board
         self.match = match
         self.display = display
 
@@ -36,8 +35,7 @@ class State():
             self.no_move = False
 
         else:
-            self.pos[0] += self.dir[0]
-            self.pos[1] += self.dir[1]           
+            self.pos = (self.pos[0] + self.dir[0], self.pos[1] + self.dir[1])
 
 
     def rotate(self, offset):
@@ -57,8 +55,7 @@ class State():
 
         else:
             orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) - 2) % len(DIRECTIONS)]
-            self.pos[0] += orthog[0]
-            self.pos[1] += orthog[1]
+            self.pos = (self.pos[0] + orthog[0], self.pos[1] + orthog[1])
         
 
     def slip_right(self):
@@ -67,8 +64,7 @@ class State():
 
         else:
             orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) + 2) % len(DIRECTIONS)]
-            self.pos[0] += orthog[0]
-            self.pos[1] += orthog[1]
+            self.pos = (self.pos[0] + orthog[0], self.pos[1] + orthog[1])
 
 
     def group_length(self, group_num):
@@ -78,90 +74,104 @@ class State():
         return len(self.groups[group_num])
 
 
+class Board():
+    def __init__(self, input_string):
+        self.board_dict = defaultdict(str)
+        x = y = 0
+        self.width = self.height = 0
+
+        for char in input_string:
+            if char == "\n":
+                 y += 1
+                 x = 0
+                 self.height = y
+
+            else:
+                self.board_dict[(x, y)] = char
+                x += 1
+                self.width = max(x, self.width)
+
+
+    def __getitem__(self, pos):
+        return self.board_dict[pos]
+
+
+    def __contains__(self, elem):
+        return elem in self.board_dict
+
+
+    def __iter__(self):
+        return iter(sorted(self.board_dict, key=lambda pos:(pos[1], pos[0])))
+
+
 class Slip():    
     def __init__(self, regex, input_string, config=""):
         self.regex = SlipParser().parser.parse(regex)
-        self.board = defaultdict(lambda: defaultdict(str))
-        x = y = 0
+        self.board = Board(input_string)
 
         self.case_insensitive = "i" in config
         self.no_repeat = "n" in config
         self.overlapping = "o" in config
-        
-        for char in input_string:
-            if char == "\n":
-                y += 1
-                x = 0
-
-            else:
-                if self.case_insensitive:
-                    self.board[y][x] = char
-
-                else:
-                    self.board[y][x] = char
-                    
-                x += 1
 
 
     def match(self):
         found = set()
         
-        for y in self.board:
-            for x in self.board[y]:
-                state_stack = [State([x, y], (1, 0), [deepcopy(self.regex)], self.board, set(),
-                                     set(), traversed=set())]
+        for pos in self.board:
+            state_stack = [State(pos, (1, 0), [deepcopy(self.regex)], set(),
+                                 set(), traversed=set())]
 
-                while True:               
-                    is_match, state_stack = self._match(state_stack)
+            while True:               
+                is_match, state_stack = self._match(state_stack)
 
-                    if is_match:
-                        min_x = min_y = max_x = max_y = None
-                        display_squares = state_stack.pop().display
+                if is_match:
+                    min_x = min_y = max_x = max_y = None
+                    display_squares = state_stack.pop().display
 
-                        for mx, my in display_squares:                       
-                            if min_x is None or mx < min_x:
-                                min_x = mx
+                    for mx, my in display_squares:                       
+                        if min_x is None or mx < min_x:
+                            min_x = mx
 
-                            if max_x is None or mx > max_x:
-                                max_x = mx
+                        if max_x is None or mx > max_x:
+                            max_x = mx
 
-                            if min_y is None or my < min_y:
-                                min_y = my
+                        if min_y is None or my < min_y:
+                            min_y = my
 
-                            if max_y is None or my > max_y:
-                                max_y = my
+                        if max_y is None or my > max_y:
+                            max_y = my
 
-                        sorted_matches = tuple(sorted(display_squares))
+                    sorted_matches = tuple(sorted(display_squares))
 
-                        if sorted_matches and sorted_matches in found:
-                            continue
-
-                        else:
-                            found.add(sorted_matches)
-
-                        if min_x is None:
-                            print("Empty match found from ({}, {})".format(x, y))
-
-                        else:
-                            print("Match found in rectangle: ({}, {}), ({}, {})".format(
-                                   min_x, min_y, max_x, max_y))
-
-                            array = [[" "]*(max_x - min_x + 1)
-                                     for _ in range(min_y, max_y + 1)]
-
-                            for mx, my in display_squares:
-                                array[my-min_y][mx-min_x] = self.board[my][mx]
-
-                            for row in array:
-                                print("".join(row).rstrip())
-
-                            print()
-
-                        if not self.overlapping:
-                            break
+                    if sorted_matches and sorted_matches in found:
+                        continue
 
                     else:
+                        found.add(sorted_matches)
+
+                    if min_x is None:
+                        print("Empty match found from ({}, {})".format(x, y))
+
+                    else:
+                        print("Match found in rectangle: ({}, {}), ({}, {})".format(
+                               min_x, min_y, max_x, max_y))
+
+                        array = [[" "]*(max_x - min_x + 1)
+                                 for _ in range(min_y, max_y + 1)]
+
+                        for pos in display_squares:
+                            array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
+
+                        for row in array:
+                            print("".join(row).rstrip())
+
+                        print()
+
+                    if not self.overlapping:
                         break
+
+                else:
+                    break
 
 
     def _match(self, state_stack):
@@ -184,8 +194,8 @@ class Slip():
                 else:
                     state.traversed.add(tuple(state.pos))
 
-            if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
-                state_char = state.get_char()
+            if state.pos in self.board:
+                state_char = self.board[state.pos]
 
                 if construct == Constructs.LITERAL:
                     if self.case_insensitive:
@@ -220,8 +230,8 @@ class Slip():
                 else:
                     state.traversed.add(tuple(state.pos))
             
-            if state.pos[1] in state.board and state.pos[0] in state.board[state.pos[1]]:
-                char = state.board[state.pos[1]][state.pos[0]]
+            if state.pos in self.board:
+                char = self.board[state.pos]
 
                 state.match.add(tuple(state.pos))
 
@@ -267,9 +277,8 @@ class Slip():
 
             state.regex_stack.pop()
 
-            if (0 <= state.pos[1] <= max(state.board)
-                and state.pos[1] in state.board
-                and 0 <= state.pos[0] <= max(state.board[state.pos[1]])): # Todo: Autopad toggle flag
+            if (0 <= state.pos[0] <= self.board.width
+                and 0 <= state.pos[1] <= self.board.height): # Todo: Autopad toggle flag
                 
                 state_stack.append(state)
 
@@ -502,8 +511,7 @@ class Slip():
             digit = regex_rest[0]
             state.regex_stack.pop()
 
-            width = max(max(state.board[y]) for y in state.board)
-            height = max(state.board)
+            width, height = self.board.width, self.board.height
 
             anchor_checks = [state.pos[1] == 0,
                              state.pos[0] == width and state.pos[1] == 0,
