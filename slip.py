@@ -1,5 +1,5 @@
 """
-Slip v0.3.2 alpha by Sp3000
+Slip v0.3.3 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -147,14 +147,17 @@ class Slip():
                         continue
 
                     else:
+                        if found:
+                            print()
+                            
                         found.add(sorted_matches)
 
                     if min_x is None:
-                        print("Empty match found from ({}, {})".format(x, y))
+                        print("Empty match found from ({}, {})".format(x, y), flush=True)
 
                     else:
                         print("Match found in rectangle: ({}, {}), ({}, {})".format(
-                               min_x, min_y, max_x, max_y))
+                               min_x, min_y, max_x, max_y), flush=True)
 
                         array = [[" "]*(max_x - min_x + 1)
                                  for _ in range(min_y, max_y + 1)]
@@ -163,9 +166,7 @@ class Slip():
                             array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
 
                         for row in array:
-                            print("".join(row).rstrip())
-
-                        print()
+                            print("".join(row).rstrip(), flush=True)
 
                     if not self.overlapping:
                         break
