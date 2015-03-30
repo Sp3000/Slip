@@ -240,10 +240,10 @@ class Slip():
 
                         else:
                             if self.case_insensitive:
-                                cond = (state_char.lower() not in [x[1].lower() for x in regex_rest[0]])
+                                cond = (state_char.lower() not in [char.lower() for char in regex_rest[0]])
 
                             else:
-                                cond = (state_char not in [x[1] for x in regex_rest[0]])
+                                cond = (state_char not in regex_rest[0])
                        
                         if state_char and cond:
                             state.match.add(tuple(state.pos))
@@ -279,9 +279,9 @@ class Slip():
 
 
                 elif construct == Constructs.CHARCLASS:
-                    for literal in regex_rest[0]:
-                        new_state = deepcopy(state)             
-                        new_state.regex_stack[-1] = [Constructs.LITERAL, literal[1]]
+                    for char in regex_rest[0]:
+                        new_state = deepcopy(state)
+                        new_state.regex_stack[-1] = [Constructs.LITERAL, char]
 
                         state_stack.append(new_state)
 
