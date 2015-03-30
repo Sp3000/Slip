@@ -120,8 +120,11 @@ class Slip():
         self.case_insensitive = "i" in config
         self.no_repeat = "n" in config
         self.overlapping = "o" in config
-        self.numerical = "N" in config
 
+        self.first_match = "F" in config
+        self.numerical = "N" in config
+        self.verbose = "V" in config
+        
 
     def match(self):
         found = set()
@@ -163,11 +166,13 @@ class Slip():
 
                     if not self.numerical:
                         if min_x is None:
-                            print("Empty match found from ({}, {})".format(x, y), flush=True)
+                            if self.verbose:
+                                print("Empty match found from ({}, {})".format(x, y), flush=True)
 
                         else:
-                            print("Match found in rectangle: ({}, {}), ({}, {})".format(
-                                   min_x, min_y, max_x, max_y), flush=True)
+                            if self.verbose:
+                                print("Match found in rectangle: ({}, {}), ({}, {})".format(
+                                       min_x, min_y, max_x, max_y), flush=True)
 
                             array = [[" "]*(max_x - min_x + 1)
                                      for _ in range(min_y, max_y + 1)]
@@ -177,6 +182,9 @@ class Slip():
 
                             for row in array:
                                 print("".join(row), flush=True)
+
+                        if self.first_match:
+                            return
 
                         if not self.overlapping:
                             break
