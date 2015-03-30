@@ -1,0 +1,2204 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> re
+Rule 1     re -> alternation
+Rule 2     re -> simple
+Rule 3     alternation -> re | simple
+Rule 4     simple -> concatenation
+Rule 5     simple -> basic
+Rule 6     concatenation -> simple basic
+Rule 7     basic -> elementary
+Rule 8     basic -> asterisk
+Rule 9     basic -> plus
+Rule 10    basic -> optional
+Rule 11    basic -> nrepeat
+Rule 12    elementary -> group
+Rule 13    elementary -> directionset
+Rule 14    elementary -> command
+Rule 15    elementary -> literal
+Rule 16    elementary -> charclass
+Rule 17    elementary -> any
+Rule 18    elementary -> nodisplay
+Rule 19    elementary -> anchor
+Rule 20    asterisk -> elementary *
+Rule 21    plus -> elementary +
+Rule 22    optional -> elementary ?
+Rule 23    nrepeat -> elementary { number }
+Rule 24    nrepeat -> elementary { , number }
+Rule 25    nrepeat -> elementary { number , }
+Rule 26    nrepeat -> elementary { number , number }
+Rule 27    any -> .
+Rule 28    nodisplay -> !
+Rule 29    number -> DIGIT
+Rule 30    number -> DIGIT number
+Rule 31    group -> ( groupbody )
+Rule 32    groupbody -> ? specialgroup
+Rule 33    groupbody -> basicgroup
+Rule 34    specialgroup -> _ lengthcheck
+Rule 35    specialgroup -> | stationarygroup
+Rule 36    specialgroup -> : nocapture
+Rule 37    lengthcheck -> ( number ) re
+Rule 38    stationarygroup -> re
+Rule 39    nocapture -> re
+Rule 40    basicgroup -> re
+Rule 41    charclass -> pcharclass
+Rule 42    charclass -> ncharclass
+Rule 43    pcharclass -> [ classitems ]
+Rule 44    ncharclass -> [ ^ classitems ]
+Rule 45    classitems -> literal
+Rule 46    classitems -> literal classitems
+Rule 47    directionset -> ^ DIGIT
+Rule 48    anchor -> $ DIGIT
+Rule 49    command -> >
+Rule 50    command -> <
+Rule 51    command -> /
+Rule 52    command -> \
+Rule 53    command -> #
+Rule 54    command -> %
+Rule 55    literal -> ESCAPED
+Rule 56    literal -> ALPHA
+Rule 57    literal -> DIGIT
+
+Terminals, with rules where they appear
+
+!                    : 28
+#                    : 53
+$                    : 48
+%                    : 54
+(                    : 31 37
+)                    : 31 37
+*                    : 20
++                    : 21
+,                    : 24 25 26
+.                    : 27
+/                    : 51
+:                    : 36
+<                    : 50
+>                    : 49
+?                    : 22 32
+ALPHA                : 56
+DIGIT                : 29 30 47 48 57
+ESCAPED              : 55
+[                    : 43 44
+\                    : 52
+]                    : 43 44
+^                    : 44 47
+_                    : 34
+error                : 
+{                    : 23 24 25 26
+|                    : 3 35
+}                    : 23 24 25 26
+
+Nonterminals, with rules where they appear
+
+alternation          : 1
+anchor               : 19
+any                  : 17
+asterisk             : 8
+basic                : 5 6
+basicgroup           : 33
+charclass            : 16
+classitems           : 43 44 46
+command              : 14
+concatenation        : 4
+directionset         : 13
+elementary           : 7 20 21 22 23 24 25 26
+group                : 12
+groupbody            : 31
+lengthcheck          : 34
+literal              : 15 45 46
+ncharclass           : 42
+nocapture            : 36
+nodisplay            : 18
+nrepeat              : 11
+number               : 23 24 25 26 26 30 37
+optional             : 10
+pcharclass           : 41
+plus                 : 9
+re                   : 3 37 38 39 40 0
+simple               : 2 3 6
+specialgroup         : 32
+stationarygroup      : 35
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . re
+    (1) re -> . alternation
+    (2) re -> . simple
+    (3) alternation -> . re | simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    basic                          shift and go to state 2
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    alternation                    shift and go to state 31
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    simple                         shift and go to state 7
+    asterisk                       shift and go to state 8
+    group                          shift and go to state 26
+    pcharclass                     shift and go to state 30
+    literal                        shift and go to state 27
+    directionset                   shift and go to state 28
+    command                        shift and go to state 10
+    re                             shift and go to state 12
+    any                            shift and go to state 29
+    concatenation                  shift and go to state 15
+    anchor                         shift and go to state 17
+    plus                           shift and go to state 34
+
+state 1
+
+    (54) command -> % .
+
+    *               reduce using rule 54 (command -> % .)
+    +               reduce using rule 54 (command -> % .)
+    ?               reduce using rule 54 (command -> % .)
+    {               reduce using rule 54 (command -> % .)
+    (               reduce using rule 54 (command -> % .)
+    ^               reduce using rule 54 (command -> % .)
+    >               reduce using rule 54 (command -> % .)
+    <               reduce using rule 54 (command -> % .)
+    /               reduce using rule 54 (command -> % .)
+    \               reduce using rule 54 (command -> % .)
+    #               reduce using rule 54 (command -> % .)
+    %               reduce using rule 54 (command -> % .)
+    ESCAPED         reduce using rule 54 (command -> % .)
+    ALPHA           reduce using rule 54 (command -> % .)
+    DIGIT           reduce using rule 54 (command -> % .)
+    .               reduce using rule 54 (command -> % .)
+    !               reduce using rule 54 (command -> % .)
+    $               reduce using rule 54 (command -> % .)
+    [               reduce using rule 54 (command -> % .)
+    |               reduce using rule 54 (command -> % .)
+    )               reduce using rule 54 (command -> % .)
+    $end            reduce using rule 54 (command -> % .)
+
+
+state 2
+
+    (5) simple -> basic .
+
+    (               reduce using rule 5 (simple -> basic .)
+    ^               reduce using rule 5 (simple -> basic .)
+    >               reduce using rule 5 (simple -> basic .)
+    <               reduce using rule 5 (simple -> basic .)
+    /               reduce using rule 5 (simple -> basic .)
+    \               reduce using rule 5 (simple -> basic .)
+    #               reduce using rule 5 (simple -> basic .)
+    %               reduce using rule 5 (simple -> basic .)
+    ESCAPED         reduce using rule 5 (simple -> basic .)
+    ALPHA           reduce using rule 5 (simple -> basic .)
+    DIGIT           reduce using rule 5 (simple -> basic .)
+    .               reduce using rule 5 (simple -> basic .)
+    !               reduce using rule 5 (simple -> basic .)
+    $               reduce using rule 5 (simple -> basic .)
+    [               reduce using rule 5 (simple -> basic .)
+    |               reduce using rule 5 (simple -> basic .)
+    $end            reduce using rule 5 (simple -> basic .)
+    )               reduce using rule 5 (simple -> basic .)
+
+
+state 3
+
+    (10) basic -> optional .
+
+    (               reduce using rule 10 (basic -> optional .)
+    ^               reduce using rule 10 (basic -> optional .)
+    >               reduce using rule 10 (basic -> optional .)
+    <               reduce using rule 10 (basic -> optional .)
+    /               reduce using rule 10 (basic -> optional .)
+    \               reduce using rule 10 (basic -> optional .)
+    #               reduce using rule 10 (basic -> optional .)
+    %               reduce using rule 10 (basic -> optional .)
+    ESCAPED         reduce using rule 10 (basic -> optional .)
+    ALPHA           reduce using rule 10 (basic -> optional .)
+    DIGIT           reduce using rule 10 (basic -> optional .)
+    .               reduce using rule 10 (basic -> optional .)
+    !               reduce using rule 10 (basic -> optional .)
+    $               reduce using rule 10 (basic -> optional .)
+    [               reduce using rule 10 (basic -> optional .)
+    |               reduce using rule 10 (basic -> optional .)
+    $end            reduce using rule 10 (basic -> optional .)
+    )               reduce using rule 10 (basic -> optional .)
+
+
+state 4
+
+    (11) basic -> nrepeat .
+
+    (               reduce using rule 11 (basic -> nrepeat .)
+    ^               reduce using rule 11 (basic -> nrepeat .)
+    >               reduce using rule 11 (basic -> nrepeat .)
+    <               reduce using rule 11 (basic -> nrepeat .)
+    /               reduce using rule 11 (basic -> nrepeat .)
+    \               reduce using rule 11 (basic -> nrepeat .)
+    #               reduce using rule 11 (basic -> nrepeat .)
+    %               reduce using rule 11 (basic -> nrepeat .)
+    ESCAPED         reduce using rule 11 (basic -> nrepeat .)
+    ALPHA           reduce using rule 11 (basic -> nrepeat .)
+    DIGIT           reduce using rule 11 (basic -> nrepeat .)
+    .               reduce using rule 11 (basic -> nrepeat .)
+    !               reduce using rule 11 (basic -> nrepeat .)
+    $               reduce using rule 11 (basic -> nrepeat .)
+    [               reduce using rule 11 (basic -> nrepeat .)
+    |               reduce using rule 11 (basic -> nrepeat .)
+    $end            reduce using rule 11 (basic -> nrepeat .)
+    )               reduce using rule 11 (basic -> nrepeat .)
+
+
+state 5
+
+    (43) pcharclass -> [ . classitems ]
+    (44) ncharclass -> [ . ^ classitems ]
+    (45) classitems -> . literal
+    (46) classitems -> . literal classitems
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+
+    ^               shift and go to state 38
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+
+    literal                        shift and go to state 36
+    classitems                     shift and go to state 37
+
+state 6
+
+    (16) elementary -> charclass .
+
+    *               reduce using rule 16 (elementary -> charclass .)
+    +               reduce using rule 16 (elementary -> charclass .)
+    ?               reduce using rule 16 (elementary -> charclass .)
+    {               reduce using rule 16 (elementary -> charclass .)
+    (               reduce using rule 16 (elementary -> charclass .)
+    ^               reduce using rule 16 (elementary -> charclass .)
+    >               reduce using rule 16 (elementary -> charclass .)
+    <               reduce using rule 16 (elementary -> charclass .)
+    /               reduce using rule 16 (elementary -> charclass .)
+    \               reduce using rule 16 (elementary -> charclass .)
+    #               reduce using rule 16 (elementary -> charclass .)
+    %               reduce using rule 16 (elementary -> charclass .)
+    ESCAPED         reduce using rule 16 (elementary -> charclass .)
+    ALPHA           reduce using rule 16 (elementary -> charclass .)
+    DIGIT           reduce using rule 16 (elementary -> charclass .)
+    .               reduce using rule 16 (elementary -> charclass .)
+    !               reduce using rule 16 (elementary -> charclass .)
+    $               reduce using rule 16 (elementary -> charclass .)
+    [               reduce using rule 16 (elementary -> charclass .)
+    |               reduce using rule 16 (elementary -> charclass .)
+    $end            reduce using rule 16 (elementary -> charclass .)
+    )               reduce using rule 16 (elementary -> charclass .)
+
+
+state 7
+
+    (2) re -> simple .
+    (6) concatenation -> simple . basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    |               reduce using rule 2 (re -> simple .)
+    )               reduce using rule 2 (re -> simple .)
+    $end            reduce using rule 2 (re -> simple .)
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    group                          shift and go to state 26
+    pcharclass                     shift and go to state 30
+    basic                          shift and go to state 39
+    literal                        shift and go to state 27
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    command                        shift and go to state 10
+    nodisplay                      shift and go to state 21
+    any                            shift and go to state 29
+    anchor                         shift and go to state 17
+    ncharclass                     shift and go to state 22
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    plus                           shift and go to state 34
+    asterisk                       shift and go to state 8
+    directionset                   shift and go to state 28
+
+state 8
+
+    (8) basic -> asterisk .
+
+    (               reduce using rule 8 (basic -> asterisk .)
+    ^               reduce using rule 8 (basic -> asterisk .)
+    >               reduce using rule 8 (basic -> asterisk .)
+    <               reduce using rule 8 (basic -> asterisk .)
+    /               reduce using rule 8 (basic -> asterisk .)
+    \               reduce using rule 8 (basic -> asterisk .)
+    #               reduce using rule 8 (basic -> asterisk .)
+    %               reduce using rule 8 (basic -> asterisk .)
+    ESCAPED         reduce using rule 8 (basic -> asterisk .)
+    ALPHA           reduce using rule 8 (basic -> asterisk .)
+    DIGIT           reduce using rule 8 (basic -> asterisk .)
+    .               reduce using rule 8 (basic -> asterisk .)
+    !               reduce using rule 8 (basic -> asterisk .)
+    $               reduce using rule 8 (basic -> asterisk .)
+    [               reduce using rule 8 (basic -> asterisk .)
+    |               reduce using rule 8 (basic -> asterisk .)
+    $end            reduce using rule 8 (basic -> asterisk .)
+    )               reduce using rule 8 (basic -> asterisk .)
+
+
+state 9
+
+    (53) command -> # .
+
+    *               reduce using rule 53 (command -> # .)
+    +               reduce using rule 53 (command -> # .)
+    ?               reduce using rule 53 (command -> # .)
+    {               reduce using rule 53 (command -> # .)
+    (               reduce using rule 53 (command -> # .)
+    ^               reduce using rule 53 (command -> # .)
+    >               reduce using rule 53 (command -> # .)
+    <               reduce using rule 53 (command -> # .)
+    /               reduce using rule 53 (command -> # .)
+    \               reduce using rule 53 (command -> # .)
+    #               reduce using rule 53 (command -> # .)
+    %               reduce using rule 53 (command -> # .)
+    ESCAPED         reduce using rule 53 (command -> # .)
+    ALPHA           reduce using rule 53 (command -> # .)
+    DIGIT           reduce using rule 53 (command -> # .)
+    .               reduce using rule 53 (command -> # .)
+    !               reduce using rule 53 (command -> # .)
+    $               reduce using rule 53 (command -> # .)
+    [               reduce using rule 53 (command -> # .)
+    |               reduce using rule 53 (command -> # .)
+    )               reduce using rule 53 (command -> # .)
+    $end            reduce using rule 53 (command -> # .)
+
+
+state 10
+
+    (14) elementary -> command .
+
+    *               reduce using rule 14 (elementary -> command .)
+    +               reduce using rule 14 (elementary -> command .)
+    ?               reduce using rule 14 (elementary -> command .)
+    {               reduce using rule 14 (elementary -> command .)
+    (               reduce using rule 14 (elementary -> command .)
+    ^               reduce using rule 14 (elementary -> command .)
+    >               reduce using rule 14 (elementary -> command .)
+    <               reduce using rule 14 (elementary -> command .)
+    /               reduce using rule 14 (elementary -> command .)
+    \               reduce using rule 14 (elementary -> command .)
+    #               reduce using rule 14 (elementary -> command .)
+    %               reduce using rule 14 (elementary -> command .)
+    ESCAPED         reduce using rule 14 (elementary -> command .)
+    ALPHA           reduce using rule 14 (elementary -> command .)
+    DIGIT           reduce using rule 14 (elementary -> command .)
+    .               reduce using rule 14 (elementary -> command .)
+    !               reduce using rule 14 (elementary -> command .)
+    $               reduce using rule 14 (elementary -> command .)
+    [               reduce using rule 14 (elementary -> command .)
+    |               reduce using rule 14 (elementary -> command .)
+    $end            reduce using rule 14 (elementary -> command .)
+    )               reduce using rule 14 (elementary -> command .)
+
+
+state 11
+
+    (48) anchor -> $ . DIGIT
+
+    DIGIT           shift and go to state 40
+
+
+state 12
+
+    (0) S' -> re .
+    (3) alternation -> re . | simple
+
+    |               shift and go to state 41
+
+
+state 13
+
+    (57) literal -> DIGIT .
+
+    *               reduce using rule 57 (literal -> DIGIT .)
+    +               reduce using rule 57 (literal -> DIGIT .)
+    ?               reduce using rule 57 (literal -> DIGIT .)
+    {               reduce using rule 57 (literal -> DIGIT .)
+    (               reduce using rule 57 (literal -> DIGIT .)
+    ^               reduce using rule 57 (literal -> DIGIT .)
+    >               reduce using rule 57 (literal -> DIGIT .)
+    <               reduce using rule 57 (literal -> DIGIT .)
+    /               reduce using rule 57 (literal -> DIGIT .)
+    \               reduce using rule 57 (literal -> DIGIT .)
+    #               reduce using rule 57 (literal -> DIGIT .)
+    %               reduce using rule 57 (literal -> DIGIT .)
+    ESCAPED         reduce using rule 57 (literal -> DIGIT .)
+    ALPHA           reduce using rule 57 (literal -> DIGIT .)
+    DIGIT           reduce using rule 57 (literal -> DIGIT .)
+    .               reduce using rule 57 (literal -> DIGIT .)
+    !               reduce using rule 57 (literal -> DIGIT .)
+    $               reduce using rule 57 (literal -> DIGIT .)
+    [               reduce using rule 57 (literal -> DIGIT .)
+    |               reduce using rule 57 (literal -> DIGIT .)
+    $end            reduce using rule 57 (literal -> DIGIT .)
+    )               reduce using rule 57 (literal -> DIGIT .)
+    ]               reduce using rule 57 (literal -> DIGIT .)
+
+
+state 14
+
+    (49) command -> > .
+
+    *               reduce using rule 49 (command -> > .)
+    +               reduce using rule 49 (command -> > .)
+    ?               reduce using rule 49 (command -> > .)
+    {               reduce using rule 49 (command -> > .)
+    (               reduce using rule 49 (command -> > .)
+    ^               reduce using rule 49 (command -> > .)
+    >               reduce using rule 49 (command -> > .)
+    <               reduce using rule 49 (command -> > .)
+    /               reduce using rule 49 (command -> > .)
+    \               reduce using rule 49 (command -> > .)
+    #               reduce using rule 49 (command -> > .)
+    %               reduce using rule 49 (command -> > .)
+    ESCAPED         reduce using rule 49 (command -> > .)
+    ALPHA           reduce using rule 49 (command -> > .)
+    DIGIT           reduce using rule 49 (command -> > .)
+    .               reduce using rule 49 (command -> > .)
+    !               reduce using rule 49 (command -> > .)
+    $               reduce using rule 49 (command -> > .)
+    [               reduce using rule 49 (command -> > .)
+    |               reduce using rule 49 (command -> > .)
+    )               reduce using rule 49 (command -> > .)
+    $end            reduce using rule 49 (command -> > .)
+
+
+state 15
+
+    (4) simple -> concatenation .
+
+    (               reduce using rule 4 (simple -> concatenation .)
+    ^               reduce using rule 4 (simple -> concatenation .)
+    >               reduce using rule 4 (simple -> concatenation .)
+    <               reduce using rule 4 (simple -> concatenation .)
+    /               reduce using rule 4 (simple -> concatenation .)
+    \               reduce using rule 4 (simple -> concatenation .)
+    #               reduce using rule 4 (simple -> concatenation .)
+    %               reduce using rule 4 (simple -> concatenation .)
+    ESCAPED         reduce using rule 4 (simple -> concatenation .)
+    ALPHA           reduce using rule 4 (simple -> concatenation .)
+    DIGIT           reduce using rule 4 (simple -> concatenation .)
+    .               reduce using rule 4 (simple -> concatenation .)
+    !               reduce using rule 4 (simple -> concatenation .)
+    $               reduce using rule 4 (simple -> concatenation .)
+    [               reduce using rule 4 (simple -> concatenation .)
+    |               reduce using rule 4 (simple -> concatenation .)
+    $end            reduce using rule 4 (simple -> concatenation .)
+    )               reduce using rule 4 (simple -> concatenation .)
+
+
+state 16
+
+    (50) command -> < .
+
+    *               reduce using rule 50 (command -> < .)
+    +               reduce using rule 50 (command -> < .)
+    ?               reduce using rule 50 (command -> < .)
+    {               reduce using rule 50 (command -> < .)
+    (               reduce using rule 50 (command -> < .)
+    ^               reduce using rule 50 (command -> < .)
+    >               reduce using rule 50 (command -> < .)
+    <               reduce using rule 50 (command -> < .)
+    /               reduce using rule 50 (command -> < .)
+    \               reduce using rule 50 (command -> < .)
+    #               reduce using rule 50 (command -> < .)
+    %               reduce using rule 50 (command -> < .)
+    ESCAPED         reduce using rule 50 (command -> < .)
+    ALPHA           reduce using rule 50 (command -> < .)
+    DIGIT           reduce using rule 50 (command -> < .)
+    .               reduce using rule 50 (command -> < .)
+    !               reduce using rule 50 (command -> < .)
+    $               reduce using rule 50 (command -> < .)
+    [               reduce using rule 50 (command -> < .)
+    |               reduce using rule 50 (command -> < .)
+    )               reduce using rule 50 (command -> < .)
+    $end            reduce using rule 50 (command -> < .)
+
+
+state 17
+
+    (19) elementary -> anchor .
+
+    *               reduce using rule 19 (elementary -> anchor .)
+    +               reduce using rule 19 (elementary -> anchor .)
+    ?               reduce using rule 19 (elementary -> anchor .)
+    {               reduce using rule 19 (elementary -> anchor .)
+    (               reduce using rule 19 (elementary -> anchor .)
+    ^               reduce using rule 19 (elementary -> anchor .)
+    >               reduce using rule 19 (elementary -> anchor .)
+    <               reduce using rule 19 (elementary -> anchor .)
+    /               reduce using rule 19 (elementary -> anchor .)
+    \               reduce using rule 19 (elementary -> anchor .)
+    #               reduce using rule 19 (elementary -> anchor .)
+    %               reduce using rule 19 (elementary -> anchor .)
+    ESCAPED         reduce using rule 19 (elementary -> anchor .)
+    ALPHA           reduce using rule 19 (elementary -> anchor .)
+    DIGIT           reduce using rule 19 (elementary -> anchor .)
+    .               reduce using rule 19 (elementary -> anchor .)
+    !               reduce using rule 19 (elementary -> anchor .)
+    $               reduce using rule 19 (elementary -> anchor .)
+    [               reduce using rule 19 (elementary -> anchor .)
+    |               reduce using rule 19 (elementary -> anchor .)
+    $end            reduce using rule 19 (elementary -> anchor .)
+    )               reduce using rule 19 (elementary -> anchor .)
+
+
+state 18
+
+    (28) nodisplay -> ! .
+
+    *               reduce using rule 28 (nodisplay -> ! .)
+    +               reduce using rule 28 (nodisplay -> ! .)
+    ?               reduce using rule 28 (nodisplay -> ! .)
+    {               reduce using rule 28 (nodisplay -> ! .)
+    (               reduce using rule 28 (nodisplay -> ! .)
+    ^               reduce using rule 28 (nodisplay -> ! .)
+    >               reduce using rule 28 (nodisplay -> ! .)
+    <               reduce using rule 28 (nodisplay -> ! .)
+    /               reduce using rule 28 (nodisplay -> ! .)
+    \               reduce using rule 28 (nodisplay -> ! .)
+    #               reduce using rule 28 (nodisplay -> ! .)
+    %               reduce using rule 28 (nodisplay -> ! .)
+    ESCAPED         reduce using rule 28 (nodisplay -> ! .)
+    ALPHA           reduce using rule 28 (nodisplay -> ! .)
+    DIGIT           reduce using rule 28 (nodisplay -> ! .)
+    .               reduce using rule 28 (nodisplay -> ! .)
+    !               reduce using rule 28 (nodisplay -> ! .)
+    $               reduce using rule 28 (nodisplay -> ! .)
+    [               reduce using rule 28 (nodisplay -> ! .)
+    |               reduce using rule 28 (nodisplay -> ! .)
+    )               reduce using rule 28 (nodisplay -> ! .)
+    $end            reduce using rule 28 (nodisplay -> ! .)
+
+
+state 19
+
+    (27) any -> . .
+
+    *               reduce using rule 27 (any -> . .)
+    +               reduce using rule 27 (any -> . .)
+    ?               reduce using rule 27 (any -> . .)
+    {               reduce using rule 27 (any -> . .)
+    (               reduce using rule 27 (any -> . .)
+    ^               reduce using rule 27 (any -> . .)
+    >               reduce using rule 27 (any -> . .)
+    <               reduce using rule 27 (any -> . .)
+    /               reduce using rule 27 (any -> . .)
+    \               reduce using rule 27 (any -> . .)
+    #               reduce using rule 27 (any -> . .)
+    %               reduce using rule 27 (any -> . .)
+    ESCAPED         reduce using rule 27 (any -> . .)
+    ALPHA           reduce using rule 27 (any -> . .)
+    DIGIT           reduce using rule 27 (any -> . .)
+    .               reduce using rule 27 (any -> . .)
+    !               reduce using rule 27 (any -> . .)
+    $               reduce using rule 27 (any -> . .)
+    [               reduce using rule 27 (any -> . .)
+    |               reduce using rule 27 (any -> . .)
+    )               reduce using rule 27 (any -> . .)
+    $end            reduce using rule 27 (any -> . .)
+
+
+state 20
+
+    (52) command -> \ .
+
+    *               reduce using rule 52 (command -> \ .)
+    +               reduce using rule 52 (command -> \ .)
+    ?               reduce using rule 52 (command -> \ .)
+    {               reduce using rule 52 (command -> \ .)
+    (               reduce using rule 52 (command -> \ .)
+    ^               reduce using rule 52 (command -> \ .)
+    >               reduce using rule 52 (command -> \ .)
+    <               reduce using rule 52 (command -> \ .)
+    /               reduce using rule 52 (command -> \ .)
+    \               reduce using rule 52 (command -> \ .)
+    #               reduce using rule 52 (command -> \ .)
+    %               reduce using rule 52 (command -> \ .)
+    ESCAPED         reduce using rule 52 (command -> \ .)
+    ALPHA           reduce using rule 52 (command -> \ .)
+    DIGIT           reduce using rule 52 (command -> \ .)
+    .               reduce using rule 52 (command -> \ .)
+    !               reduce using rule 52 (command -> \ .)
+    $               reduce using rule 52 (command -> \ .)
+    [               reduce using rule 52 (command -> \ .)
+    |               reduce using rule 52 (command -> \ .)
+    )               reduce using rule 52 (command -> \ .)
+    $end            reduce using rule 52 (command -> \ .)
+
+
+state 21
+
+    (18) elementary -> nodisplay .
+
+    *               reduce using rule 18 (elementary -> nodisplay .)
+    +               reduce using rule 18 (elementary -> nodisplay .)
+    ?               reduce using rule 18 (elementary -> nodisplay .)
+    {               reduce using rule 18 (elementary -> nodisplay .)
+    (               reduce using rule 18 (elementary -> nodisplay .)
+    ^               reduce using rule 18 (elementary -> nodisplay .)
+    >               reduce using rule 18 (elementary -> nodisplay .)
+    <               reduce using rule 18 (elementary -> nodisplay .)
+    /               reduce using rule 18 (elementary -> nodisplay .)
+    \               reduce using rule 18 (elementary -> nodisplay .)
+    #               reduce using rule 18 (elementary -> nodisplay .)
+    %               reduce using rule 18 (elementary -> nodisplay .)
+    ESCAPED         reduce using rule 18 (elementary -> nodisplay .)
+    ALPHA           reduce using rule 18 (elementary -> nodisplay .)
+    DIGIT           reduce using rule 18 (elementary -> nodisplay .)
+    .               reduce using rule 18 (elementary -> nodisplay .)
+    !               reduce using rule 18 (elementary -> nodisplay .)
+    $               reduce using rule 18 (elementary -> nodisplay .)
+    [               reduce using rule 18 (elementary -> nodisplay .)
+    |               reduce using rule 18 (elementary -> nodisplay .)
+    $end            reduce using rule 18 (elementary -> nodisplay .)
+    )               reduce using rule 18 (elementary -> nodisplay .)
+
+
+state 22
+
+    (42) charclass -> ncharclass .
+
+    *               reduce using rule 42 (charclass -> ncharclass .)
+    +               reduce using rule 42 (charclass -> ncharclass .)
+    ?               reduce using rule 42 (charclass -> ncharclass .)
+    {               reduce using rule 42 (charclass -> ncharclass .)
+    (               reduce using rule 42 (charclass -> ncharclass .)
+    ^               reduce using rule 42 (charclass -> ncharclass .)
+    >               reduce using rule 42 (charclass -> ncharclass .)
+    <               reduce using rule 42 (charclass -> ncharclass .)
+    /               reduce using rule 42 (charclass -> ncharclass .)
+    \               reduce using rule 42 (charclass -> ncharclass .)
+    #               reduce using rule 42 (charclass -> ncharclass .)
+    %               reduce using rule 42 (charclass -> ncharclass .)
+    ESCAPED         reduce using rule 42 (charclass -> ncharclass .)
+    ALPHA           reduce using rule 42 (charclass -> ncharclass .)
+    DIGIT           reduce using rule 42 (charclass -> ncharclass .)
+    .               reduce using rule 42 (charclass -> ncharclass .)
+    !               reduce using rule 42 (charclass -> ncharclass .)
+    $               reduce using rule 42 (charclass -> ncharclass .)
+    [               reduce using rule 42 (charclass -> ncharclass .)
+    |               reduce using rule 42 (charclass -> ncharclass .)
+    $end            reduce using rule 42 (charclass -> ncharclass .)
+    )               reduce using rule 42 (charclass -> ncharclass .)
+
+
+state 23
+
+    (7) basic -> elementary .
+    (20) asterisk -> elementary . *
+    (21) plus -> elementary . +
+    (22) optional -> elementary . ?
+    (23) nrepeat -> elementary . { number }
+    (24) nrepeat -> elementary . { , number }
+    (25) nrepeat -> elementary . { number , }
+    (26) nrepeat -> elementary . { number , number }
+
+    (               reduce using rule 7 (basic -> elementary .)
+    ^               reduce using rule 7 (basic -> elementary .)
+    >               reduce using rule 7 (basic -> elementary .)
+    <               reduce using rule 7 (basic -> elementary .)
+    /               reduce using rule 7 (basic -> elementary .)
+    \               reduce using rule 7 (basic -> elementary .)
+    #               reduce using rule 7 (basic -> elementary .)
+    %               reduce using rule 7 (basic -> elementary .)
+    ESCAPED         reduce using rule 7 (basic -> elementary .)
+    ALPHA           reduce using rule 7 (basic -> elementary .)
+    DIGIT           reduce using rule 7 (basic -> elementary .)
+    .               reduce using rule 7 (basic -> elementary .)
+    !               reduce using rule 7 (basic -> elementary .)
+    $               reduce using rule 7 (basic -> elementary .)
+    [               reduce using rule 7 (basic -> elementary .)
+    |               reduce using rule 7 (basic -> elementary .)
+    $end            reduce using rule 7 (basic -> elementary .)
+    )               reduce using rule 7 (basic -> elementary .)
+    *               shift and go to state 43
+    +               shift and go to state 42
+    ?               shift and go to state 45
+    {               shift and go to state 44
+
+
+state 24
+
+    (51) command -> / .
+
+    *               reduce using rule 51 (command -> / .)
+    +               reduce using rule 51 (command -> / .)
+    ?               reduce using rule 51 (command -> / .)
+    {               reduce using rule 51 (command -> / .)
+    (               reduce using rule 51 (command -> / .)
+    ^               reduce using rule 51 (command -> / .)
+    >               reduce using rule 51 (command -> / .)
+    <               reduce using rule 51 (command -> / .)
+    /               reduce using rule 51 (command -> / .)
+    \               reduce using rule 51 (command -> / .)
+    #               reduce using rule 51 (command -> / .)
+    %               reduce using rule 51 (command -> / .)
+    ESCAPED         reduce using rule 51 (command -> / .)
+    ALPHA           reduce using rule 51 (command -> / .)
+    DIGIT           reduce using rule 51 (command -> / .)
+    .               reduce using rule 51 (command -> / .)
+    !               reduce using rule 51 (command -> / .)
+    $               reduce using rule 51 (command -> / .)
+    [               reduce using rule 51 (command -> / .)
+    |               reduce using rule 51 (command -> / .)
+    )               reduce using rule 51 (command -> / .)
+    $end            reduce using rule 51 (command -> / .)
+
+
+state 25
+
+    (55) literal -> ESCAPED .
+
+    *               reduce using rule 55 (literal -> ESCAPED .)
+    +               reduce using rule 55 (literal -> ESCAPED .)
+    ?               reduce using rule 55 (literal -> ESCAPED .)
+    {               reduce using rule 55 (literal -> ESCAPED .)
+    (               reduce using rule 55 (literal -> ESCAPED .)
+    ^               reduce using rule 55 (literal -> ESCAPED .)
+    >               reduce using rule 55 (literal -> ESCAPED .)
+    <               reduce using rule 55 (literal -> ESCAPED .)
+    /               reduce using rule 55 (literal -> ESCAPED .)
+    \               reduce using rule 55 (literal -> ESCAPED .)
+    #               reduce using rule 55 (literal -> ESCAPED .)
+    %               reduce using rule 55 (literal -> ESCAPED .)
+    ESCAPED         reduce using rule 55 (literal -> ESCAPED .)
+    ALPHA           reduce using rule 55 (literal -> ESCAPED .)
+    DIGIT           reduce using rule 55 (literal -> ESCAPED .)
+    .               reduce using rule 55 (literal -> ESCAPED .)
+    !               reduce using rule 55 (literal -> ESCAPED .)
+    $               reduce using rule 55 (literal -> ESCAPED .)
+    [               reduce using rule 55 (literal -> ESCAPED .)
+    |               reduce using rule 55 (literal -> ESCAPED .)
+    $end            reduce using rule 55 (literal -> ESCAPED .)
+    )               reduce using rule 55 (literal -> ESCAPED .)
+    ]               reduce using rule 55 (literal -> ESCAPED .)
+
+
+state 26
+
+    (12) elementary -> group .
+
+    *               reduce using rule 12 (elementary -> group .)
+    +               reduce using rule 12 (elementary -> group .)
+    ?               reduce using rule 12 (elementary -> group .)
+    {               reduce using rule 12 (elementary -> group .)
+    (               reduce using rule 12 (elementary -> group .)
+    ^               reduce using rule 12 (elementary -> group .)
+    >               reduce using rule 12 (elementary -> group .)
+    <               reduce using rule 12 (elementary -> group .)
+    /               reduce using rule 12 (elementary -> group .)
+    \               reduce using rule 12 (elementary -> group .)
+    #               reduce using rule 12 (elementary -> group .)
+    %               reduce using rule 12 (elementary -> group .)
+    ESCAPED         reduce using rule 12 (elementary -> group .)
+    ALPHA           reduce using rule 12 (elementary -> group .)
+    DIGIT           reduce using rule 12 (elementary -> group .)
+    .               reduce using rule 12 (elementary -> group .)
+    !               reduce using rule 12 (elementary -> group .)
+    $               reduce using rule 12 (elementary -> group .)
+    [               reduce using rule 12 (elementary -> group .)
+    |               reduce using rule 12 (elementary -> group .)
+    $end            reduce using rule 12 (elementary -> group .)
+    )               reduce using rule 12 (elementary -> group .)
+
+
+state 27
+
+    (15) elementary -> literal .
+
+    *               reduce using rule 15 (elementary -> literal .)
+    +               reduce using rule 15 (elementary -> literal .)
+    ?               reduce using rule 15 (elementary -> literal .)
+    {               reduce using rule 15 (elementary -> literal .)
+    (               reduce using rule 15 (elementary -> literal .)
+    ^               reduce using rule 15 (elementary -> literal .)
+    >               reduce using rule 15 (elementary -> literal .)
+    <               reduce using rule 15 (elementary -> literal .)
+    /               reduce using rule 15 (elementary -> literal .)
+    \               reduce using rule 15 (elementary -> literal .)
+    #               reduce using rule 15 (elementary -> literal .)
+    %               reduce using rule 15 (elementary -> literal .)
+    ESCAPED         reduce using rule 15 (elementary -> literal .)
+    ALPHA           reduce using rule 15 (elementary -> literal .)
+    DIGIT           reduce using rule 15 (elementary -> literal .)
+    .               reduce using rule 15 (elementary -> literal .)
+    !               reduce using rule 15 (elementary -> literal .)
+    $               reduce using rule 15 (elementary -> literal .)
+    [               reduce using rule 15 (elementary -> literal .)
+    |               reduce using rule 15 (elementary -> literal .)
+    $end            reduce using rule 15 (elementary -> literal .)
+    )               reduce using rule 15 (elementary -> literal .)
+
+
+state 28
+
+    (13) elementary -> directionset .
+
+    *               reduce using rule 13 (elementary -> directionset .)
+    +               reduce using rule 13 (elementary -> directionset .)
+    ?               reduce using rule 13 (elementary -> directionset .)
+    {               reduce using rule 13 (elementary -> directionset .)
+    (               reduce using rule 13 (elementary -> directionset .)
+    ^               reduce using rule 13 (elementary -> directionset .)
+    >               reduce using rule 13 (elementary -> directionset .)
+    <               reduce using rule 13 (elementary -> directionset .)
+    /               reduce using rule 13 (elementary -> directionset .)
+    \               reduce using rule 13 (elementary -> directionset .)
+    #               reduce using rule 13 (elementary -> directionset .)
+    %               reduce using rule 13 (elementary -> directionset .)
+    ESCAPED         reduce using rule 13 (elementary -> directionset .)
+    ALPHA           reduce using rule 13 (elementary -> directionset .)
+    DIGIT           reduce using rule 13 (elementary -> directionset .)
+    .               reduce using rule 13 (elementary -> directionset .)
+    !               reduce using rule 13 (elementary -> directionset .)
+    $               reduce using rule 13 (elementary -> directionset .)
+    [               reduce using rule 13 (elementary -> directionset .)
+    |               reduce using rule 13 (elementary -> directionset .)
+    $end            reduce using rule 13 (elementary -> directionset .)
+    )               reduce using rule 13 (elementary -> directionset .)
+
+
+state 29
+
+    (17) elementary -> any .
+
+    *               reduce using rule 17 (elementary -> any .)
+    +               reduce using rule 17 (elementary -> any .)
+    ?               reduce using rule 17 (elementary -> any .)
+    {               reduce using rule 17 (elementary -> any .)
+    (               reduce using rule 17 (elementary -> any .)
+    ^               reduce using rule 17 (elementary -> any .)
+    >               reduce using rule 17 (elementary -> any .)
+    <               reduce using rule 17 (elementary -> any .)
+    /               reduce using rule 17 (elementary -> any .)
+    \               reduce using rule 17 (elementary -> any .)
+    #               reduce using rule 17 (elementary -> any .)
+    %               reduce using rule 17 (elementary -> any .)
+    ESCAPED         reduce using rule 17 (elementary -> any .)
+    ALPHA           reduce using rule 17 (elementary -> any .)
+    DIGIT           reduce using rule 17 (elementary -> any .)
+    .               reduce using rule 17 (elementary -> any .)
+    !               reduce using rule 17 (elementary -> any .)
+    $               reduce using rule 17 (elementary -> any .)
+    [               reduce using rule 17 (elementary -> any .)
+    |               reduce using rule 17 (elementary -> any .)
+    $end            reduce using rule 17 (elementary -> any .)
+    )               reduce using rule 17 (elementary -> any .)
+
+
+state 30
+
+    (41) charclass -> pcharclass .
+
+    *               reduce using rule 41 (charclass -> pcharclass .)
+    +               reduce using rule 41 (charclass -> pcharclass .)
+    ?               reduce using rule 41 (charclass -> pcharclass .)
+    {               reduce using rule 41 (charclass -> pcharclass .)
+    (               reduce using rule 41 (charclass -> pcharclass .)
+    ^               reduce using rule 41 (charclass -> pcharclass .)
+    >               reduce using rule 41 (charclass -> pcharclass .)
+    <               reduce using rule 41 (charclass -> pcharclass .)
+    /               reduce using rule 41 (charclass -> pcharclass .)
+    \               reduce using rule 41 (charclass -> pcharclass .)
+    #               reduce using rule 41 (charclass -> pcharclass .)
+    %               reduce using rule 41 (charclass -> pcharclass .)
+    ESCAPED         reduce using rule 41 (charclass -> pcharclass .)
+    ALPHA           reduce using rule 41 (charclass -> pcharclass .)
+    DIGIT           reduce using rule 41 (charclass -> pcharclass .)
+    .               reduce using rule 41 (charclass -> pcharclass .)
+    !               reduce using rule 41 (charclass -> pcharclass .)
+    $               reduce using rule 41 (charclass -> pcharclass .)
+    [               reduce using rule 41 (charclass -> pcharclass .)
+    |               reduce using rule 41 (charclass -> pcharclass .)
+    $end            reduce using rule 41 (charclass -> pcharclass .)
+    )               reduce using rule 41 (charclass -> pcharclass .)
+
+
+state 31
+
+    (1) re -> alternation .
+
+    |               reduce using rule 1 (re -> alternation .)
+    )               reduce using rule 1 (re -> alternation .)
+    $end            reduce using rule 1 (re -> alternation .)
+
+
+state 32
+
+    (47) directionset -> ^ . DIGIT
+
+    DIGIT           shift and go to state 46
+
+
+state 33
+
+    (56) literal -> ALPHA .
+
+    *               reduce using rule 56 (literal -> ALPHA .)
+    +               reduce using rule 56 (literal -> ALPHA .)
+    ?               reduce using rule 56 (literal -> ALPHA .)
+    {               reduce using rule 56 (literal -> ALPHA .)
+    (               reduce using rule 56 (literal -> ALPHA .)
+    ^               reduce using rule 56 (literal -> ALPHA .)
+    >               reduce using rule 56 (literal -> ALPHA .)
+    <               reduce using rule 56 (literal -> ALPHA .)
+    /               reduce using rule 56 (literal -> ALPHA .)
+    \               reduce using rule 56 (literal -> ALPHA .)
+    #               reduce using rule 56 (literal -> ALPHA .)
+    %               reduce using rule 56 (literal -> ALPHA .)
+    ESCAPED         reduce using rule 56 (literal -> ALPHA .)
+    ALPHA           reduce using rule 56 (literal -> ALPHA .)
+    DIGIT           reduce using rule 56 (literal -> ALPHA .)
+    .               reduce using rule 56 (literal -> ALPHA .)
+    !               reduce using rule 56 (literal -> ALPHA .)
+    $               reduce using rule 56 (literal -> ALPHA .)
+    [               reduce using rule 56 (literal -> ALPHA .)
+    |               reduce using rule 56 (literal -> ALPHA .)
+    $end            reduce using rule 56 (literal -> ALPHA .)
+    )               reduce using rule 56 (literal -> ALPHA .)
+    ]               reduce using rule 56 (literal -> ALPHA .)
+
+
+state 34
+
+    (9) basic -> plus .
+
+    (               reduce using rule 9 (basic -> plus .)
+    ^               reduce using rule 9 (basic -> plus .)
+    >               reduce using rule 9 (basic -> plus .)
+    <               reduce using rule 9 (basic -> plus .)
+    /               reduce using rule 9 (basic -> plus .)
+    \               reduce using rule 9 (basic -> plus .)
+    #               reduce using rule 9 (basic -> plus .)
+    %               reduce using rule 9 (basic -> plus .)
+    ESCAPED         reduce using rule 9 (basic -> plus .)
+    ALPHA           reduce using rule 9 (basic -> plus .)
+    DIGIT           reduce using rule 9 (basic -> plus .)
+    .               reduce using rule 9 (basic -> plus .)
+    !               reduce using rule 9 (basic -> plus .)
+    $               reduce using rule 9 (basic -> plus .)
+    [               reduce using rule 9 (basic -> plus .)
+    |               reduce using rule 9 (basic -> plus .)
+    $end            reduce using rule 9 (basic -> plus .)
+    )               reduce using rule 9 (basic -> plus .)
+
+
+state 35
+
+    (31) group -> ( . groupbody )
+    (32) groupbody -> . ? specialgroup
+    (33) groupbody -> . basicgroup
+    (40) basicgroup -> . re
+    (1) re -> . alternation
+    (2) re -> . simple
+    (3) alternation -> . re | simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    ?               shift and go to state 49
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    basic                          shift and go to state 2
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    basicgroup                     shift and go to state 48
+    pcharclass                     shift and go to state 30
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    simple                         shift and go to state 7
+    asterisk                       shift and go to state 8
+    group                          shift and go to state 26
+    concatenation                  shift and go to state 15
+    literal                        shift and go to state 27
+    directionset                   shift and go to state 28
+    groupbody                      shift and go to state 47
+    command                        shift and go to state 10
+    re                             shift and go to state 50
+    any                            shift and go to state 29
+    alternation                    shift and go to state 31
+    anchor                         shift and go to state 17
+    plus                           shift and go to state 34
+
+state 36
+
+    (45) classitems -> literal .
+    (46) classitems -> literal . classitems
+    (45) classitems -> . literal
+    (46) classitems -> . literal classitems
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+
+    ]               reduce using rule 45 (classitems -> literal .)
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+
+    literal                        shift and go to state 36
+    classitems                     shift and go to state 51
+
+state 37
+
+    (43) pcharclass -> [ classitems . ]
+
+    ]               shift and go to state 52
+
+
+state 38
+
+    (44) ncharclass -> [ ^ . classitems ]
+    (45) classitems -> . literal
+    (46) classitems -> . literal classitems
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+
+    literal                        shift and go to state 36
+    classitems                     shift and go to state 53
+
+state 39
+
+    (6) concatenation -> simple basic .
+
+    (               reduce using rule 6 (concatenation -> simple basic .)
+    ^               reduce using rule 6 (concatenation -> simple basic .)
+    >               reduce using rule 6 (concatenation -> simple basic .)
+    <               reduce using rule 6 (concatenation -> simple basic .)
+    /               reduce using rule 6 (concatenation -> simple basic .)
+    \               reduce using rule 6 (concatenation -> simple basic .)
+    #               reduce using rule 6 (concatenation -> simple basic .)
+    %               reduce using rule 6 (concatenation -> simple basic .)
+    ESCAPED         reduce using rule 6 (concatenation -> simple basic .)
+    ALPHA           reduce using rule 6 (concatenation -> simple basic .)
+    DIGIT           reduce using rule 6 (concatenation -> simple basic .)
+    .               reduce using rule 6 (concatenation -> simple basic .)
+    !               reduce using rule 6 (concatenation -> simple basic .)
+    $               reduce using rule 6 (concatenation -> simple basic .)
+    [               reduce using rule 6 (concatenation -> simple basic .)
+    |               reduce using rule 6 (concatenation -> simple basic .)
+    $end            reduce using rule 6 (concatenation -> simple basic .)
+    )               reduce using rule 6 (concatenation -> simple basic .)
+
+
+state 40
+
+    (48) anchor -> $ DIGIT .
+
+    *               reduce using rule 48 (anchor -> $ DIGIT .)
+    +               reduce using rule 48 (anchor -> $ DIGIT .)
+    ?               reduce using rule 48 (anchor -> $ DIGIT .)
+    {               reduce using rule 48 (anchor -> $ DIGIT .)
+    (               reduce using rule 48 (anchor -> $ DIGIT .)
+    ^               reduce using rule 48 (anchor -> $ DIGIT .)
+    >               reduce using rule 48 (anchor -> $ DIGIT .)
+    <               reduce using rule 48 (anchor -> $ DIGIT .)
+    /               reduce using rule 48 (anchor -> $ DIGIT .)
+    \               reduce using rule 48 (anchor -> $ DIGIT .)
+    #               reduce using rule 48 (anchor -> $ DIGIT .)
+    %               reduce using rule 48 (anchor -> $ DIGIT .)
+    ESCAPED         reduce using rule 48 (anchor -> $ DIGIT .)
+    ALPHA           reduce using rule 48 (anchor -> $ DIGIT .)
+    DIGIT           reduce using rule 48 (anchor -> $ DIGIT .)
+    .               reduce using rule 48 (anchor -> $ DIGIT .)
+    !               reduce using rule 48 (anchor -> $ DIGIT .)
+    $               reduce using rule 48 (anchor -> $ DIGIT .)
+    [               reduce using rule 48 (anchor -> $ DIGIT .)
+    |               reduce using rule 48 (anchor -> $ DIGIT .)
+    )               reduce using rule 48 (anchor -> $ DIGIT .)
+    $end            reduce using rule 48 (anchor -> $ DIGIT .)
+
+
+state 41
+
+    (3) alternation -> re | . simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    basic                          shift and go to state 2
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    simple                         shift and go to state 54
+    asterisk                       shift and go to state 8
+    group                          shift and go to state 26
+    pcharclass                     shift and go to state 30
+    literal                        shift and go to state 27
+    directionset                   shift and go to state 28
+    command                        shift and go to state 10
+    any                            shift and go to state 29
+    concatenation                  shift and go to state 15
+    anchor                         shift and go to state 17
+    plus                           shift and go to state 34
+
+state 42
+
+    (21) plus -> elementary + .
+
+    (               reduce using rule 21 (plus -> elementary + .)
+    ^               reduce using rule 21 (plus -> elementary + .)
+    >               reduce using rule 21 (plus -> elementary + .)
+    <               reduce using rule 21 (plus -> elementary + .)
+    /               reduce using rule 21 (plus -> elementary + .)
+    \               reduce using rule 21 (plus -> elementary + .)
+    #               reduce using rule 21 (plus -> elementary + .)
+    %               reduce using rule 21 (plus -> elementary + .)
+    ESCAPED         reduce using rule 21 (plus -> elementary + .)
+    ALPHA           reduce using rule 21 (plus -> elementary + .)
+    DIGIT           reduce using rule 21 (plus -> elementary + .)
+    .               reduce using rule 21 (plus -> elementary + .)
+    !               reduce using rule 21 (plus -> elementary + .)
+    $               reduce using rule 21 (plus -> elementary + .)
+    [               reduce using rule 21 (plus -> elementary + .)
+    |               reduce using rule 21 (plus -> elementary + .)
+    )               reduce using rule 21 (plus -> elementary + .)
+    $end            reduce using rule 21 (plus -> elementary + .)
+
+
+state 43
+
+    (20) asterisk -> elementary * .
+
+    (               reduce using rule 20 (asterisk -> elementary * .)
+    ^               reduce using rule 20 (asterisk -> elementary * .)
+    >               reduce using rule 20 (asterisk -> elementary * .)
+    <               reduce using rule 20 (asterisk -> elementary * .)
+    /               reduce using rule 20 (asterisk -> elementary * .)
+    \               reduce using rule 20 (asterisk -> elementary * .)
+    #               reduce using rule 20 (asterisk -> elementary * .)
+    %               reduce using rule 20 (asterisk -> elementary * .)
+    ESCAPED         reduce using rule 20 (asterisk -> elementary * .)
+    ALPHA           reduce using rule 20 (asterisk -> elementary * .)
+    DIGIT           reduce using rule 20 (asterisk -> elementary * .)
+    .               reduce using rule 20 (asterisk -> elementary * .)
+    !               reduce using rule 20 (asterisk -> elementary * .)
+    $               reduce using rule 20 (asterisk -> elementary * .)
+    [               reduce using rule 20 (asterisk -> elementary * .)
+    |               reduce using rule 20 (asterisk -> elementary * .)
+    $end            reduce using rule 20 (asterisk -> elementary * .)
+    )               reduce using rule 20 (asterisk -> elementary * .)
+
+
+state 44
+
+    (23) nrepeat -> elementary { . number }
+    (24) nrepeat -> elementary { . , number }
+    (25) nrepeat -> elementary { . number , }
+    (26) nrepeat -> elementary { . number , number }
+    (29) number -> . DIGIT
+    (30) number -> . DIGIT number
+
+    ,               shift and go to state 55
+    DIGIT           shift and go to state 57
+
+    number                         shift and go to state 56
+
+state 45
+
+    (22) optional -> elementary ? .
+
+    (               reduce using rule 22 (optional -> elementary ? .)
+    ^               reduce using rule 22 (optional -> elementary ? .)
+    >               reduce using rule 22 (optional -> elementary ? .)
+    <               reduce using rule 22 (optional -> elementary ? .)
+    /               reduce using rule 22 (optional -> elementary ? .)
+    \               reduce using rule 22 (optional -> elementary ? .)
+    #               reduce using rule 22 (optional -> elementary ? .)
+    %               reduce using rule 22 (optional -> elementary ? .)
+    ESCAPED         reduce using rule 22 (optional -> elementary ? .)
+    ALPHA           reduce using rule 22 (optional -> elementary ? .)
+    DIGIT           reduce using rule 22 (optional -> elementary ? .)
+    .               reduce using rule 22 (optional -> elementary ? .)
+    !               reduce using rule 22 (optional -> elementary ? .)
+    $               reduce using rule 22 (optional -> elementary ? .)
+    [               reduce using rule 22 (optional -> elementary ? .)
+    |               reduce using rule 22 (optional -> elementary ? .)
+    $end            reduce using rule 22 (optional -> elementary ? .)
+    )               reduce using rule 22 (optional -> elementary ? .)
+
+
+state 46
+
+    (47) directionset -> ^ DIGIT .
+
+    *               reduce using rule 47 (directionset -> ^ DIGIT .)
+    +               reduce using rule 47 (directionset -> ^ DIGIT .)
+    ?               reduce using rule 47 (directionset -> ^ DIGIT .)
+    {               reduce using rule 47 (directionset -> ^ DIGIT .)
+    (               reduce using rule 47 (directionset -> ^ DIGIT .)
+    ^               reduce using rule 47 (directionset -> ^ DIGIT .)
+    >               reduce using rule 47 (directionset -> ^ DIGIT .)
+    <               reduce using rule 47 (directionset -> ^ DIGIT .)
+    /               reduce using rule 47 (directionset -> ^ DIGIT .)
+    \               reduce using rule 47 (directionset -> ^ DIGIT .)
+    #               reduce using rule 47 (directionset -> ^ DIGIT .)
+    %               reduce using rule 47 (directionset -> ^ DIGIT .)
+    ESCAPED         reduce using rule 47 (directionset -> ^ DIGIT .)
+    ALPHA           reduce using rule 47 (directionset -> ^ DIGIT .)
+    DIGIT           reduce using rule 47 (directionset -> ^ DIGIT .)
+    .               reduce using rule 47 (directionset -> ^ DIGIT .)
+    !               reduce using rule 47 (directionset -> ^ DIGIT .)
+    $               reduce using rule 47 (directionset -> ^ DIGIT .)
+    [               reduce using rule 47 (directionset -> ^ DIGIT .)
+    |               reduce using rule 47 (directionset -> ^ DIGIT .)
+    $end            reduce using rule 47 (directionset -> ^ DIGIT .)
+    )               reduce using rule 47 (directionset -> ^ DIGIT .)
+
+
+state 47
+
+    (31) group -> ( groupbody . )
+
+    )               shift and go to state 58
+
+
+state 48
+
+    (33) groupbody -> basicgroup .
+
+    )               reduce using rule 33 (groupbody -> basicgroup .)
+
+
+state 49
+
+    (32) groupbody -> ? . specialgroup
+    (34) specialgroup -> . _ lengthcheck
+    (35) specialgroup -> . | stationarygroup
+    (36) specialgroup -> . : nocapture
+
+    _               shift and go to state 61
+    |               shift and go to state 59
+    :               shift and go to state 62
+
+    specialgroup                   shift and go to state 60
+
+state 50
+
+    (40) basicgroup -> re .
+    (3) alternation -> re . | simple
+
+    )               reduce using rule 40 (basicgroup -> re .)
+    |               shift and go to state 41
+
+
+state 51
+
+    (46) classitems -> literal classitems .
+
+    ]               reduce using rule 46 (classitems -> literal classitems .)
+
+
+state 52
+
+    (43) pcharclass -> [ classitems ] .
+
+    *               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    +               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    ?               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    {               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    (               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    ^               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    >               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    <               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    /               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    \               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    #               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    %               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    ESCAPED         reduce using rule 43 (pcharclass -> [ classitems ] .)
+    ALPHA           reduce using rule 43 (pcharclass -> [ classitems ] .)
+    DIGIT           reduce using rule 43 (pcharclass -> [ classitems ] .)
+    .               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    !               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    $               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    [               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    |               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    )               reduce using rule 43 (pcharclass -> [ classitems ] .)
+    $end            reduce using rule 43 (pcharclass -> [ classitems ] .)
+
+
+state 53
+
+    (44) ncharclass -> [ ^ classitems . ]
+
+    ]               shift and go to state 63
+
+
+state 54
+
+    (3) alternation -> re | simple .
+    (6) concatenation -> simple . basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    |               reduce using rule 3 (alternation -> re | simple .)
+    )               reduce using rule 3 (alternation -> re | simple .)
+    $end            reduce using rule 3 (alternation -> re | simple .)
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    group                          shift and go to state 26
+    pcharclass                     shift and go to state 30
+    basic                          shift and go to state 39
+    literal                        shift and go to state 27
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    command                        shift and go to state 10
+    any                            shift and go to state 29
+    anchor                         shift and go to state 17
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    plus                           shift and go to state 34
+    asterisk                       shift and go to state 8
+    directionset                   shift and go to state 28
+
+state 55
+
+    (24) nrepeat -> elementary { , . number }
+    (29) number -> . DIGIT
+    (30) number -> . DIGIT number
+
+    DIGIT           shift and go to state 57
+
+    number                         shift and go to state 64
+
+state 56
+
+    (23) nrepeat -> elementary { number . }
+    (25) nrepeat -> elementary { number . , }
+    (26) nrepeat -> elementary { number . , number }
+
+    }               shift and go to state 65
+    ,               shift and go to state 66
+
+
+state 57
+
+    (29) number -> DIGIT .
+    (30) number -> DIGIT . number
+    (29) number -> . DIGIT
+    (30) number -> . DIGIT number
+
+    )               reduce using rule 29 (number -> DIGIT .)
+    }               reduce using rule 29 (number -> DIGIT .)
+    ,               reduce using rule 29 (number -> DIGIT .)
+    DIGIT           shift and go to state 57
+
+    number                         shift and go to state 67
+
+state 58
+
+    (31) group -> ( groupbody ) .
+
+    *               reduce using rule 31 (group -> ( groupbody ) .)
+    +               reduce using rule 31 (group -> ( groupbody ) .)
+    ?               reduce using rule 31 (group -> ( groupbody ) .)
+    {               reduce using rule 31 (group -> ( groupbody ) .)
+    (               reduce using rule 31 (group -> ( groupbody ) .)
+    ^               reduce using rule 31 (group -> ( groupbody ) .)
+    >               reduce using rule 31 (group -> ( groupbody ) .)
+    <               reduce using rule 31 (group -> ( groupbody ) .)
+    /               reduce using rule 31 (group -> ( groupbody ) .)
+    \               reduce using rule 31 (group -> ( groupbody ) .)
+    #               reduce using rule 31 (group -> ( groupbody ) .)
+    %               reduce using rule 31 (group -> ( groupbody ) .)
+    ESCAPED         reduce using rule 31 (group -> ( groupbody ) .)
+    ALPHA           reduce using rule 31 (group -> ( groupbody ) .)
+    DIGIT           reduce using rule 31 (group -> ( groupbody ) .)
+    .               reduce using rule 31 (group -> ( groupbody ) .)
+    !               reduce using rule 31 (group -> ( groupbody ) .)
+    $               reduce using rule 31 (group -> ( groupbody ) .)
+    [               reduce using rule 31 (group -> ( groupbody ) .)
+    |               reduce using rule 31 (group -> ( groupbody ) .)
+    )               reduce using rule 31 (group -> ( groupbody ) .)
+    $end            reduce using rule 31 (group -> ( groupbody ) .)
+
+
+state 59
+
+    (35) specialgroup -> | . stationarygroup
+    (38) stationarygroup -> . re
+    (1) re -> . alternation
+    (2) re -> . simple
+    (3) alternation -> . re | simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    stationarygroup                shift and go to state 69
+    basic                          shift and go to state 2
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    pcharclass                     shift and go to state 30
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    simple                         shift and go to state 7
+    asterisk                       shift and go to state 8
+    group                          shift and go to state 26
+    concatenation                  shift and go to state 15
+    literal                        shift and go to state 27
+    directionset                   shift and go to state 28
+    command                        shift and go to state 10
+    re                             shift and go to state 68
+    any                            shift and go to state 29
+    alternation                    shift and go to state 31
+    anchor                         shift and go to state 17
+    plus                           shift and go to state 34
+
+state 60
+
+    (32) groupbody -> ? specialgroup .
+
+    )               reduce using rule 32 (groupbody -> ? specialgroup .)
+
+
+state 61
+
+    (34) specialgroup -> _ . lengthcheck
+    (37) lengthcheck -> . ( number ) re
+
+    (               shift and go to state 70
+
+    lengthcheck                    shift and go to state 71
+
+state 62
+
+    (36) specialgroup -> : . nocapture
+    (39) nocapture -> . re
+    (1) re -> . alternation
+    (2) re -> . simple
+    (3) alternation -> . re | simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    basic                          shift and go to state 2
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    pcharclass                     shift and go to state 30
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    simple                         shift and go to state 7
+    asterisk                       shift and go to state 8
+    group                          shift and go to state 26
+    concatenation                  shift and go to state 15
+    literal                        shift and go to state 27
+    directionset                   shift and go to state 28
+    command                        shift and go to state 10
+    plus                           shift and go to state 34
+    re                             shift and go to state 72
+    any                            shift and go to state 29
+    alternation                    shift and go to state 31
+    anchor                         shift and go to state 17
+    nocapture                      shift and go to state 73
+
+state 63
+
+    (44) ncharclass -> [ ^ classitems ] .
+
+    *               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    +               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    ?               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    {               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    (               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    ^               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    >               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    <               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    /               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    \               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    #               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    %               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    ESCAPED         reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    ALPHA           reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    DIGIT           reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    .               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    !               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    $               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    [               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    |               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    $end            reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+    )               reduce using rule 44 (ncharclass -> [ ^ classitems ] .)
+
+
+state 64
+
+    (24) nrepeat -> elementary { , number . }
+
+    }               shift and go to state 74
+
+
+state 65
+
+    (23) nrepeat -> elementary { number } .
+
+    (               reduce using rule 23 (nrepeat -> elementary { number } .)
+    ^               reduce using rule 23 (nrepeat -> elementary { number } .)
+    >               reduce using rule 23 (nrepeat -> elementary { number } .)
+    <               reduce using rule 23 (nrepeat -> elementary { number } .)
+    /               reduce using rule 23 (nrepeat -> elementary { number } .)
+    \               reduce using rule 23 (nrepeat -> elementary { number } .)
+    #               reduce using rule 23 (nrepeat -> elementary { number } .)
+    %               reduce using rule 23 (nrepeat -> elementary { number } .)
+    ESCAPED         reduce using rule 23 (nrepeat -> elementary { number } .)
+    ALPHA           reduce using rule 23 (nrepeat -> elementary { number } .)
+    DIGIT           reduce using rule 23 (nrepeat -> elementary { number } .)
+    .               reduce using rule 23 (nrepeat -> elementary { number } .)
+    !               reduce using rule 23 (nrepeat -> elementary { number } .)
+    $               reduce using rule 23 (nrepeat -> elementary { number } .)
+    [               reduce using rule 23 (nrepeat -> elementary { number } .)
+    |               reduce using rule 23 (nrepeat -> elementary { number } .)
+    )               reduce using rule 23 (nrepeat -> elementary { number } .)
+    $end            reduce using rule 23 (nrepeat -> elementary { number } .)
+
+
+state 66
+
+    (25) nrepeat -> elementary { number , . }
+    (26) nrepeat -> elementary { number , . number }
+    (29) number -> . DIGIT
+    (30) number -> . DIGIT number
+
+    }               shift and go to state 75
+    DIGIT           shift and go to state 57
+
+    number                         shift and go to state 76
+
+state 67
+
+    (30) number -> DIGIT number .
+
+    )               reduce using rule 30 (number -> DIGIT number .)
+    }               reduce using rule 30 (number -> DIGIT number .)
+    ,               reduce using rule 30 (number -> DIGIT number .)
+
+
+state 68
+
+    (38) stationarygroup -> re .
+    (3) alternation -> re . | simple
+
+    )               reduce using rule 38 (stationarygroup -> re .)
+    |               shift and go to state 41
+
+
+state 69
+
+    (35) specialgroup -> | stationarygroup .
+
+    )               reduce using rule 35 (specialgroup -> | stationarygroup .)
+
+
+state 70
+
+    (37) lengthcheck -> ( . number ) re
+    (29) number -> . DIGIT
+    (30) number -> . DIGIT number
+
+    DIGIT           shift and go to state 57
+
+    number                         shift and go to state 77
+
+state 71
+
+    (34) specialgroup -> _ lengthcheck .
+
+    )               reduce using rule 34 (specialgroup -> _ lengthcheck .)
+
+
+state 72
+
+    (39) nocapture -> re .
+    (3) alternation -> re . | simple
+
+    )               reduce using rule 39 (nocapture -> re .)
+    |               shift and go to state 41
+
+
+state 73
+
+    (36) specialgroup -> : nocapture .
+
+    )               reduce using rule 36 (specialgroup -> : nocapture .)
+
+
+state 74
+
+    (24) nrepeat -> elementary { , number } .
+
+    (               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    ^               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    >               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    <               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    /               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    \               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    #               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    %               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    ESCAPED         reduce using rule 24 (nrepeat -> elementary { , number } .)
+    ALPHA           reduce using rule 24 (nrepeat -> elementary { , number } .)
+    DIGIT           reduce using rule 24 (nrepeat -> elementary { , number } .)
+    .               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    !               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    $               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    [               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    |               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    )               reduce using rule 24 (nrepeat -> elementary { , number } .)
+    $end            reduce using rule 24 (nrepeat -> elementary { , number } .)
+
+
+state 75
+
+    (25) nrepeat -> elementary { number , } .
+
+    (               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    ^               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    >               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    <               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    /               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    \               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    #               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    %               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    ESCAPED         reduce using rule 25 (nrepeat -> elementary { number , } .)
+    ALPHA           reduce using rule 25 (nrepeat -> elementary { number , } .)
+    DIGIT           reduce using rule 25 (nrepeat -> elementary { number , } .)
+    .               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    !               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    $               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    [               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    |               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    )               reduce using rule 25 (nrepeat -> elementary { number , } .)
+    $end            reduce using rule 25 (nrepeat -> elementary { number , } .)
+
+
+state 76
+
+    (26) nrepeat -> elementary { number , number . }
+
+    }               shift and go to state 78
+
+
+state 77
+
+    (37) lengthcheck -> ( number . ) re
+
+    )               shift and go to state 79
+
+
+state 78
+
+    (26) nrepeat -> elementary { number , number } .
+
+    (               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    ^               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    >               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    <               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    /               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    \               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    #               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    %               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    ESCAPED         reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    ALPHA           reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    DIGIT           reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    .               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    !               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    $               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    [               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    |               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    )               reduce using rule 26 (nrepeat -> elementary { number , number } .)
+    $end            reduce using rule 26 (nrepeat -> elementary { number , number } .)
+
+
+state 79
+
+    (37) lengthcheck -> ( number ) . re
+    (1) re -> . alternation
+    (2) re -> . simple
+    (3) alternation -> . re | simple
+    (4) simple -> . concatenation
+    (5) simple -> . basic
+    (6) concatenation -> . simple basic
+    (7) basic -> . elementary
+    (8) basic -> . asterisk
+    (9) basic -> . plus
+    (10) basic -> . optional
+    (11) basic -> . nrepeat
+    (12) elementary -> . group
+    (13) elementary -> . directionset
+    (14) elementary -> . command
+    (15) elementary -> . literal
+    (16) elementary -> . charclass
+    (17) elementary -> . any
+    (18) elementary -> . nodisplay
+    (19) elementary -> . anchor
+    (20) asterisk -> . elementary *
+    (21) plus -> . elementary +
+    (22) optional -> . elementary ?
+    (23) nrepeat -> . elementary { number }
+    (24) nrepeat -> . elementary { , number }
+    (25) nrepeat -> . elementary { number , }
+    (26) nrepeat -> . elementary { number , number }
+    (31) group -> . ( groupbody )
+    (47) directionset -> . ^ DIGIT
+    (49) command -> . >
+    (50) command -> . <
+    (51) command -> . /
+    (52) command -> . \
+    (53) command -> . #
+    (54) command -> . %
+    (55) literal -> . ESCAPED
+    (56) literal -> . ALPHA
+    (57) literal -> . DIGIT
+    (41) charclass -> . pcharclass
+    (42) charclass -> . ncharclass
+    (27) any -> . .
+    (28) nodisplay -> . !
+    (48) anchor -> . $ DIGIT
+    (43) pcharclass -> . [ classitems ]
+    (44) ncharclass -> . [ ^ classitems ]
+
+    (               shift and go to state 35
+    ^               shift and go to state 32
+    >               shift and go to state 14
+    <               shift and go to state 16
+    /               shift and go to state 24
+    \               shift and go to state 20
+    #               shift and go to state 9
+    %               shift and go to state 1
+    ESCAPED         shift and go to state 25
+    ALPHA           shift and go to state 33
+    DIGIT           shift and go to state 13
+    .               shift and go to state 19
+    !               shift and go to state 18
+    $               shift and go to state 11
+    [               shift and go to state 5
+
+    basic                          shift and go to state 2
+    optional                       shift and go to state 3
+    nrepeat                        shift and go to state 4
+    nodisplay                      shift and go to state 21
+    ncharclass                     shift and go to state 22
+    alternation                    shift and go to state 31
+    elementary                     shift and go to state 23
+    charclass                      shift and go to state 6
+    simple                         shift and go to state 7
+    asterisk                       shift and go to state 8
+    group                          shift and go to state 26
+    pcharclass                     shift and go to state 30
+    literal                        shift and go to state 27
+    directionset                   shift and go to state 28
+    command                        shift and go to state 10
+    re                             shift and go to state 80
+    any                            shift and go to state 29
+    concatenation                  shift and go to state 15
+    anchor                         shift and go to state 17
+    plus                           shift and go to state 34
+
+state 80
+
+    (37) lengthcheck -> ( number ) re .
+    (3) alternation -> re . | simple
+
+    )               reduce using rule 37 (lengthcheck -> ( number ) re .)
+    |               shift and go to state 41
+
