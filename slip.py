@@ -82,7 +82,8 @@ class Board():
     def __init__(self, input_string):
         self.board_dict = defaultdict(str)
         x = y = 0
-        self.width = self.height = 0
+        self.width = 0
+        self.height = 1
 
         for char in input_string:
             if char == "\n":
@@ -203,7 +204,7 @@ class Slip():
 
 
     def _match(self, state_stack):
-        while True:
+        while True:            
             if not state_stack:
                 return (False, state_stack)
 
