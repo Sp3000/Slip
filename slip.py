@@ -123,22 +123,43 @@ class Slip():
 
         self.first_match = "F" in config
         self.numerical = "N" in config
+        self.position = "P" in config
         self.verbose = "V" in config
-        
+
 
     def match(self):
         found = set()
+        match_count = 0
         
         for pos in self.board:
             state_stack = [State(pos, (1, 0), [deepcopy(self.regex)], set(),
                                  set(), traversed=set())]
 
-            while True:               
+            while not (found and self.first_match): # Otherwise just a while True for overlapping               
                 is_match, state_stack = self._match(state_stack)
 
                 if is_match:
-                    min_x = min_y = max_x = max_y = None
                     display_squares = state_stack.pop().display
+                    sorted_matches = tuple(sorted(display_squares))
+
+                    if sorted_matches and sorted_matches in found:
+                        continue
+
+                    match_count += 1
+                    
+                    if found and not self.numerical and not self.position:
+                        print()
+
+                    found.add(sorted_matches)
+
+                    if self.numerical:
+                        continue
+
+                    if self.position:
+                        print(*pos)
+                        continue
+                    
+                    min_x = min_y = max_x = max_y = None
 
                     for mx, my in display_squares:                       
                         if min_x is None or mx < min_x:
@@ -153,47 +174,32 @@ class Slip():
                         if max_y is None or my > max_y:
                             max_y = my
 
-                    sorted_matches = tuple(sorted(display_squares))
-
-                    if sorted_matches and sorted_matches in found:
-                        continue
+                    if min_x is None:
+                        if self.verbose:
+                            print("Empty match found from ({}, {})".format(*pos), flush=True)
 
                     else:
-                        if found and not self.numerical:
-                            print()
-                            
-                        found.add(sorted_matches)
+                        if self.verbose:
+                            print("Match found in rectangle: ({}, {}), ({}, {})".format(
+                                   min_x, min_y, max_x, max_y), flush=True)
 
-                    if not self.numerical:
-                        if min_x is None:
-                            if self.verbose:
-                                print("Empty match found from ({}, {})".format(x, y), flush=True)
+                        array = [[" "]*(max_x - min_x + 1)
+                                 for _ in range(min_y, max_y + 1)]
 
-                        else:
-                            if self.verbose:
-                                print("Match found in rectangle: ({}, {}), ({}, {})".format(
-                                       min_x, min_y, max_x, max_y), flush=True)
+                        for pos in display_squares:
+                            array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
 
-                            array = [[" "]*(max_x - min_x + 1)
-                                     for _ in range(min_y, max_y + 1)]
+                        for row in array:
+                            print("".join(row), flush=True)
 
-                            for pos in display_squares:
-                                array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
-
-                            for row in array:
-                                print("".join(row), flush=True)
-
-                        if self.first_match:
-                            return
-
-                        if not self.overlapping:
-                            break
+                    if not self.overlapping:
+                        break
 
                 else:
                     break
 
         if self.numerical:
-            print(len(found))
+            print(match_count)
 
 
     def _match(self, state_stack):
