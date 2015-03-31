@@ -12,5 +12,5 @@ classes = {"a": string.ascii_lowercase + string.ascii_uppercase,
            "u": string.ascii_uppercase,
            "v": "aeiouAEIOU",
            "w": string.ascii_lowercase + string.ascii_uppercase + string.digits + "_",
-           "y": "aeiouy"}
+           "y": "aeiouyAEIOUY"}
            
