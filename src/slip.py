@@ -1,5 +1,5 @@
 """
-Slip v0.4 alpha by Sp3000
+Slip v0.4.2 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -218,7 +218,6 @@ class Slip():
                 return (True, state_stack)
     
             state = state_stack.pop()
-
             construct, *regex_rest = state.regex_stack[-1]
 
             if construct in [Constructs.LITERAL, Constructs.NEGCHARCLASS]:
@@ -342,7 +341,7 @@ class Slip():
 
 
             elif construct == Constructs.NREPEAT:
-                regex, *nums = regex_rest
+                nongreedy, regex, *nums = regex_rest
 
                 if len(nums) == 1: # {n}
                     new_state = deepcopy(state)
@@ -351,7 +350,7 @@ class Slip():
                         new_state.regex_stack.pop()
 
                     else:
-                        new_state.regex_stack[-1][2] -= 1
+                        new_state.regex_stack[-1][3] -= 1
                         new_state.regex_stack.append(regex)
                         
                     state_stack.append(new_state)
@@ -365,34 +364,40 @@ class Slip():
                         state_stack.append(new_state)
 
                     else:
-                        new_state.regex_stack[-1][3] -= 1
+                        new_state.regex_stack[-1][4] -= 1
 
                         new_state2 = deepcopy(state)
-                        new_state2.regex_stack[-1] = [Constructs.NREPEAT, regex, nums[1]]
+                        new_state2.regex_stack[-1] = [Constructs.NREPEAT, nongreedy, regex, nums[1]]
 
                         state_stack.append(new_state)
                         state_stack.append(new_state2)
 
+                        if nongreedy:
+                            state_stack[-2:] = state_stack[-2:][::-1]
+
 
                 elif nums[1] is None: # {n,}
-                    state.regex_stack[-1:] = [[Constructs.ASTERISK, False, regex],
-                                              [Constructs.NREPEAT, regex, nums[0]]]
+                    state.regex_stack[-1:] = [[Constructs.ASTERISK, nongreedy, regex],
+                                              [Constructs.NREPEAT, nongreedy, regex, nums[0]]]
                     state_stack.append(state)
                     
 
                 else: # {n, m}
-                    state.regex_stack[-1:] = [[Constructs.NREPEAT, regex, None, nums[1] - nums[0]],
-                                              [Constructs.NREPEAT, regex, nums[0]]]
+                    state.regex_stack[-1:] = [[Constructs.NREPEAT, nongreedy, regex, None, nums[1] - nums[0]],
+                                              [Constructs.NREPEAT, nongreedy, regex, nums[0]]]
                     state_stack.append(state)
             
 
-            elif construct == Constructs.OPTIONAL:           
+            elif construct == Constructs.OPTIONAL:
                 state2 = deepcopy(state)
-                state2.regex_stack[-1] = regex_rest[0]
+                state2.regex_stack[-1] = regex_rest[1]
                 state.regex_stack.pop()
                 
                 state_stack.append(state)
                 state_stack.append(state2)
+
+                if regex_rest[0]:
+                    state_stack[-2:] = state_stack[-2:][::-1]
 
 
             elif construct == Constructs.NOCAPTURE:

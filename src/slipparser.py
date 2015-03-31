@@ -106,10 +106,23 @@ class SlipParser():
 
     def p_basic(self, p):
         """basic : elementary
-                 | asterisk
-                 | plus
-                 | optional
-                 | nrepeat"""
+                 | quantifier"""
+        p[0] = p[1]
+
+
+    def p_quantifier(self, p):
+        """quantifier : basequantifier
+                      | basequantifier '?'"""
+        
+        p[0] = p[1][:1] + [len(p) == 3] + p[1][1:]
+
+
+    def p_basequantifier(self, p):
+        """basequantifier : asterisk
+                          | plus
+                          | optional
+                          | nrepeat"""
+
         p[0] = p[1]
 
 
@@ -127,15 +140,13 @@ class SlipParser():
 
 
     def p_asterisk(self, p):
-        """asterisk : elementary '*'
-                    | elementary '*' '?'"""
-        p[0] = [Constructs.ASTERISK, len(p) == 4, p[1]]
+        """asterisk : elementary '*'"""
+        p[0] = [Constructs.ASTERISK, p[1]]
 
 
     def p_plus(self, p):
-        """plus : elementary '+'
-                | elementary '+' '?'"""
-        p[0] = [Constructs.PLUS, len(p) == 4, p[1]]
+        """plus : elementary '+'"""
+        p[0] = [Constructs.PLUS, p[1]]
 
 
     def p_optional(self, p):
@@ -376,4 +387,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("ab+?c"))
+    print(parser.parse("ab??c"))
