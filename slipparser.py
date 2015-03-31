@@ -127,13 +127,15 @@ class SlipParser():
 
 
     def p_asterisk(self, p):
-        """asterisk : elementary '*'"""
-        p[0] = [Constructs.ASTERISK, p[1]]
+        """asterisk : elementary '*'
+                    | elementary '*' '?'"""
+        p[0] = [Constructs.ASTERISK, len(p) == 4, p[1]]
 
 
     def p_plus(self, p):
-        """plus : elementary '+'"""
-        p[0] = [Constructs.PLUS, p[1]]
+        """plus : elementary '+'
+                | elementary '+' '?'"""
+        p[0] = [Constructs.PLUS, len(p) == 4, p[1]]
 
 
     def p_optional(self, p):
@@ -345,8 +347,9 @@ class SlipParser():
 
 
     def p_anchor(self, p):
-        """anchor : '$' DIGIT"""
-        p[0] = [Constructs.ANCHOR, int(p[2])]
+        """anchor : '$' DIGIT
+                  | '$' ALPHA"""
+        p[0] = [Constructs.ANCHOR, p[2]]
             
 
     def p_command(self, p):
@@ -373,4 +376,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("`d"))
+    print(parser.parse("ab+?c"))

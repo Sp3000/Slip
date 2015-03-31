@@ -27,6 +27,7 @@ class State():
         self.no_slip = no_slip
         
         self.groups = {}
+        self.anchors = {}
 
         self.traversed = traversed
 
@@ -140,7 +141,10 @@ class Slip():
                     sorted_matches = tuple(sorted(display_squares))
 
                     if sorted_matches and sorted_matches in found:
-                        continue
+                        if self.overlapping:
+                            continue
+                        else:
+                            break
 
                     match_count += 1
                     
@@ -150,11 +154,17 @@ class Slip():
                     found.add(sorted_matches)
 
                     if self.numerical:
-                        continue
+                        if self.overlapping:
+                            continue
+                        else:
+                            break
 
                     if self.position:
                         print(*pos)
-                        continue
+                        if self.overlapping:
+                            continue
+                        else:
+                            break
                     
                     min_x = min_y = max_x = max_y = None
 
@@ -200,7 +210,7 @@ class Slip():
 
 
     def _match(self, state_stack):
-        while True:            
+        while True:                
             if not state_stack:
                 return (False, state_stack)
 
@@ -208,6 +218,7 @@ class Slip():
                 return (True, state_stack)
     
             state = state_stack.pop()
+
             construct, *regex_rest = state.regex_stack[-1]
 
             if construct in [Constructs.LITERAL, Constructs.NEGCHARCLASS]:
@@ -241,8 +252,8 @@ class Slip():
                             cond = (state_char not in regex_rest[0])
                    
                     if state_char and cond:
-                        state.match.add(tuple(state.pos))
-                        state.display.add(tuple(state.pos))
+                        state.match.add(state.pos)
+                        state.display.add(state.pos)
                         state.regex_stack.pop()
                         state_stack.append(state)
                         
@@ -292,7 +303,7 @@ class Slip():
                 elif command == "\\":
                     state.slip_right()
 
-                elif command == "#":
+                elif command == "#":                    
                     state.no_move = True
 
                 elif command == "%":
@@ -309,20 +320,23 @@ class Slip():
                 state_stack.append(state)
             
 
-            elif construct == Constructs.ASTERISK:
+            elif construct == Constructs.ASTERISK:               
                 new_state = deepcopy(state)
                 state.regex_stack.pop()
                 state_stack.append(state)
-                
-                new_state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[0],
-                                            [Constructs.ASTERISK, regex_rest[0]]]
+
+                new_state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[1],
+                                            [Constructs.ASTERISK] + regex_rest]
                 
                 state_stack.append(new_state)
 
+                if regex_rest[0]:
+                    state_stack[-2:] = state_stack[-2:][::-1]
+
 
             elif construct == Constructs.PLUS:           
-                state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[0],
-                                            [Constructs.ASTERISK, regex_rest[0]]]
+                state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[1],
+                                            [Constructs.ASTERISK, regex_rest[0], regex_rest[1]]]
                 
                 state_stack.append(state)
 
@@ -361,7 +375,7 @@ class Slip():
 
 
                 elif nums[1] is None: # {n,}
-                    state.regex_stack[-1:] = [[Constructs.ASTERISK, regex],
+                    state.regex_stack[-1:] = [[Constructs.ASTERISK, False, regex],
                                               [Constructs.NREPEAT, regex, nums[0]]]
                     state_stack.append(state)
                     
@@ -439,6 +453,7 @@ class Slip():
                 state.pos = prev_state.pos
                 state.dir = prev_state.dir
                 state.no_move = prev_state.no_move
+                state.no_slip = prev_state.no_slip
 
                 state_stack.append(state)
             
@@ -501,30 +516,41 @@ class Slip():
             
 
             elif construct == Constructs.ANCHOR:
-                digit = regex_rest[0]
+                char = regex_rest[0]
                 state.regex_stack.pop()
 
-                width, height = self.board.width, self.board.height
+                if char.isdigit():
+                    digit = int(char)
+                    width, height = self.board.width, self.board.height
 
-                anchor_checks = [state.pos[1] == 0,
-                                 state.pos[0] == width - 1 and state.pos[1] == 0,
-                                 state.pos[0] == width - 1,
-                                 state.pos[0] == width - 1 and state.pos[1] == height - 1,
-                                 state.pos[1] == height - 1,
-                                 state.pos[0] == 0 and state.pos[1] == height - 1,
-                                 state.pos[0] == 0,
-                                 state.pos[0] == 0 and state.pos[1] == 0]
+                    anchor_checks = [state.pos[1] == 0,
+                                     state.pos[0] == width - 1 and state.pos[1] == 0,
+                                     state.pos[0] == width - 1,
+                                     state.pos[0] == width - 1 and state.pos[1] == height - 1,
+                                     state.pos[1] == height - 1,
+                                     state.pos[0] == 0 and state.pos[1] == height - 1,
+                                     state.pos[0] == 0,
+                                     state.pos[0] == 0 and state.pos[1] == 0]
 
-                if digit == 8:
-                    if any(anchor_checks[::2]):
-                        state_stack.append(state)
+                    if digit == 8:
+                        if any(anchor_checks[::2]):
+                            state_stack.append(state)
 
-                elif digit == 9:
-                    if any(anchor_checks[1::2]):
-                        state_stack.append(state)
+                    elif digit == 9:
+                        if any(anchor_checks[1::2]):
+                            state_stack.append(state)
 
-                else:
-                    if anchor_checks[digit]:
+                    else:
+                        if anchor_checks[digit]:
+                            state_stack.append(state)
+
+                elif char.islower():
+                    state.anchors[char] = state.pos
+                    state_stack.append(state)
+
+
+                elif char.isupper():                    
+                    if char.lower() in state.anchors and state.pos == state.anchors[char.lower()]:
                         state_stack.append(state)
 
 
