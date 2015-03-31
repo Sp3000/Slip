@@ -6,6 +6,9 @@ from enum import Enum
 import ply.lex as lex
 import ply.yacc as yacc
 
+import string
+import charclasses
+
 
 class Constructs(Enum):
     (ALTERNATION,
@@ -37,60 +40,34 @@ class SlipLexer():
     def __init__(self):
         self.lexer = lex.lex(module=self)
         
-    tokens = ("PIPE",
-              "LPARENS",
-              "RPARENS",
-              "LSQBRACKET",
-              "RSQBRACKET",
-              "LBRACE",
-              "RBRACE",
-              "CARET",
-              "QMARK",
-              "EMARK",
-              "EQUALS",
-              "ASTERISK",
-              "PLUS",
-              "UNDERSCORE",
-              "DOT",
-              "COMMA",
-              "DOLLAR",
-              "COLON",
-              "COMMAND",
+    tokens = ("ALPHA",
               "DIGIT",
-              "LITERAL")
+              "OTHER",
+              "ESCAPED")
 
-    # Tokens
-    t_PIPE = r"\|"
-    t_LPARENS = r"\("
-    t_RPARENS = r"\)"
-    t_LSQBRACKET = r"\["
-    t_RSQBRACKET = r"\]"
-    t_LBRACE = r"\{"
-    t_RBRACE = r"\}"
-    t_CARET = r"\^"
-    t_QMARK = r"\?"
-    t_EMARK = r"!"
-    t_EQUALS = r"="
-    t_ASTERISK = r"\*"
-    t_PLUS = r"\+"
-    t_UNDERSCORE = r"_"
-    t_DOT = r"\."
-    t_COMMA = r","
-    t_DOLLAR = r"\$"
-    t_COLON = r":"
-    t_DIGIT = r"\d"
+    literals = [c for c in string.printable if not c.isalnum()]
 
 
-    def t_COMMAND(self, t):
-        r"[<>/\\#%]"
+    def t_ALPHA(self, t):
+        r"[a-zA-Z]"
         return t
 
 
-    def t_LITERAL(self, t):
-        r"`.|[^][|()^?!=*+_.$,{}:#0-9]"
-        t.value = t.value[t.value[0] == "`"]
+    def t_DIGIT(self, t):
+        r"\d"
         return t
 
+
+    def t_OTHER(self, t):
+        r"[\n ]"
+        return t
+
+
+    def t_ESCAPED(self, t):
+        r"`[^a-zA-Z]"
+        t.value = t.value[1]
+        return t
+    
 
     def t_error(self, t):
         print("Illegal character '%s'" % t.value[0])
@@ -112,7 +89,7 @@ class SlipParser():
 
 
     def p_alternation(self, p):
-        """alternation : re PIPE simple"""
+        """alternation : re '|' simple"""
         p[0] = [Constructs.ALTERNATION, p[1], p[3]]
 
 
@@ -142,32 +119,33 @@ class SlipParser():
                       | command
                       | literal
                       | charclass
-                      | any
+                      | anychar
                       | nodisplay
-                      | anchor"""
+                      | anchor
+                      | predefined"""
         p[0] = p[1]
 
 
     def p_asterisk(self, p):
-        """asterisk : elementary ASTERISK"""
+        """asterisk : elementary '*'"""
         p[0] = [Constructs.ASTERISK, p[1]]
 
 
     def p_plus(self, p):
-        """plus : elementary PLUS"""
+        """plus : elementary '+'"""
         p[0] = [Constructs.PLUS, p[1]]
 
 
     def p_optional(self, p):
-        """optional : elementary QMARK"""
+        """optional : elementary '?'"""
         p[0] = [Constructs.OPTIONAL, p[1]]
 
 
     def p_nrepeat(self, p):
-        """nrepeat : elementary LBRACE number RBRACE
-                   | elementary LBRACE COMMA number RBRACE
-                   | elementary LBRACE number COMMA RBRACE
-                   | elementary LBRACE number COMMA number RBRACE"""
+        """nrepeat : elementary '{' number '}'
+                   | elementary '{' ',' number '}'
+                   | elementary '{' number ',' '}'
+                   | elementary '{' number ',' number '}'"""
 
         if len(p) == 5:
             p[0] = [Constructs.NREPEAT, p[1], p[3]]
@@ -183,13 +161,13 @@ class SlipParser():
             p[0] = [Constructs.NREPEAT, p[1], p[3], p[5]]
         
 
-    def p_any(self, p):
-        """any : DOT"""
+    def p_anychar(self, p):
+        """anychar : '.'"""
         p[0] = [Constructs.ANYCHAR]
 
 
     def p_nodisplay(self, p):
-        """nodisplay : EMARK"""
+        """nodisplay : '!'"""
         p[0] = [Constructs.NODISPLAY]
 
 
@@ -205,12 +183,12 @@ class SlipParser():
 
 
     def p_group(self, p):
-        """group : LPARENS groupbody RPARENS"""
+        """group : '(' groupbody ')'"""
         p[0] = p[2]
 
 
     def p_groupbody(self, p):
-        """groupbody : QMARK specialgroup
+        """groupbody : '?' specialgroup
                      | basicgroup"""
 
         if len(p) == 2:
@@ -221,14 +199,14 @@ class SlipParser():
 
 
     def p_specialgroup(self, p):
-        """specialgroup : UNDERSCORE lengthcheck
-                        | PIPE stationarygroup
-                        | COLON nocapture"""
+        """specialgroup : '_' lengthcheck
+                        | '|' stationarygroup
+                        | ':' nocapture"""
         p[0] = p[2]
 
 
     def p_lengthcheck(self, p):
-        """lengthcheck : LPARENS number RPARENS re"""
+        """lengthcheck : '(' number ')' re"""
         p[0] = [Constructs.LENGTHCHECK, p[2], self.groupnum, p[4]]
         self.groupnum += 1
 
@@ -251,52 +229,142 @@ class SlipParser():
 
 
     def p_charclass(self, p):
-        """charclass : pcharclass
-                     | ncharclass"""
-        p[0] = p[1]
-
-
-    def p_pcharclass(self, p):
-        """pcharclass : LSQBRACKET classitems RSQBRACKET"""
-        p[0] = [Constructs.CHARCLASS, p[2]]
-
-
-    def p_ncharclass(self, p):
-        """ncharclass : LSQBRACKET CARET classitems RSQBRACKET"""
-        p[0] = [Constructs.NEGCHARCLASS, p[3]]
+        """charclass : '[' classitems ']'"""
+        p[0] = p[2]
 
 
     def p_classitems(self, p):
-        """classitems : literal
-                      | literal classitems"""
+        """classitems : '^' baseitems
+                      | classitems2"""
 
-        if len(p) == 2:
-            p[0] = [p[1]]
+        if len(p) == 3:
+            p[0] = [Constructs.NEGCHARCLASS, p[2]]
 
         else:
-            p[0] = [p[1]] + p[2]
+            p[0] = p[1]
+
+
+    def p_classitems2(self, p):
+        """classitems2 : baseitems
+                       | baseitems '|' baseitems"""
+
+        if len(p) == 2:
+            p[0] = [Constructs.CHARCLASS, p[1]]
+
+        else:
+            p[0] = [Constructs.CHARCLASS, [c for c in p[1] if c not in p[3]]]
+
+
+    def p_baseitems(self, p):
+        """baseitems : classatom
+                     | classatom baseitems"""
+
+
+        if len(p) == 2:
+            p[0] = p[1]
+
+        else:
+            p[0] = p[1] + p[2]
+
+
+    def p_classatom(self, p):
+        """classatom : classliteral
+                     | classrange"""
+
+        if isinstance(p[1], list):
+            p[0] = p[1]
+
+        else:
+            p[0] = [p[1]]
+        
+
+    def p_classliteral(self, p):
+        r"""classliteral : '!'
+                         | '"'
+                         | '#'
+                         | '$'
+                         | '%'
+                         | '&'
+                         | '\''
+                         | '('
+                         | ')'
+                         | '*'
+                         | '+'
+                         | ','
+                         | '.'
+                         | '/'
+                         | ':'
+                         | ';'
+                         | '<'
+                         | '='
+                         | '>'
+                         | '?'
+                         | '@'
+                         | '['
+                         | '\\'
+                         | '_'
+                         | '`'
+                         | '{'
+                         | '}'
+                         | '~'
+                         | literal"""
+
+        # There's got to be a better way...
+        # Missing from the above is space/tab and '^]|-'
+
+        if isinstance(p[1], str):
+            p[0] = p[1]
+
+        else:
+            p[0] = p[1][1]
+
+
+    def p_classrange(self, p):
+        """classrange : classliteral '-' classliteral"""
+
+        p[0] = [chr(c) for c in range(ord(p[1]), ord(p[3])+1)]
+
+
+    def p_predefined(self, p):
+        """predefined : '`' ALPHA"""
+
+        if p[2].lower() in charclasses.classes:
+            if p[2].islower():
+                p[0] = [Constructs.CHARCLASS, list(charclasses.classes[p[2]])]
+
+            else:
+                p[0] = [Constructs.NEGCHARCLASS, list(charclasses.classes[p[2].lower()])]
+
+        else:
+            raise NotImplementedError
 
 
     def p_directionset(self, p):
-        """directionset : CARET DIGIT"""
+        """directionset : '^' DIGIT"""
         p[0] = [Constructs.DIRECTIONSET, int(p[2])]
 
 
     def p_anchor(self, p):
-        """anchor : DOLLAR DIGIT"""
+        """anchor : '$' DIGIT"""
         p[0] = [Constructs.ANCHOR, int(p[2])]
             
 
     def p_command(self, p):
-        """command : COMMAND"""
+        r"""command : '>'
+                    | '<'
+                    | '/'
+                    | '\\'
+                    | '#'
+                    | '%' """
         p[0] = [Constructs.COMMAND, p[1]]
 
 
     def p_literal(self, p):
-        """literal : LITERAL
-                   | DIGIT"""
+        """literal : ESCAPED
+                   | ALPHA
+                   | DIGIT
+                   | OTHER"""
         p[0] = [Constructs.LITERAL, p[1]]
-
 
     def p_error(self, p):
         print("Syntax error at '%s'" % p.value)
@@ -305,4 +373,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("!!!"))
+    print(parser.parse("`d"))
