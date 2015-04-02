@@ -376,4 +376,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("ab+?c"))
+    print(parser.parse("$a(`+`-[^ +]+`-`+(<|>)`|[^ +]+`|`+#(<|>))+?$A"))

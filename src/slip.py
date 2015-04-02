@@ -9,27 +9,30 @@ from copy import deepcopy
 import sys
 
 from slipparser import Constructs, SlipParser
+from extra import OrderedSet, Regex
 
 DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
 
 
 class State():
-    def __init__(self, pos, dir_, regex_stack, match, display,
-                 no_move=True, no_slip=False, traversed=None):
+    def __init__(self, pos, dir_, regex_stack):
         
         self.pos = pos
         self.dir = dir_
         self.regex_stack = regex_stack
-        self.match = match
-        self.display = display
 
-        self.no_move = no_move
-        self.no_slip = no_slip
+        # Rather than storing all to-display/traversed cells, keep track of those cells
+        # in a stack separately and store the index, then pop as appropriate when backtracking
+        self.match_count = 0
+        self.display_count = 0
+        self.traversed_count = 0
+
+        self.no_move = True
+        self.no_slip = False
         
         self.groups = {}
         self.anchors = {}
-
-        self.traversed = traversed
+        
 
     def move(self):
         if self.no_move:
@@ -130,15 +133,17 @@ class Slip():
         match_count = 0
         
         for pos in self.board:
-            state_stack = [State(pos, (1, 0), [deepcopy(self.regex)], set(),
-                                 set(), traversed=set())]
+            state_stack = [State(pos, (1, 0), [deepcopy(self.regex)])]
+            match_set = OrderedSet([])
+            display_set = OrderedSet([])
+            traversed_set = OrderedSet([])
 
             while not (found and self.first_match): # Otherwise just a while True for overlapping               
-                is_match, state_stack = self._match(state_stack)
+                is_match, state_stack, match_set, display_set, traversed_set = self._match(state_stack, match_set, display_set, traversed_set)
 
                 if is_match:
-                    display_squares = state_stack.pop().display
-                    sorted_matches = tuple(sorted(display_squares))
+                    state_stack.pop()
+                    sorted_matches = tuple(sorted(display_set))
 
                     if sorted_matches and sorted_matches in found:
                         if self.overlapping:
@@ -168,7 +173,7 @@ class Slip():
                     
                     min_x = min_y = max_x = max_y = None
 
-                    for mx, my in display_squares:                       
+                    for mx, my in display_set:                       
                         if min_x is None or mx < min_x:
                             min_x = mx
 
@@ -193,7 +198,7 @@ class Slip():
                         array = [[" "]*(max_x - min_x + 1)
                                  for _ in range(min_y, max_y + 1)]
 
-                        for pos in display_squares:
+                        for pos in display_set:
                             array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
 
                         for row in array:
@@ -209,83 +214,122 @@ class Slip():
             print(match_count)
 
 
-    def _match(self, state_stack):
+    def _match(self, state_stack, match_set, display_set, traversed_set):
+        def backtrack():
+            state_stack.pop()
+
+            if state_stack:
+                display_set.keep(state_stack[-1].display_count)
+                traversed_set.keep(state_stack[-1].traversed_count)
+
+
+        def add_to_match_only():
+            match_set.add(state.pos)
+            state.match_count = len(match_set)
+            
+
+        def add_to_display():
+            match_set.add(state.pos)
+            state.match_count = len(match_set)
+            display_set.add(state.pos)
+            state.display_count = len(display_set)
+
+
+        def add_to_traversed():
+            traversed_set.add(state.pos)
+            state.traversed_count = len(traversed_set)
+
+                
         while True:                
             if not state_stack:
-                return (False, state_stack)
+                # No more options left in stack
+                return (False, state_stack, match_set, display_set, traversed_set)
 
             elif not state_stack[-1].regex_stack:
-                return (True, state_stack)
+                # Regex completely matched
+                return (True, state_stack, match_set, display_set, traversed_set)
     
-            state = state_stack.pop()
-            construct, *regex_rest = state.regex_stack[-1]
+            state = state_stack[-1]
+            regex = state.regex_stack.pop()
+            construct, *regex_rest = regex
+
 
             if construct in [Constructs.LITERAL, Constructs.NEGCHARCLASS]:
                 state.move()
 
                 if state.out_of_bounds(self.board):
+                    backtrack()
                     continue
 
                 if self.no_repeat:
-                    if tuple(state.pos) in state.traversed:
+                    if state.pos in traversed_set:
+                        backtrack()
                         continue
 
                     else:
-                        state.traversed.add(tuple(state.pos))
+                        add_to_traversed()
 
                 if state.pos in self.board:
                     state_char = self.board[state.pos]
 
                     if construct == Constructs.LITERAL:
+                        match_char = regex_rest[0]
+                        
                         if self.case_insensitive:
-                            cond = (state_char.lower() == regex_rest[0].lower())
+                            cond = (state_char.lower() == match_char.lower())
 
                         else:
-                            cond = (state_char == regex_rest[0])
+                            cond = (state_char == match_char)
 
                     else:
+                        avoid_chars = regex_rest[0]
+                        
                         if self.case_insensitive:
-                            cond = (state_char.lower() not in [char.lower() for char in regex_rest[0]])
+                            cond = (state_char.lower() not in [char.lower() for char in avoid_chars])
 
                         else:
-                            cond = (state_char not in regex_rest[0])
+                            cond = (state_char not in avoid_chars)
                    
                     if state_char and cond:
-                        state.match.add(state.pos)
-                        state.display.add(state.pos)
-                        state.regex_stack.pop()
-                        state_stack.append(state)
+                        add_to_display()
+
+                    else:
+                        backtrack()
+                        continue
                         
 
             elif construct in [Constructs.ANYCHAR, Constructs.NODISPLAY]:
                 state.move()
 
                 if state.out_of_bounds(self.board):
+                    backtrack()
                     continue
 
                 if self.no_repeat:
-                    if tuple(state.pos) in state.traversed:
+                    if state.pos in traversed_set:
+                        backtrack()
                         continue
 
                     else:
-                        state.traversed.add(tuple(state.pos))
-                
-                state.match.add(tuple(state.pos))
-
+                        add_to_traversed()
+                        
                 if construct == Constructs.ANYCHAR:
-                    state.display.add(tuple(state.pos))
-                    
-                state.regex_stack.pop()
-                state_stack.append(state)
+                    add_to_display()
+
+                else:
+                    add_to_match_only()
 
 
             elif construct == Constructs.CHARCLASS:
-                for char in regex_rest[0]:
-                    new_state = deepcopy(state)
-                    new_state.regex_stack[-1] = [Constructs.LITERAL, char]
-
-                    state_stack.append(new_state)
-
+                if not regex_rest[0]:
+                    backtrack()
+                    continue
+                    
+                new_state = deepcopy(state)
+                state.regex_stack.append(regex)
+                new_state.regex_stack.append([Constructs.LITERAL, regex_rest[0].pop(0)])                    
+                state_stack.append(new_state)
+                
 
             elif construct == Constructs.COMMAND:
                 command = regex_rest[0]
@@ -308,135 +352,123 @@ class Slip():
                 elif command == "%":
                     state.no_slip = True
 
-                state.regex_stack.pop()
+                if state.out_of_bounds(self.board): # Todo: Autopad toggle flag
+                    backtrack()
 
-                if not state.out_of_bounds(self.board): # Todo: Autopad toggle flag
-                    state_stack.append(state)
-                    
                 
             elif construct == Constructs.CONCATENATION:
-                state.regex_stack[-1:] = regex_rest[::-1]
-                state_stack.append(state)
+                state.regex_stack.append(regex_rest[1])
+                state.regex_stack.append(regex_rest[0])
             
 
-            elif construct == Constructs.ASTERISK:               
+            elif construct == Constructs.ASTERISK:         
                 new_state = deepcopy(state)
-                state.regex_stack.pop()
-                state_stack.append(state)
-
-                new_state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[1],
-                                            [Constructs.ASTERISK] + regex_rest]
-                
+                new_state.regex_stack.append([Constructs.ASTERISK] + regex_rest)
+                new_state.regex_stack.append(regex_rest[1])
                 state_stack.append(new_state)
 
+                # Lazy match
                 if regex_rest[0]:
                     state_stack[-2:] = state_stack[-2:][::-1]
 
 
-            elif construct == Constructs.PLUS:           
-                state.regex_stack[-1] = [Constructs.CONCATENATION, regex_rest[1],
-                                            [Constructs.ASTERISK, regex_rest[0], regex_rest[1]]]
-                
-                state_stack.append(state)
+            elif construct == Constructs.PLUS:
+                state.regex_stack.append([Constructs.ASTERISK] + regex_rest)
+                state.regex_stack.append(regex_rest[1])
+
+                # Lazy match
+                if regex_rest[0]:
+                    state_stack[-2:] = state_stack[-2:][::-1]
 
 
             elif construct == Constructs.NREPEAT:
-                nongreedy, regex, *nums = regex_rest
+                lazy_match, inner_regex, *nums = regex_rest
 
                 if len(nums) == 1: # {n}
-                    new_state = deepcopy(state)
-                    
                     if nums[0] <= 0:
-                        new_state.regex_stack.pop()
+                        continue
 
                     else:
-                        new_state.regex_stack[-1][3] -= 1
-                        new_state.regex_stack.append(regex)
+                        regex[3] -= 1
+                        state.regex_stack.append(regex)
+                        state.regex_stack.append(inner_regex)
                         
-                    state_stack.append(new_state)
-                    
 
                 elif nums[0] is None: # {,n}
-                    new_state = deepcopy(state)
-
-                    if nums[1] < 0:
-                        new_state.regex_stack.pop()
-                        state_stack.append(new_state)
+                    if nums[1] <= 0:
+                        continue
 
                     else:
-                        new_state.regex_stack[-1][4] -= 1
-
-                        new_state2 = deepcopy(state)
-                        new_state2.regex_stack[-1] = [Constructs.NREPEAT, nongreedy, regex, nums[1]]
-
+                        new_state = deepcopy(state)
+                        new_state.regex_stack.append([Constructs.NREPEAT, lazy_match, inner_regex, nums[1]])
+                        
+                        state.regex_stack.append(regex)
+                        regex[4] -= 1
+                        
                         state_stack.append(new_state)
-                        state_stack.append(new_state2)
 
-                        if nongreedy:
+                        if lazy_match:
                             state_stack[-2:] = state_stack[-2:][::-1]
 
 
                 elif nums[1] is None: # {n,}
-                    state.regex_stack[-1:] = [[Constructs.ASTERISK, nongreedy, regex],
-                                              [Constructs.NREPEAT, nongreedy, regex, nums[0]]]
-                    state_stack.append(state)
+                    state.regex_stack.append([Constructs.ASTERISK, lazy_match, inner_regex])
+                    state.regex_stack.append([Constructs.NREPEAT, lazy_match, inner_regex, nums[0]])
                     
 
                 else: # {n, m}
-                    state.regex_stack[-1:] = [[Constructs.NREPEAT, nongreedy, regex, None, nums[1] - nums[0]],
-                                              [Constructs.NREPEAT, nongreedy, regex, nums[0]]]
-                    state_stack.append(state)
-            
+                    state.regex_stack.append([Constructs.NREPEAT, lazy_match, inner_regex, None, nums[1] - nums[0]])
+                    state.regex_stack.append([Constructs.NREPEAT, lazy_match, inner_regex, nums[0]])
+
 
             elif construct == Constructs.OPTIONAL:
-                state2 = deepcopy(state)
-                state2.regex_stack[-1] = regex_rest[1]
-                state.regex_stack.pop()
-                
-                state_stack.append(state)
-                state_stack.append(state2)
+                new_state = deepcopy(state)
+                new_state.regex_stack.append(regex_rest[1])
+                state_stack.append(new_state)
 
+                # Lazy match
                 if regex_rest[0]:
                     state_stack[-2:] = state_stack[-2:][::-1]
 
 
             elif construct == Constructs.NOCAPTURE:
-                match = deepcopy(state.match)
-                display = deepcopy(state.display)
-                groups = deepcopy(state.groups)
-                state.regex_stack[-1:] = [[Constructs.MATCHREMOVE, match, display, groups], regex_rest[0]]
-                state_stack.append(state)
+                raise NotImplementedError
+            
+##                display_count = state.display_count
+##                groups = deepcopy(state.groups)
+##                state.regex_stack.append([Constructs.MATCHREMOVE, display_count, groups])
+##                state.regex_stack.append(regex_rest[0])
 
 
             elif construct == Constructs.MATCHREMOVE:
-                match, display, groups = regex_rest
-                state.match = match
-                state.display = display
-                state.groups = groups
-                state.regex_stack.pop()
-                state_stack.append(state)
+                raise NotImplementedError
+            
+##                display_count, groups = regex_rest
+##                state.display_count = display_count
+##                state.groups = groups
 
+            ## TODO: Make like char class
+            elif construct == Constructs.ALTERNATION:
+                new_state = deepcopy(state)
+                
+                state.regex_stack.append(regex_rest[1])
+                new_state.regex_stack.append(regex_rest[0])
 
-            elif construct == Constructs.ALTERNATION:           
-                for regex_part in regex_rest[::-1]:
-                    new_state = deepcopy(state)
-                    new_state.regex_stack = state.regex_stack[:-1] + [regex_part]
-
-                    state_stack.append(new_state)
-
+                state_stack.append(new_state)
+                
 
             elif construct == Constructs.GROUP:
                 group_num = regex_rest[0]
-                match = state.match
-                state.match = set()
-                state.regex_stack[-1:] = [[Constructs.GROUPSTORE, group_num, match], regex_rest[1]]
+                display = state.display
+                state.display = set()
+                state.regex_stack[-1:] = [[Constructs.GROUPSTORE, group_num, display], regex_rest[1]]
                 state_stack.append(state)
             
 
             elif construct == Constructs.GROUPSTORE:
-                group_num, match = regex_rest
-                state.groups[group_num] = deepcopy(state.match)
-                state.match |= match
+                group_num, display = regex_rest
+                state.groups[group_num] = deepcopy(state.display)
+                state.display |= display
                 
                 state.regex_stack.pop()
                 state_stack.append(state)

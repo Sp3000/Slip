@@ -6,35 +6,10 @@ from enum import Enum
 import ply.lex as lex
 import ply.yacc as yacc
 
+from constructs import *
 import string
-import charclasses
+import extra
 
-
-class Constructs(Enum):
-    (ALTERNATION,
-     CONCATENATION,
-     COMMAND,
-     LITERAL,
-     CHARCLASS,
-     NEGCHARCLASS,
-     ASTERISK,
-     PLUS,
-     OPTIONAL,
-     GROUP,
-     GROUPSTORE,
-     STATIONARY,
-     STATIONARYRESET,
-     LENGTHCHECK,
-     LENGTHVERIFY,
-     DIRECTIONSET,
-     DIRECTIONCHECK,
-     ANYCHAR,
-     ANCHOR,
-     NREPEAT,
-     NOCAPTURE,
-     MATCHREMOVE,
-     NODISPLAY) = range(23)
-    
     
 class SlipLexer():
     def __init__(self):
@@ -79,7 +54,7 @@ class SlipParser():
         self.tokens = SlipLexer.tokens
         self.lexer = SlipLexer().lexer
         self.parser = yacc.yacc(module=self)
-        self.groupnum = 1
+        self.group_num = 1
         
 
     def p_re(self, p):
@@ -101,7 +76,7 @@ class SlipParser():
 
     def p_concatenation(self, p):
         """concatenation : simple basic"""
-        p[0] = [Constructs.CONCATENATION, p[1], p[2]]
+        p[0] = Concatenation(p[1], p[2])
 
 
     def p_basic(self, p):
@@ -113,8 +88,9 @@ class SlipParser():
     def p_quantifier(self, p):
         """quantifier : basequantifier
                       | basequantifier '?'"""
-        
-        p[0] = p[1][:1] + [len(p) == 3] + p[1][1:]
+
+        p[1].lazy_match = True
+        p[0] = p[1]
 
 
     def p_basequantifier(self, p):
@@ -128,7 +104,7 @@ class SlipParser():
 
     def p_elementary(self, p):
         """elementary : group
-                      | directionset
+                      | directional
                       | command
                       | literal
                       | charclass
@@ -141,17 +117,17 @@ class SlipParser():
 
     def p_asterisk(self, p):
         """asterisk : elementary '*'"""
-        p[0] = [Constructs.ASTERISK, p[1]]
+        p[0] = Asterisk(p[1])
 
 
     def p_plus(self, p):
         """plus : elementary '+'"""
-        p[0] = [Constructs.PLUS, p[1]]
+        p[0] = Plus(p[1])
 
 
     def p_optional(self, p):
         """optional : elementary '?'"""
-        p[0] = [Constructs.OPTIONAL, p[1]]
+        p[0] = Optional(p[1])
 
 
     def p_nrepeat(self, p):
@@ -161,22 +137,22 @@ class SlipParser():
                    | elementary '{' number ',' number '}'"""
 
         if len(p) == 5:
-            p[0] = [Constructs.NREPEAT, p[1], p[3]]
+            p[0] = NRepeat(p[1], p[3], p[3])
 
         elif len(p) == 6:
             if p[3] == ",":
-                p[0] = [Constructs.NREPEAT, p[1], None, p[4]]
+                p[0] = NRepeat(p[1], None, p[4])
 
             else:
-                p[0] = [Constructs.NREPEAT, p[1], p[3], None]
+                p[0] = NRepeat(p[1], p[3], None)
 
         else:
-            p[0] = [Constructs.NREPEAT, p[1], p[3], p[5]]
+            p[0] = NRepeat(p[1], p[3], p[5])
         
 
     def p_anychar(self, p):
         """anychar : '.'"""
-        p[0] = [Constructs.ANYCHAR]
+        p[0] = AnyChar()
 
 
     def p_nodisplay(self, p):
@@ -220,14 +196,14 @@ class SlipParser():
 
     def p_lengthcheck(self, p):
         """lengthcheck : '(' number ')' re"""
-        p[0] = [Constructs.LENGTHCHECK, p[2], self.groupnum, p[4]]
-        self.groupnum += 1
+        p[0] = [Constructs.LENGTHCHECK, p[2], self.group_num, p[4]]
+        self.group_num += 1
 
 
     def p_stationarygroup(self, p):
         """stationarygroup : re"""
-        p[0] = [Constructs.STATIONARY, self.groupnum, p[1]]
-        self.groupnum += 1
+        p[0] = [Constructs.STATIONARY, self.group_num, p[1]]
+        self.group_num += 1
 
 
     def p_nocapture(self, p):
@@ -237,8 +213,9 @@ class SlipParser():
 
     def p_basicgroup(self, p):
         """basicgroup : re"""
-        p[0] = [Constructs.GROUP, self.groupnum, p[1]]
-        self.groupnum += 1
+        
+        p[0] = Group(self.group_num, p[1])
+        self.group_num += 1
 
 
     def p_charclass(self, p):
@@ -251,7 +228,7 @@ class SlipParser():
                       | classitems2"""
 
         if len(p) == 3:
-            p[0] = [Constructs.NEGCHARCLASS, p[2]]
+            p[0] = NegatedCharClass(p[2])
 
         else:
             p[0] = p[1]
@@ -262,10 +239,10 @@ class SlipParser():
                        | baseitems '|' baseitems"""
 
         if len(p) == 2:
-            p[0] = [Constructs.CHARCLASS, p[1]]
+            p[0] = CharClass(p[1])
 
         else:
-            p[0] = [Constructs.CHARCLASS, [c for c in p[1] if c not in p[3]]]
+            p[0] = CharClass([c for c in p[1] if c not in p[3]])
 
 
     def p_baseitems(self, p):
@@ -329,7 +306,7 @@ class SlipParser():
             p[0] = p[1]
 
         else:
-            p[0] = p[1][1]
+            p[0] = p[1].char
 
 
     def p_classrange(self, p):
@@ -341,25 +318,28 @@ class SlipParser():
     def p_predefined(self, p):
         """predefined : '`' ALPHA"""
 
-        if p[2].lower() in charclasses.classes:
+        if p[2].lower() in extra.classes:
             if p[2].islower():
-                p[0] = [Constructs.CHARCLASS, list(charclasses.classes[p[2]])]
+                p[0] = CharClass(list(extra.classes[p[2]]))
 
             else:
-                p[0] = [Constructs.NEGCHARCLASS, list(charclasses.classes[p[2].lower()])]
+                p[0] = NegatedCharClass(list(extra.classes[p[2].lower()]))
 
         else:
             raise NotImplementedError
 
 
-    def p_directionset(self, p):
-        """directionset : '^' DIGIT"""
-        p[0] = [Constructs.DIRECTIONSET, int(p[2])]
+    def p_directional(self, p):
+        """directional : '^' DIGIT
+                       | '^' ALPHA"""
+        
+        p[0] = Directional(p[2])
 
 
     def p_anchor(self, p):
         """anchor : '$' DIGIT
                   | '$' ALPHA"""
+        
         p[0] = [Constructs.ANCHOR, p[2]]
             
 
@@ -370,7 +350,8 @@ class SlipParser():
                     | '\\'
                     | '#'
                     | '%' """
-        p[0] = [Constructs.COMMAND, p[1]]
+        
+        p[0] = Command(p[1])
 
 
     def p_literal(self, p):
@@ -378,7 +359,8 @@ class SlipParser():
                    | ALPHA
                    | DIGIT
                    | OTHER"""
-        p[0] = [Constructs.LITERAL, p[1]]
+        
+        p[0] = Literal(p[1])
 
     def p_error(self, p):
         print("Syntax error at '%s'" % p.value)
@@ -387,4 +369,4 @@ class SlipParser():
 
 if __name__ == "__main__":
     parser = SlipParser().parser
-    print(parser.parse("ab??c"))
+    print(parser.parse("((((((((((((1))))))))))))(?_(12)4)"))
