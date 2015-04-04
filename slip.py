@@ -614,6 +614,9 @@ class Slip():
                     dirs_ = [DIRECTIONS[i] for i in indices]
                     state.regex_stack.append(DirectionCheck(dirs_))
 
+                elif char == "T":
+                    state.regex_stack.append(Alternation(Command("<"), Command(">")))
+
 
             elif isinstance(construct, DirectionCheck):
                 if not construct.dirs:
