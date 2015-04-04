@@ -206,6 +206,11 @@ class NoDisplayMatchGroup():
         return "<nodispmatch {}>".format(self.inner)
 
 
+class Recursive():
+    def __repr__(self):
+        return "<recursive>"
+
+
 class Command(Regex):
     def __init__(self, char):
         self.char = char

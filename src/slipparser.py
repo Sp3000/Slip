@@ -16,17 +16,11 @@ class SlipLexer():
     def __init__(self):
         self.lexer = lex.lex(module=self)
         
-    tokens = ("ALPHA",
-              "DIGIT",
+    tokens = ("DIGIT",
               "OTHER",
               "ESCAPED")
 
-    literals = [c for c in string.printable if not c.isalnum()]
-
-
-    def t_ALPHA(self, t):
-        r"[a-zA-Z]"
-        return t
+    literals = [c for c in string.printable if not c.isdigit()]
 
 
     def t_DIGIT(self, t):
@@ -205,8 +199,14 @@ class SlipParser():
                         | '|' stationarygroup
                         | ':' nomatchgroup
                         | ',' nodispgroup
-                        | ';' nodispmatchgroup"""
-        p[0] = p[2]
+                        | ';' nodispmatchgroup
+                        | recursive"""
+
+        if len(p) == 3:
+            p[0] = p[2]
+
+        else:
+            p[0] = p[1]
 
 
     def p_lengthcheck(self, p):
@@ -235,6 +235,11 @@ class SlipParser():
     def p_nodispmatchgroup(self, p):
         """nodispmatchgroup : re"""
         p[0] = NoDisplayMatchGroup(p[1])
+
+
+    def p_recursive(self, p):
+        """recursive : 'R'"""
+        p[0] = Recursive()
         
 
     def p_basicgroup(self, p):
@@ -342,7 +347,7 @@ class SlipParser():
 
 
     def p_predefined(self, p):
-        """predefined : '`' ALPHA"""
+        """predefined : '`' alpha"""
 
         if p[2].lower() in extra.classes:
             if p[2].islower():
@@ -357,7 +362,7 @@ class SlipParser():
 
     def p_directional(self, p):
         """directional : '^' DIGIT
-                       | '^' ALPHA
+                       | '^' alpha
                        | '^' '*'
                        | '^' '+'"""
 
@@ -366,7 +371,7 @@ class SlipParser():
 
     def p_anchor(self, p):
         """anchor : '$' DIGIT
-                  | '$' ALPHA
+                  | '$' alpha
                   | '$' '*'
                   | '$' '+'
                   | '$' '^'"""
@@ -387,11 +392,80 @@ class SlipParser():
 
     def p_literal(self, p):
         """literal : ESCAPED
-                   | ALPHA
+                   | alpha
                    | DIGIT
                    | OTHER"""
         
         p[0] = Literal(p[1])
+
+
+    def p_alpha(self, p):
+        """alpha : alpha_lower
+                 | alpha_upper"""
+
+        p[0] = p[1]
+
+
+    def p_alpha_lower(self, p):
+        """alpha_lower : 'a'
+                       | 'b'
+                       | 'c'
+                       | 'd'
+                       | 'e'
+                       | 'f'
+                       | 'g'
+                       | 'h'
+                       | 'i'
+                       | 'j'
+                       | 'k'
+                       | 'l'
+                       | 'm'
+                       | 'n'
+                       | 'o'
+                       | 'p'
+                       | 'q'
+                       | 'r'
+                       | 's'
+                       | 't'
+                       | 'u'
+                       | 'v'
+                       | 'w'
+                       | 'x'
+                       | 'y'
+                       | 'z'"""
+
+        p[0] = p[1]
+
+
+    def p_alpha_upper(self, p):
+        """alpha_upper : 'A'
+                       | 'B'
+                       | 'C'
+                       | 'D'
+                       | 'E'
+                       | 'F'
+                       | 'G'
+                       | 'H'
+                       | 'I'
+                       | 'J'
+                       | 'K'
+                       | 'L'
+                       | 'M'
+                       | 'N'
+                       | 'O'
+                       | 'P'
+                       | 'Q'
+                       | 'R'
+                       | 'S'
+                       | 'T'
+                       | 'U'
+                       | 'V'
+                       | 'W'
+                       | 'X'
+                       | 'Y'
+                       | 'Z'"""
+
+        p[0] = p[1]
         
 
     def p_error(self, p):

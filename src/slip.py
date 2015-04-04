@@ -286,6 +286,8 @@ class Slip():
 
             construct = state.regex_stack.pop()
 
+            # print(construct, state.regex_stack)
+
             if type(construct) in [Literal, NegatedCharClass, AnyChar]:
                 state.move()
 
@@ -522,6 +524,10 @@ class Slip():
             elif isinstance(construct, NoMatchDecrement):
                 state.no_match_count -= 1
                 assert state.no_match_count >= 0
+
+
+            elif isinstance(construct, Recursive):
+                state.regex_stack.append(self.regex)
                 
                 
             elif isinstance(construct, Command):
