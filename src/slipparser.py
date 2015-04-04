@@ -111,6 +111,8 @@ class SlipParser():
                       | charclass
                       | anychar
                       | nodisplay
+                      | nomatch
+                      | nodispmatch
                       | anchor
                       | predefined"""
         p[0] = p[1]
@@ -161,6 +163,16 @@ class SlipParser():
         p[0] = NoDisplay()
 
 
+    def p_nomatch(self, p):
+        """nomatch : ':'"""
+        p[0] = NoMatch()
+
+
+    def p_nodispmatch(self, p):
+        """nodispmatch : ';'"""
+        p[0] = NoDisplayMatch()
+
+
     def p_number(self, p):
         """number : DIGIT
                   | DIGIT number"""
@@ -191,7 +203,9 @@ class SlipParser():
     def p_specialgroup(self, p):
         """specialgroup : '_' lengthcheck
                         | '|' stationarygroup
-                        | ':' nocapture"""
+                        | ':' nomatchgroup
+                        | ',' nodispgroup
+                        | ';' nodispmatchgroup"""
         p[0] = p[2]
 
 
@@ -207,9 +221,20 @@ class SlipParser():
         self.group_num += 1
 
 
-    def p_nocapture(self, p):
-        """nocapture : re"""
-        p[0] = [Constructs.NOCAPTURE, p[1]]
+    def p_nomatchgroup(self, p):
+        """nomatchgroup : re"""
+        p[0] = NoMatchGroup(p[1])
+
+
+    def p_nodispgroup(self, p):
+        """nodispgroup : re"""
+        p[0] = NoDisplayGroup(self.group_num, p[1])
+        self.group_num += 1
+
+
+    def p_nodispmatchgroup(self, p):
+        """nodispmatchgroup : re"""
+        p[0] = NoDisplayMatchGroup(p[1])
         
 
     def p_basicgroup(self, p):

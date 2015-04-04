@@ -103,9 +103,24 @@ class NoDisplay(Regex):
         return ","
 
 
+class NoMatch(Regex):
+    def __repr__(self):
+        return ":"
+
+
+class NoDisplayMatch(Regex):
+    def __repr__(self):
+        return ";"
+    
+
 class NoDisplayDecrement(Regex):
     def __repr__(self):
         return "<nodispdec>"
+
+
+class NoMatchDecrement(Regex):
+    def __repr__(self):
+        return "<nomatchdec>"
 
 
 class Group(Regex):
@@ -164,6 +179,31 @@ class LengthCheck():
 
     def __repr__(self):
         return "<lengthcheck {} {}>".format(self.group_num, self.length)
+
+
+class NoMatchGroup():
+    def __init__(self, inner):
+        self.inner = inner
+
+    def __repr__(self):
+        return "<nomatch {}>".format(self.inner)
+
+
+class NoDisplayGroup():
+    def __init__(self, group_num, inner):
+        self.group_num = group_num
+        self.inner = inner
+
+    def __repr__(self):
+        return "<nodisp {} {}>".format(self.group_num, self.inner)
+
+
+class NoDisplayMatchGroup():
+    def __init__(self, inner):
+        self.inner = inner
+
+    def __repr__(self):
+        return "<nodispmatch {}>".format(self.inner)
 
 
 class Command(Regex):
