@@ -2,6 +2,7 @@
 # http://www.dabeaz.com/ply/
 
 from enum import Enum
+import sys
 
 import ply.lex as lex
 import ply.yacc as yacc
@@ -34,7 +35,7 @@ class SlipLexer():
 
 
     def t_OTHER(self, t):
-        r"[\n ]"
+        r"[^!-~]"
         return t
 
 
@@ -65,7 +66,7 @@ class SlipParser():
 
     def p_alternation(self, p):
         """alternation : re '|' simple"""
-        p[0] = [Constructs.ALTERNATION, p[1], p[3]]
+        p[0] = Alternation(p[1], p[3])
 
 
     def p_simple(self, p):
@@ -89,7 +90,7 @@ class SlipParser():
         """quantifier : basequantifier
                       | basequantifier '?'"""
 
-        p[1].lazy_match = True
+        p[1].lazy_match = len(p) > 2
         p[0] = p[1]
 
 
@@ -117,17 +118,17 @@ class SlipParser():
 
     def p_asterisk(self, p):
         """asterisk : elementary '*'"""
-        p[0] = Asterisk(p[1])
+        p[0] = Asterisk(p[1], False)
 
 
     def p_plus(self, p):
         """plus : elementary '+'"""
-        p[0] = Plus(p[1])
+        p[0] = Plus(p[1], False)
 
 
     def p_optional(self, p):
         """optional : elementary '?'"""
-        p[0] = Optional(p[1])
+        p[0] = Optional(p[1], False)
 
 
     def p_nrepeat(self, p):
@@ -137,17 +138,17 @@ class SlipParser():
                    | elementary '{' number ',' number '}'"""
 
         if len(p) == 5:
-            p[0] = NRepeat(p[1], p[3], p[3])
+            p[0] = NRepeat(p[1], False, p[3], p[3])
 
         elif len(p) == 6:
             if p[3] == ",":
-                p[0] = NRepeat(p[1], None, p[4])
+                p[0] = NRepeat(p[1], False, None, p[4])
 
             else:
-                p[0] = NRepeat(p[1], p[3], None)
+                p[0] = NRepeat(p[1], False, p[3], None)
 
         else:
-            p[0] = NRepeat(p[1], p[3], p[5])
+            p[0] = NRepeat(p[1], False, p[3], p[5])
         
 
     def p_anychar(self, p):
@@ -156,8 +157,8 @@ class SlipParser():
 
 
     def p_nodisplay(self, p):
-        """nodisplay : '!'"""
-        p[0] = [Constructs.NODISPLAY]
+        """nodisplay : ','"""
+        p[0] = NoDisplay()
 
 
     def p_number(self, p):
@@ -196,13 +197,13 @@ class SlipParser():
 
     def p_lengthcheck(self, p):
         """lengthcheck : '(' number ')' re"""
-        p[0] = [Constructs.LENGTHCHECK, p[2], self.group_num, p[4]]
+        p[0] = LengthAssert(self.group_num, p[2], p[4])
         self.group_num += 1
 
 
     def p_stationarygroup(self, p):
         """stationarygroup : re"""
-        p[0] = [Constructs.STATIONARY, self.group_num, p[1]]
+        p[0] = StationaryGroup(self.group_num, p[1])
         self.group_num += 1
 
 
@@ -331,8 +332,10 @@ class SlipParser():
 
     def p_directional(self, p):
         """directional : '^' DIGIT
-                       | '^' ALPHA"""
-        
+                       | '^' ALPHA
+                       | '^' '*'
+                       | '^' '+'"""
+
         p[0] = Directional(p[2])
 
 
@@ -340,7 +343,7 @@ class SlipParser():
         """anchor : '$' DIGIT
                   | '$' ALPHA"""
         
-        p[0] = [Constructs.ANCHOR, p[2]]
+        p[0] = Anchor(p[2])
             
 
     def p_command(self, p):
@@ -361,9 +364,10 @@ class SlipParser():
                    | OTHER"""
         
         p[0] = Literal(p[1])
+        
 
     def p_error(self, p):
-        print("Syntax error at '%s'" % p.value)
+        sys.stderr.write("Syntax error at '%s'\n" % p.value)
         exit()
 
 

@@ -20,9 +20,10 @@ class State():
         self.dir = (1, 0)
         self.regex_stack = [regex]
 
+        self.match = set()
+        
         # Rather than storing all to-display/traversed cells, keep track of those cells
         # in a stack separately and store the index, then pop as appropriate when backtracking
-        self.match_count = 0
         self.display_count = 0
         self.traversed_count = 0
         
@@ -32,6 +33,9 @@ class State():
         self.no_move = True
         self.no_slip = False
 
+        self.no_disp_count = 0 # Increases/decreases depending on depth
+        self.no_match_count = 0
+
 
     def clone(self):
         new_state = State(None, None)
@@ -40,7 +44,7 @@ class State():
         new_state.dir = self.dir
         new_state.regex_stack = self.regex_stack[:]
 
-        new_state.match_count = self.match_count
+        new_state.match = deepcopy(self.match)
         new_state.display_count = self.display_count
         new_state.traversed_count = self.traversed_count
 
@@ -49,6 +53,9 @@ class State():
 
         new_state.no_move = self.no_move
         new_state.no_slip = self.no_slip
+
+        new_state.no_disp_count = self.no_disp_count
+        new_state.no_match_count = self.no_match_count
 
         return new_state
 
@@ -140,9 +147,33 @@ class Slip():
         self.board = Board(input_string)
 
         self.case_insensitive = "i" in config
-        self.no_repeat = "n" in config
-        
-        self.verbose = "V" in config
+        self.no_repeat = "r" in config        
+        self.verbose = "v" in config
+        self.debug = "d" in config
+
+        if "n" in config:
+            result = self.match_one()
+            print(len(result))
+
+        elif "b" in config:
+            result = self.match_one()
+            print(len(result))
+
+        else:
+            if "a" in config:
+                result = self.match_one()
+
+            elif "o" in config:
+                result = self.match_all()
+
+            else:
+                result = self.match_first()
+
+            for i, (pos, match) in enumerate(result):
+                if i > 0:
+                    print()
+                    
+                self.output(pos, match)
 
 
     def match_one(self):
@@ -179,7 +210,7 @@ class Slip():
         for pos in self.board:
             try:
                 result = next(self.match(pos))
-                return [result]
+                return [(pos, result)]
 
             except StopIteration:
                 continue
@@ -189,27 +220,32 @@ class Slip():
 
     def match(self, pos):
         state_stack = [State(pos, self.regex)]
-        match_set = OrderedSet([])
         display_set = OrderedSet([])
         traversed_set = OrderedSet([])
         
 
         def backtrack():
             state_stack.pop()
-
-            if state_stack:
-                display_set.keep(state_stack[-1].display_count)
-                traversed_set.keep(state_stack[-1].traversed_count)
-
-
-        def add_to_match_only():
-            match_set.add(state.pos)
-            state.match_count = len(match_set)
             
+            if state_stack:
+                last = state_stack[-1]
+                display_set.keep(last.display_count)
+                traversed_set.keep(last.traversed_count)
+
+
+        def add_to_match_only(arg=None):
+            if state.no_match_count > 0:
+                return
+            
+            state.match.add(arg if arg is not None else state.pos)
+
 
         def add_to_display():
-            match_set.add(state.pos)
-            state.match_count = len(match_set)
+            add_to_match_only(state.pos)
+
+            if state.no_disp_count > 0:
+                return
+            
             display_set.add(state.pos)
             state.display_count = len(display_set)
 
@@ -222,11 +258,11 @@ class Slip():
         while state_stack:
             state = state_stack[-1]
 
-
-            # For debugging:
-            # print(list(map(str, state.regex_stack)))
-
             if not state.regex_stack:
+                if self.debug:
+                    # To be changed later
+                    print(state.groups)
+                    
                 yield set(display_set)
                 backtrack()
                 continue
@@ -295,6 +331,15 @@ class Slip():
                 state.regex_stack.append(construct.left)
 
 
+            elif isinstance(construct, Alternation):
+                new_state = state.clone()
+
+                state.regex_stack.append(construct.right)
+                new_state.regex_stack.append(construct.left)
+
+                state_stack.append(new_state)
+
+
             elif isinstance(construct, Asterisk):
                 new_state = state.clone()
                 new_state.regex_stack.append(construct)
@@ -306,7 +351,7 @@ class Slip():
 
 
             elif isinstance(construct, Plus):
-                state.regex_stack.append(Asterisk(construct.inner))
+                state.regex_stack.append(Asterisk(construct.inner, construct.lazy_match))
                 state.regex_stack.append(construct.inner)
 
                 if construct.lazy_match:
@@ -325,14 +370,12 @@ class Slip():
             elif isinstance(construct, NRepeat):
                 if construct.low == construct.high: # {n}:
                     n = construct.low
-
-                    print(n, str(construct.inner))
                     
                     if n <= 0:
                         continue
 
                     else:
-                        new_regex = NRepeat(construct.inner, n-1, n-1)
+                        new_regex = NRepeat(construct.inner, construct.lazy_match, n-1, n-1)
                         state.regex_stack.append(new_regex)
                         state.regex_stack.append(construct.inner)
 
@@ -344,11 +387,10 @@ class Slip():
 
                     else:
                         new_state = state.clone()
-                        new_regex1 = NRepeat(construct.inner, n, n)
+                        new_regex1 = NRepeat(construct.inner, construct.lazy_match, n, n)
                         new_state.regex_stack.append(new_regex1)
-                        
-                        new_regex2 = NRepeat(construct.inner, None, n-1)
-                        new_regex2.lazy_match = construct.lazy_match
+
+                        new_regex2 = NRepeat(construct.inner, construct.lazy_match, None, n-1)
                         state.regex_stack.append(new_regex2)
 
                         state_stack.append(new_state)
@@ -356,13 +398,73 @@ class Slip():
                         if construct.lazy_match:
                             state_stack[-2:] = state_stack[-2:][::-1]
 
+                elif construct.high is None: # {n,}
+                    n = construct.low
+
+                    state.regex_stack.append(Asterisk(construct.inner, construct.lazy_match))
+                    state.regex_stack.append(NRepeat(construct.inner, construct.lazy_match, n, n))
+
+                else: # {m, n}
+                    m = construct.low
+                    n = construct.high
+
+                    state.regex_stack.append(NRepeat(construct.inner, construct.lazy_match, None, n-m))
+                    state.regex_stack.append(NRepeat(construct.inner, construct.lazy_match, m, m))                        
+
 
             elif isinstance(construct, Group):
-                raise NotImplementedError
+                match = state.match
+                state.match = set()
+                state.regex_stack.append(GroupStore(construct.group_num, match))
+                state.regex_stack.append(construct.inner)
 
-                # Uh oh
+
+            elif isinstance(construct, GroupStore):
+                group_num = construct.group_num                
+                state.groups[group_num] = deepcopy(state.match)
+                state.match |= construct.prev_match
 
 
+            elif isinstance(construct, StationaryGroup):
+                state.regex_stack.append(StationaryReset(state.pos, state.dir,
+                                                         state.no_move, state.no_slip))
+                state.regex_stack.append(Group(construct.group_num, construct.inner))
+
+
+            elif isinstance(construct, StationaryReset):
+                state.pos = construct.pos
+                state.dir = construct.dir
+                state.no_move = construct.no_move
+                state.no_slip = construct.no_slip
+
+
+            elif isinstance(construct, LengthAssert):
+                if construct.equal_to not in state.groups:
+                    backtrack()
+                    continue
+
+                length = state.group_length(construct.equal_to)
+                state.regex_stack.append(LengthCheck(construct.group_num, length))
+                state.regex_stack.append(Group(construct.group_num, construct.inner))
+                
+
+            elif isinstance(construct, LengthCheck):
+                if state.group_length(construct.group_num) != construct.length:
+                    backtrack()
+                    continue
+
+
+            elif isinstance(construct, NoDisplay):
+                state.no_disp_count += 1
+                
+                state.regex_stack.append(NoDisplayDecrement())
+                state.regex_stack.append(AnyChar())
+
+
+            elif isinstance(construct, NoDisplayDecrement):
+                state.no_disp_count -= 1
+                
+                
             elif isinstance(construct, Command):
                 command = construct.char
 
@@ -389,18 +491,59 @@ class Slip():
                     continue
 
 
-            elif isinstance(construct, Directional):
-                if construct.char.isdigit():
-                    digit = int(construct.char)
+            elif isinstance(construct, Anchor):
+                char = construct.char
 
-                    if digit == 8:
+                if char in "01234567+*":
+                    width, height = self.board.width, self.board.height
+
+                    anchor_checks = [state.pos[1] == 0,
+                                     state.pos[0] == width - 1 and state.pos[1] == 0,
+                                     state.pos[0] == width - 1,
+                                     state.pos[0] == width - 1 and state.pos[1] == height - 1,
+                                     state.pos[1] == height - 1,
+                                     state.pos[0] == 0 and state.pos[1] == height - 1,
+                                     state.pos[0] == 0,
+                                     state.pos[0] == 0 and state.pos[1] == 0]
+
+                    if char == "*":
+                        if not any(anchor_checks[::2]):
+                            backtrack()
+                            continue
+
+                    elif char == "+":
+                        if not any(anchor_checks[1::2]):
+                            backtrack()
+                            continue
+
+                    else:
+                        if not anchor_checks[int(char)]:
+                            backtrack()
+                            continue
+
+
+                elif char.islower():
+                    state.anchors[char] = state.pos
+                    
+
+                elif char.isupper():                    
+                    if char.lower() not in state.anchors or state.pos != state.anchors[char.lower()]:
+                        backtrack()
+                        continue
+
+
+            elif isinstance(construct, Directional):
+                char = construct.char
+                
+                if char in "01234567+*":
+                    if char == "*":
                         indices = [0, 1, 2, 3, 4, 5, 6, 7]
 
-                    elif digit == 9:
+                    elif char == "+":
                         indices = [0, 2, 4, 6]
 
                     else:
-                        indices = [digit]
+                        indices = [int(char)]
 
                     dirs_ = [DIRECTIONS[i] for i in indices]
                     state.regex_stack.append(DirectionCheck(dirs_))
@@ -441,19 +584,23 @@ class Slip():
             if self.verbose:
                 print("Empty match found from ({}, {})".format(*pos), flush=True)
 
+            else:
+                print()
+
         else:
             if self.verbose:
                 print("Match found in rectangle: ({}, {}), ({}, {})".format(
                        min_x, min_y, max_x, max_y), flush=True)
 
-            array = [[" "]*(max_x - min_x + 1)
+            array = [[""]*(max_x - min_x + 1)
                      for _ in range(min_y, max_y + 1)]
 
             for pos in cells:
                 array[pos[1]-min_y][pos[0]-min_x] = self.board[pos]
 
             for row in array:
-                print("".join(row), flush=True)
+                non_empty = max([-1] + list(filter(row.__getitem__, range(len(row)))))
+                print("".join(c if c else " " for c in row[:non_empty+1]), flush=True)
 
 
 if __name__ == "__main__":
@@ -484,23 +631,4 @@ if __name__ == "__main__":
             config = ""
 
     slip = Slip(regex, input_string, config)
-
-    if "f" in config:
-        result = slip.match_first()
-
-    elif "o" in config:
-        result = slip.match_all()
-
-    else:
-        result = slip.match_one()
-
-    if "N" in config:
-        print(len(result))
-
-    else:
-        for i, (pos, match) in enumerate(result):
-            if i > 0:
-                print()
-                
-            slip.output(pos, match)
                     
