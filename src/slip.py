@@ -155,50 +155,38 @@ class Slip():
 
 
     def match(self, output=False):
-        if "n" in self.config:
-            result = self.match_one()
+        if "f" in self.config:
+            result = self.match_first()
 
-            if output:
-                print(len(result))
-            else:
-                return len(result)
-
-        elif "b" in self.config:
-            result = self.match_one()
-
-            if output:
-                print(len(result))
-            else:
-                return len(result)
+        elif "o" in self.config:
+            result = self.match_all()
 
         else:
-            if "a" in self.config:
-                result = self.match_one()
+            result = self.match_one()
 
-            elif "o" in self.config:
-                result = self.match_all()
+        if "n" in self.config:
+            if output:
+                print(len(result))
 
-            else:
-                result = self.match_first()
+            return len(result)
 
-            if "p" in self.config:
-                if output:
-                    for pos, match in result:
-                        print(*pos)
+        if "p" in self.config:
+            if output:
+                for pos, match in result:
+                    print(*pos)
 
-                else:
-                    return {r[0] for r in result}
+            return {r[0] for r in result}
 
-            else:
-                if output:
-                    for i, (pos, match) in enumerate(result):
-                        if i > 0:
-                            print()
-                            
-                        self.output(pos, match)
+        else:
+            # TODO: Expand to return actual strings rather than positions
+            if output:
+                for i, (pos, match) in enumerate(result):
+                    if i > 0:
+                        print()
+                        
+                    self.output(pos, match)
 
-                else:
-                    return result
+            return result
 
 
     def match_one(self):
@@ -524,10 +512,12 @@ class Slip():
 
             elif isinstance(construct, NoDisplayDecrement):
                 state.no_disp_count -= 1
+                assert state.no_disp_count >= 0
 
 
             elif isinstance(construct, NoMatchDecrement):
                 state.no_match_count -= 1
+                assert state.no_match_count >= 0
                 
                 
             elif isinstance(construct, Command):
