@@ -60,12 +60,16 @@ class State():
         return new_state
 
 
+    def next_pos(self):
+        return (self.pos[0] + self.dir[0], self.pos[1] + self.dir[1])
+
+
     def move(self):
         if self.no_move:
             self.no_move = False
 
         else:
-            self.pos = (self.pos[0] + self.dir[0], self.pos[1] + self.dir[1])
+            self.pos = self.next_pos()
 
 
     def rotate(self, offset):
@@ -549,7 +553,7 @@ class Slip():
             elif isinstance(construct, Anchor):
                 char = construct.char
 
-                if char in "01234567+*":
+                if char in "01234567+*^":
                     width, height = self.board.width, self.board.height
 
                     anchor_checks = [state.pos[1] == 0,
@@ -568,6 +572,13 @@ class Slip():
 
                     elif char == "+":
                         if not any(anchor_checks[1::2]):
+                            backtrack()
+                            continue
+
+                    elif char == "^":
+                        new_pos = state.next_pos()
+
+                        if new_pos in self.board:
                             backtrack()
                             continue
 

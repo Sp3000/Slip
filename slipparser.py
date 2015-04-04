@@ -368,7 +368,8 @@ class SlipParser():
         """anchor : '$' DIGIT
                   | '$' ALPHA
                   | '$' '*'
-                  | '$' '+'"""
+                  | '$' '+'
+                  | '$' '^'"""
         
         p[0] = Anchor(p[2])
             
