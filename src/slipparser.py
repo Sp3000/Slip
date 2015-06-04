@@ -3,13 +3,17 @@
 
 from enum import Enum
 import sys
+import string
 
-import ply.lex as lex
-import ply.yacc as yacc
+from ply import lex
+from ply import yacc
 
 from constructs import *
-import string
-import extra
+from extra import *
+
+
+class InvalidSyntax(Exception):
+    pass
 
     
 class SlipLexer():
@@ -49,17 +53,23 @@ class SlipParser():
         self.tokens = SlipLexer.tokens
         self.lexer = SlipLexer().lexer
         self.parser = yacc.yacc(module=self)
-        self.group_num = 1
         
 
     def p_re(self, p):
         """re : alternation
-              | simple"""
+              | simple
+              | empty"""
         p[0] = p[1]
 
 
+    def p_empty(self, p):
+        """empty :"""
+        p[0] = Empty()
+
+
     def p_alternation(self, p):
-        """alternation : re '|' simple"""
+        """alternation : re '|' simple
+                       | re '|' empty"""
         p[0] = Alternation(p[1], p[3])
 
 
@@ -211,14 +221,12 @@ class SlipParser():
 
     def p_lengthcheck(self, p):
         """lengthcheck : '(' number ')' re"""
-        p[0] = LengthAssert(self.group_num, p[2], p[4])
-        self.group_num += 1
+        p[0] = LengthAssert(-1, p[2], p[4])
 
 
     def p_stationarygroup(self, p):
         """stationarygroup : re"""
-        p[0] = StationaryGroup(self.group_num, p[1])
-        self.group_num += 1
+        p[0] = StationaryGroup(-1, p[1])
 
 
     def p_nomatchgroup(self, p):
@@ -228,8 +236,7 @@ class SlipParser():
 
     def p_nodispgroup(self, p):
         """nodispgroup : re"""
-        p[0] = NoDisplayGroup(self.group_num, p[1])
-        self.group_num += 1
+        p[0] = NoDisplayGroup(-1, p[1])
 
 
     def p_nodispmatchgroup(self, p):
@@ -238,15 +245,19 @@ class SlipParser():
 
 
     def p_recursive(self, p):
-        """recursive : 'R'"""
-        p[0] = Recursive()
+        """recursive : 'R'
+                     | number"""
+
+        if p[1] == "R":
+            p[0] = Recursive(None)
+
+        else:
+            p[0] = Recursive(p[1])
         
 
     def p_basicgroup(self, p):
-        """basicgroup : re"""
-        
-        p[0] = Group(self.group_num, p[1])
-        self.group_num += 1
+        """basicgroup : re"""        
+        p[0] = Group(-1, p[1])
 
 
     def p_charclass(self, p):
@@ -349,12 +360,12 @@ class SlipParser():
     def p_predefined(self, p):
         """predefined : '`' alpha"""
 
-        if p[2].lower() in extra.classes:
+        if p[2].lower() in classes:
             if p[2].islower():
-                p[0] = CharClass(list(extra.classes[p[2]]))
+                p[0] = CharClass(list(classes[p[2]]))
 
             else:
-                p[0] = NegatedCharClass(list(extra.classes[p[2].lower()]))
+                p[0] = NegatedCharClass(list(classes[p[2].lower()]))
 
         else:
             raise NotImplementedError
@@ -469,10 +480,15 @@ class SlipParser():
         
 
     def p_error(self, p):
-        sys.stderr.write("Syntax error at '%s'\n" % p.value)
-        exit()
+        if p is None:
+            raise InvalidSyntax("Unexpected end of input")
+
+        else:
+            raise InvalidSyntax("Syntax error at '%s'\n" % p.value)
 
 
 if __name__ == "__main__":
+    code = "|a"
+    
     parser = SlipParser().parser
-    print(parser.parse("((((((((((((1))))))))))))(?_(12)4)"))
+    print(parser.parse(code)) # Debugging

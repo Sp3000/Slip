@@ -2,12 +2,24 @@ class Regex():
     pass
 
 
+class Empty(Regex):
+    def __init__(self):
+        pass
+    
+    def __repr__(self):
+        return "<empty>"
+
+
 class Literal(Regex):
     def __init__(self, char):
         self.char = char
 
     def __repr__(self):
         return self.char
+
+
+    def __iter__(self):
+        return iter([])
 
 
 class Concatenation(Regex):
@@ -19,6 +31,10 @@ class Concatenation(Regex):
         return repr(self.left) + repr(self.right)
 
 
+    def __iter__(self):
+        return iter([self.left, self.right])
+
+
 class Alternation(Regex):
     def __init__(self, left, right):
         self.left = left
@@ -26,12 +42,20 @@ class Alternation(Regex):
 
     def __repr__(self):
         return "{}|{}".format(self.left, self.right)
+
+
+    def __iter__(self):
+        return iter([self.left, self.right])
         
 
 class Quantifier(Regex):
     def __init__(self, inner, lazy_match):
         self.inner = inner
         self.lazy_match = lazy_match
+
+
+    def __iter__(self):
+        return iter([self.inner])
         
 
 class Asterisk(Quantifier):
@@ -68,7 +92,8 @@ class NRepeat(Quantifier):
 
         else:
             return "{}{{{},{}}}".format(self.inner, self.low, self.high)
-        
+
+
 class Optional(Quantifier):
     def __init__(self, inner, lazy_match):
         super().__init__(inner, lazy_match)
@@ -82,7 +107,11 @@ class CharClass(Regex):
         self.chars = chars
 
     def __repr__(self):
-        return "<class {}>".format("".join(chars))
+        return "<class {}>".format("".join(self.chars))
+
+
+    def __iter__(self):
+        return iter([])
 
 
 class NegatedCharClass(Regex):
@@ -90,7 +119,11 @@ class NegatedCharClass(Regex):
         self.chars = chars
 
     def __repr__(self):
-        return "<negclass {}>".format("".join(chars))
+        return "<negclass {}>".format("".join(self.chars))
+
+
+    def __iter__(self):
+        return iter([])
 
 
 class AnyChar(Regex):
@@ -98,9 +131,17 @@ class AnyChar(Regex):
         return "."
 
 
+    def __iter__(self):
+        return iter([])
+
+
 class NoDisplay(Regex):
     def __repr__(self):
         return ","
+
+
+    def __iter__(self):
+        return iter([])
 
 
 class NoMatch(Regex):
@@ -108,9 +149,17 @@ class NoMatch(Regex):
         return ":"
 
 
+    def __iter__(self):
+        return iter([])
+
+
 class NoDisplayMatch(Regex):
     def __repr__(self):
         return ";"
+    
+
+    def __iter__(self):
+        return iter([])
     
 
 class NoDisplayDecrement(Regex):
@@ -118,10 +167,11 @@ class NoDisplayDecrement(Regex):
         return "<nodispdec>"
 
 
-class NoMatchDecrement(Regex):
-    def __repr__(self):
-        return "<nomatchdec>"
+    def __iter__(self):
+        return iter([])
 
+
+# class GroupLike(Regex):
 
 class Group(Regex):
     def __init__(self, group_num, inner):
@@ -130,6 +180,10 @@ class Group(Regex):
 
     def __repr__(self):
         return "<group {}: {}>".format(self.group_num, self.inner)
+
+
+    def __iter__(self):
+        return iter([self.inner])
 
 
 class GroupStore(Regex):
@@ -141,6 +195,10 @@ class GroupStore(Regex):
         return "<groupstore {}>".format(self.group_num)
 
 
+    def __iter__(self):
+        return iter([])
+
+
 class StationaryGroup():
     def __init__(self, group_num, inner):
         self.group_num = group_num
@@ -148,6 +206,10 @@ class StationaryGroup():
 
     def __repr__(self):
         return "<stationary {} {}>".format(self.group_num, self.inner)
+
+
+    def __iter__(self):
+        return iter([self.inner])
 
 
 class StationaryReset(Regex):
@@ -159,6 +221,10 @@ class StationaryReset(Regex):
 
     def __repr__(self):
         return "<stationaryreset>"
+
+
+    def __iter__(self):
+        return iter([])
     
 
 class LengthAssert():
@@ -172,6 +238,10 @@ class LengthAssert():
                                                 self.inner)
 
 
+    def __iter__(self):
+        return iter([self.inner])
+
+
 class LengthCheck():
     def __init__(self, group_num, length):
         self.group_num = group_num
@@ -181,12 +251,20 @@ class LengthCheck():
         return "<lengthcheck {} {}>".format(self.group_num, self.length)
 
 
+    def __iter__(self):
+        return iter([])
+
+
 class NoMatchGroup():
     def __init__(self, inner):
         self.inner = inner
 
     def __repr__(self):
         return "<nomatch {}>".format(self.inner)
+
+
+    def __iter__(self):
+        return iter([self.inner])
 
 
 class NoDisplayGroup():
@@ -198,6 +276,10 @@ class NoDisplayGroup():
         return "<nodisp {} {}>".format(self.group_num, self.inner)
 
 
+    def __iter__(self):
+        return iter([self.inner])
+
+
 class NoDisplayMatchGroup():
     def __init__(self, inner):
         self.inner = inner
@@ -206,9 +288,24 @@ class NoDisplayMatchGroup():
         return "<nodispmatch {}>".format(self.inner)
 
 
+    def __iter__(self):
+        return iter([self.inner])
+
+
 class Recursive():
+    def __init__(self, group_num):
+        self.group_num = group_num
+        
     def __repr__(self):
-        return "<recursive>"
+        if self.group_num is None:
+            return "<recursive>"
+
+        else:
+            return "<recursive {}>".format(self.group_num)
+        
+
+    def __iter__(self):
+        return iter([])
 
 
 class Command(Regex):
@@ -219,13 +316,21 @@ class Command(Regex):
         return self.char
 
 
+    def __iter__(self):
+        return iter([])
+
+
 class Anchor(Regex):
     def __init__(self, char):
         self.char = char
 
     def __repr__(self):
         return "$" + self.char
+    
 
+    def __iter__(self):
+        return iter([])
+    
 
 class Directional(Regex):
     def __init__(self, char):
@@ -235,9 +340,17 @@ class Directional(Regex):
         return "^" + self.char
 
 
+    def __iter__(self):
+        return iter([])
+
+
 class DirectionCheck(Regex):
     def __init__(self, dirs_):
         self.dirs = dirs_
 
     def __repr__(self):
         return "<dircheck [{}]>".format(" ".join(map(str, self.dirs)))
+
+
+    def __iter__(self):
+        return iter([])

@@ -1,35 +1,13 @@
-ABA
+Match found in rectangle: (11, 3), (13, 5)
+###
+###
+###
 
-B
+Match found in rectangle: (0, 0), (15, 6)
+##             #
+##             #
 
-ABA
 
-B
 
-ABA
 
-B
-
-ABA
-
-B
-
-B
-
-B
-
-B
-
-B
-
-B
-
-AAAABAAAA
-
-AAABAAA
-
-AABAA
-
-ABA
-
-B
+##             #

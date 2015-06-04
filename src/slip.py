@@ -1,5 +1,5 @@
 """
-Slip v0.5 alpha by Sp3000
+Slip v0.5.1 alpha by Sp3000
 
 Requires Python 3.4
 """
@@ -10,7 +10,7 @@ import sys
 
 from constructs import *
 from extra import OrderedSet
-from slipparser import SlipParser
+from slipparser import SlipParser, InvalidSyntax
 
 DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
 
@@ -20,7 +20,7 @@ class State():
         self.dir = (1, 0)
         self.regex_stack = [regex]
 
-        self.match = set()
+        self.match = OrderedSet([])
         
         # Rather than storing all to-display/traversed cells, keep track of those cells
         # in a stack separately and store the index, then pop as appropriate when backtracking
@@ -34,7 +34,6 @@ class State():
         self.no_slip = False
 
         self.no_disp_count = 0 # Increases/decreases depending on depth
-        self.no_match_count = 0
 
 
     def clone(self):
@@ -55,7 +54,6 @@ class State():
         new_state.no_slip = self.no_slip
 
         new_state.no_disp_count = self.no_disp_count
-        new_state.no_match_count = self.no_match_count
 
         return new_state
 
@@ -72,8 +70,12 @@ class State():
             self.pos = self.next_pos()
 
 
-    def rotate(self, offset):
-        self.dir = DIRECTIONS[(DIRECTIONS.index(self.dir) + offset) % len(DIRECTIONS)]
+    def rotate_right(self):
+        self.dir = (-self.dir[1], self.dir[0])
+
+        
+    def rotate_left(self):
+        self.dir = (self.dir[1], -self.dir[0])
 
 
     def slip_left(self):
@@ -81,16 +83,16 @@ class State():
             self.no_slip = False
 
         else:
-            orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) - 2) % len(DIRECTIONS)]
+            orthog = (self.dir[1], -self.dir[0])
             self.pos = (self.pos[0] + orthog[0], self.pos[1] + orthog[1])
-        
+
 
     def slip_right(self):
         if self.no_slip:
             self.no_slip = False
 
         else:
-            orthog = DIRECTIONS[(DIRECTIONS.index(self.dir) + 2) % len(DIRECTIONS)]
+            orthog = (-self.dir[1], self.dir[0])
             self.pos = (self.pos[0] + orthog[0], self.pos[1] + orthog[1])
 
 
@@ -106,8 +108,17 @@ class State():
         return self.pos not in board
 
 
+    def wrap(self, board):
+        # Need to make more efficient
+        new_y = self.pos[1] % board.height
+
+        row_length = max(p[0] for p in board if p[1] == new_y) + 1
+        new_x = self.pos[0] % row_length
+        self.pos = (new_x, new_y)
+
+        
 class Board():
-    def __init__(self, input_string):
+    def __init__(self, input_string, padding=False):
         self.board_dict = defaultdict(str)
         x = y = 0
         self.width = 0
@@ -123,6 +134,13 @@ class Board():
                 self.board_dict[(x, y)] = char
                 self.width = max(x + 1, self.width)
                 x += 1
+
+        # Experimental
+        if padding:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if (x, y) not in self.board_dict:
+                        self.board_dict[(x, y)] = ""
 
 
     def __getitem__(self, pos):
@@ -146,27 +164,69 @@ class Board():
 
 
 class Slip():    
-    def __init__(self, regex, input_string, config=""):
-        self.regex = SlipParser().parser.parse(regex)
-        self.board = Board(input_string)
+    def __init__(self, regex, config=""):
+        try:
+            self.regex = SlipParser().parser.parse(regex)
+            
+        except InvalidSyntax as e:
+            if "!" in config: # For online interpreter only
+                raise e
 
+            else:
+                print(e, file=sys.stderr)
+                exit()
+            
+        
+        self.recurse_regexes = {}
         self.config = config.lower()
 
         self.case_insensitive = "i" in config
         self.no_repeat = "r" in config        
         self.verbose = "v" in config
         self.debug = "d" in config
+        self.wrapping = "w" in config
+        self.padding = "g" in config
+
+        self.__number_groups(self.regex)
 
 
-    def match(self, output=False):
+    def __number_groups(self, regex):
+        # TODO: Fix this terrible, terrible code
+        numbering_stack = [regex]
+        capture_group_num = 1
+        no_capture_num = -1
+        
+        while numbering_stack:
+            curr_regex = numbering_stack.pop()
+
+            if type(curr_regex) in [StationaryGroup, NoDisplayGroup, Group]:
+                curr_regex.group_num = capture_group_num
+                self.recurse_regexes[curr_regex.group_num] = curr_regex.inner
+                capture_group_num += 1
+
+            elif type(curr_regex) in [LengthAssert, NoDisplayMatchGroup, NoMatchGroup]:
+                curr_regex.group_num = no_capture_num
+                self.recurse_regexes[curr_regex.group_num] = curr_regex.inner
+                no_capture_num += 1
+
+            else:
+                continue
+
+            for child in list(curr_regex)[::-1]:
+                numbering_stack.append(child)
+
+
+    def match(self, input_string, output=False):
+        self.board = Board(input_string, self.padding)
+
         if "f" in self.config:
-            result = self.match_first()
+            result = self.__match_first()
 
         elif "o" in self.config:
-            result = self.match_all()
+            result = self.__match_all()
 
         else:
-            result = self.match_one()
+            result = self.__match_one()
 
         if "n" in self.config:
             if output:
@@ -174,12 +234,19 @@ class Slip():
 
             return len(result)
 
-        if "p" in self.config:
+        elif "s" in self.config:
             if output:
                 for pos, match in result:
                     print(*pos)
 
             return {r[0] for r in result}
+
+        elif "p" in self.config:
+            if output:
+                for pos, match in result:
+                    print(*match)
+
+            return result
 
         else:
             # TODO: Expand to return actual strings rather than positions
@@ -188,17 +255,17 @@ class Slip():
                     if i > 0:
                         print()
                         
-                    self.output(pos, match)
+                    self.__output(pos, match)
 
             return result
 
 
-    def match_one(self):
+    def __match_one(self):
         found = []
 
         for pos in self.board:
             try:
-                result = next(self._match(pos))
+                result = next(self.__match(pos))
                 if result and result in [pair[1] for pair in found]:
                     continue
 
@@ -210,11 +277,11 @@ class Slip():
         return found
 
 
-    def match_all(self):
+    def __match_all(self):
         found = []
 
         for pos in self.board:
-            for result in self._match(pos):
+            for result in self.__match(pos):
                 if result and result in [pair[1] for pair in found]:
                     continue
 
@@ -223,10 +290,10 @@ class Slip():
         return found
 
 
-    def match_first(self):
+    def __match_first(self):
         for pos in self.board:
             try:
-                result = next(self._match(pos))
+                result = next(self.__match(pos))
                 return [(pos, result)]
 
             except StopIteration:
@@ -235,7 +302,7 @@ class Slip():
         return []
 
 
-    def _match(self, pos):
+    def __match(self, pos):
         state_stack = [State(pos, self.regex)]
         display_set = OrderedSet([])
         traversed_set = OrderedSet([])
@@ -250,10 +317,7 @@ class Slip():
                 traversed_set.keep(last.traversed_count)
 
 
-        def add_to_match_only(arg=None):
-            if state.no_match_count > 0:
-                return
-            
+        def add_to_match_only(arg=None):            
             state.match.add(arg if arg is not None else state.pos)
 
 
@@ -278,7 +342,7 @@ class Slip():
             if not state.regex_stack:
                 if self.debug:
                     # To be changed later
-                    print(state.groups)
+                    print(state.groups, flush=True)
                     
                 yield set(display_set)
                 backtrack()
@@ -292,8 +356,11 @@ class Slip():
                 state.move()
 
                 if state.out_of_bounds(self.board):
-                    backtrack()
-                    continue
+                    if self.wrapping:
+                        state.wrap(self.board)
+                    else:
+                        backtrack()
+                        continue
 
                 if self.no_repeat:
                     if state.pos in traversed_set:
@@ -305,7 +372,10 @@ class Slip():
 
                 state_char = self.board[state.pos]
 
-                if isinstance(construct, Literal):
+                if isinstance(construct, Empty):
+                    continue
+                
+                elif isinstance(construct, Literal):
                     match_char = construct.char
 
                     if self.case_insensitive:
@@ -445,8 +515,6 @@ class Slip():
 
 
             elif isinstance(construct, NoMatchGroup):
-                state.no_match_count += 1
-                state.regex_stack.append(NoMatchDecrement())
                 state.regex_stack.append(construct.inner)
 
 
@@ -458,9 +526,7 @@ class Slip():
 
             elif isinstance(construct, NoDisplayMatchGroup):
                 state.no_disp_count += 1
-                state.no_match_count += 1
                 state.regex_stack.append(NoDisplayDecrement())
-                state.regex_stack.append(NoMatchDecrement())
                 state.regex_stack.append(construct.inner)
 
 
@@ -501,18 +567,12 @@ class Slip():
 
 
             elif isinstance(construct, NoMatch):
-                state.no_match_count += 1
-                
-                state.regex_stack.append(NoMatchDecrement())
                 state.regex_stack.append(AnyChar())
 
 
             elif isinstance(construct, NoDisplayMatch):
                 state.no_disp_count += 1
-                state.no_match_count += 1
-
                 state.regex_stack.append(NoDisplayDecrement())
-                state.regex_stack.append(NoMatchDecrement())
                 state.regex_stack.append(AnyChar())
 
 
@@ -521,23 +581,22 @@ class Slip():
                 assert state.no_disp_count >= 0
 
 
-            elif isinstance(construct, NoMatchDecrement):
-                state.no_match_count -= 1
-                assert state.no_match_count >= 0
+            elif isinstance(construct, Recursive):                
+                if construct.group_num:
+                    state.regex_stack.append(self.recurse_regexes[construct.group_num])
 
-
-            elif isinstance(construct, Recursive):
-                state.regex_stack.append(self.regex)
+                else:
+                    state.regex_stack.append(self.regex)
                 
                 
             elif isinstance(construct, Command):
                 command = construct.char
 
                 if command == ">":
-                    state.rotate(2)
+                    state.rotate_right()
                     
                 elif command == "<":
-                    state.rotate(-2)
+                    state.rotate_left()
 
                 elif command == "/":
                     state.slip_left()
@@ -551,9 +610,13 @@ class Slip():
                 elif command == "%":
                     state.no_slip = True
 
-                if state.out_of_bounds(self.board): # TODO: Autopad toggle flag
-                    backtrack()
-                    continue
+                if state.out_of_bounds(self.board):
+                    if self.wrapping:
+                        state.wrap(self.board)
+
+                    else:
+                        backtrack()
+                        continue
 
 
             elif isinstance(construct, Anchor):
@@ -639,7 +702,7 @@ class Slip():
         raise StopIteration
 
 
-    def output(self, pos, cells):
+    def __output(self, pos, cells):
         min_x = min_y = max_x = max_y = None
 
         for x, y in cells:                       
@@ -688,7 +751,7 @@ if __name__ == "__main__":
             input_string = inputfile.read()
 
     elif len(sys.argv) == 2:
-        print("Missing file: Need both regex and input files")
+        print("Missing file: Need both regex and input files", file=sys.stderr)
         exit()
 
     else:
@@ -705,6 +768,6 @@ if __name__ == "__main__":
         else:
             config = ""
 
-    slip = Slip(regex, input_string, config)
-    slip.match(output=True)
+    slip = Slip(regex, config)
+    slip.match(input_string, output=True)
                     
