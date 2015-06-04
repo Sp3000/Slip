@@ -1,3 +1,4 @@
+from textwrap import dedent
 import unittest
 
 from slip import Slip
@@ -69,21 +70,25 @@ class TestSlip(unittest.TestCase):
 
 
     def test_rotate_left(self):
-        # ..e
-        # ..d
-        # abc
-        
         slip = Slip("abc<de")
-        self.assertEqual(slip.match("..e\n..d\nabc"),
+        data = dedent("""\
+                      ..e
+                      ..d
+                      abc""")
+        
+        print(repr(data))
+        
+        self.assertEqual(slip.match(data),
                          [((0, 2), {(0, 2), (1, 2), (2, 2), (2, 1), (2, 0)})])
 
     def test_rotate_left(self):
-        # abc
-        # ..d
-        # ..e
-        
         slip = Slip("abc>de")
-        self.assertEqual(slip.match("abc\n..d\n..e"),
+        data = dedent("""\
+                      abc
+                      ..d
+                      ..e""")
+        
+        self.assertEqual(slip.match(data),
                          [((0, 0), {(0, 0), (1, 0), (2, 0), (2, 1), (2, 2)})])
 
 
@@ -93,13 +98,8 @@ class TestSlip(unittest.TestCase):
 
 
     def test_slip_left(self):
-        slip = Slip("(?|abc)/def", "n")
+        slip = Slip("(?|abc)/def", "n")        
         self.assertEqual(slip.match("def\nabc"), 1)
-
-
-    def test_padding(self):
-        slip = Slip("abc>.>ed", "gn")
-        self.assertEqual(slip.match("abc\nde"), 1)
 
 
     @unittest.skip("Non-capturing bug")
@@ -107,7 +107,57 @@ class TestSlip(unittest.TestCase):
         slip = Slip("(?:(a)bc)(?_(1).*)")
         self.assertEqual(slip.match("pabce"), [((1, 0), rect((1, 0), (4, 0)))])
 
-    # Similarly for recursion
+
+    # Todo: Check against Regex101
+    @unittest.skip("Recursion capturing bug")
+    def test_recursion_groups(self):
+        slip = Slip("$6((a+)(?_(2)b+))(?1)(?_(2)c+)$2", "n")
+        self.assertEqual(slip.match("aaabbbabc"), 0)
+        self.assertEqual(slip.match("aaabbbabccc"), 1)
+
+
+class TestSlipFlags(unittest.TestCase):
+    def test_padding(self):
+        slip = Slip("abc>.>ed", "gn")
+        self.assertEqual(slip.match("abc\nde"), 1)
+
+
+    def test_wrapping(self):
+        slip = Slip("abc", "w")
+        self.assertEqual(slip.match("bca"), [((2, 0), rect((0, 0), (2, 0)))])
+
+
+    def test_overlapping(self):
+        slip = Slip(">?aba", "n")
+        slip_overlapping = Slip(">?aba", "on")
+        data = dedent("""\
+                      aba
+                      b..
+                      a..""")
+        
+        self.assertEqual(slip.match(data), 1)
+        self.assertEqual(slip_overlapping.match(data), 2)
+
+    
+class TestSlipProblems(unittest.TestCase):
+    def test_problem_4(self):
+        # Word search
+        slip = Slip("^*GOLF", "n")
+        slip_overlap = Slip("^*GOLF", "on")
+        
+        data = dedent("""\
+                      GOLFREGHO
+                      OFORLRGRF
+                      LLFORGOLF
+                      FEWRGOOTL
+                      EFWRGGRLF""")
+
+
+        self.assertEqual(slip.match(data), 3)
+        self.assertEqual(slip_overlap.match(data), 4)
+
+JLr7
+
 
 class TestStack(unittest.TestCase):
     def test_push(self):
