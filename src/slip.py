@@ -209,9 +209,6 @@ class Slip():
                 self.recurse_regexes[curr_regex.group_num] = curr_regex.inner
                 no_capture_num += 1
 
-            else:
-                continue
-
             for child in list(curr_regex)[::-1]:
                 numbering_stack.append(child)
 

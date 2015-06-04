@@ -1,13 +1,4 @@
-Match found in rectangle: (11, 3), (13, 5)
-###
-###
-###
-
-Match found in rectangle: (0, 0), (15, 6)
-##             #
-##             #
-
-
-
-
-##             #
+Match found in rectangle: (0, 0), (23, 2)
+?1-(v  #1)-
+1   0v ^(#    0)(1+0)#)!
+    (#)  ^#1-(0 #
