@@ -15,7 +15,7 @@ from slipparser import SlipParser, InvalidSyntax
 DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
 
 class State():
-    def __init__(self, pos, regex):
+    def __init__(self, pos=None, regex=None):
         self.pos = pos
         self.dir = (1, 0)
         self.regex_stack = [regex]
@@ -37,7 +37,7 @@ class State():
 
 
     def clone(self):
-        new_state = State(None, None)
+        new_state = State()
 
         new_state.pos = self.pos
         new_state.dir = self.dir
@@ -241,7 +241,7 @@ class Slip():
         elif "p" in self.config:
             if output:
                 for pos, match in result:
-                    print(*match)
+                    print(*sorted(match))
 
             return result
 
@@ -619,7 +619,7 @@ class Slip():
             elif isinstance(construct, Anchor):
                 char = construct.char
 
-                if char in "01234567+*^":
+                if char in "01234567^x+":
                     width, height = self.board.width, self.board.height
 
                     anchor_checks = [state.pos[1] == 0,
@@ -631,13 +631,13 @@ class Slip():
                                      state.pos[0] == 0,
                                      state.pos[0] == 0 and state.pos[1] == 0]
 
-                    if char == "*":
-                        if not any(anchor_checks[::2]):
+                    if char == "x":
+                        if not any(anchor_checks[1::2]):
                             backtrack()
                             continue
 
                     elif char == "+":
-                        if not any(anchor_checks[1::2]):
+                        if not any(anchor_checks[::2]):
                             backtrack()
                             continue
 
@@ -663,16 +663,22 @@ class Slip():
                         backtrack()
                         continue
 
+                else:
+                    raise NotImplementedError
+
 
             elif isinstance(construct, Directional):
                 char = construct.char
                 
-                if char in "01234567+*":
+                if char in "01234567+*x":
                     if char == "*":
                         indices = [0, 1, 2, 3, 4, 5, 6, 7]
 
                     elif char == "+":
                         indices = [0, 2, 4, 6]
+
+                    elif char == "x":
+                        indices = [1, 3, 5, 7]
 
                     else:
                         indices = [int(char)]
@@ -682,6 +688,9 @@ class Slip():
 
                 elif char == "T":
                     state.regex_stack.append(Alternation(Command("<"), Command(">")))
+
+                else:
+                    raise NotImplementedError
 
 
             elif isinstance(construct, DirectionCheck):

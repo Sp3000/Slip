@@ -24,6 +24,24 @@ class TestSlip(unittest.TestCase):
         self.assertEqual(slip.match("abca"), 2)
 
 
+    def test_charclass(self):
+        slip = Slip("[abcd]", "n")
+        self.assertEqual(slip.match("abacus"), 4)
+        self.assertEqual(slip.match("zyzzyva", 1))
+
+        slip = Slip("[^abcd]", "n")
+        self.assertEqual(slip.match("abacus"), 2)
+        self.assertEqual(slip.match("zyzzyva", 6))
+
+        slip = Slip("[b-z|eiouy]", "n")
+        self.assertEqual(slip.match("abacus"), 3)
+        self.assertEqual(slip.match("zyzzyva", 4))
+
+        slip = Slip("`y", "n")
+        self.assertEqual(slip.match("abacus"), 3)
+        self.assertEqual(slip.match("zyzzyva", 4))
+
+
     def test_multiple_runs(self):
         slip = Slip("a", "n")
         self.assertEqual(slip.match("abca"), 2)
@@ -102,6 +120,23 @@ class TestSlip(unittest.TestCase):
         self.assertEqual(slip.match("def\nabc"), 1)
 
 
+    def test_directions(self):
+        data = dedent("""\
+                      c c c
+                       bbb
+                        a""")
+
+        self.assertEqual(Slip("^0abc", "no").match(data), 1)
+        self.assertEqual(Slip("^1abc", "no").match(data), 1)
+        self.assertEqual(Slip("^2abc", "no").match(data), 0)
+        self.assertEqual(Slip("^6abc", "no").match(data), 0)
+        self.assertEqual(Slip("^7abc", "no").match(data), 1)
+
+        self.assertEqual(Slip("^*abc", "no").match(data), 3)
+        self.assertEqual(Slip("^xabc", "no").match(data), 2)
+        self.assertEqual(Slip("^+abc", "no").match(data), 1)
+
+
     @unittest.skip("Non-capturing bug")
     def test_noncapturing(self):
         slip = Slip("(?:(a)bc)(?_(1).*)")
@@ -155,8 +190,6 @@ class TestSlipProblems(unittest.TestCase):
 
         self.assertEqual(slip.match(data), 3)
         self.assertEqual(slip_overlap.match(data), 4)
-
-JLr7
 
 
 class TestStack(unittest.TestCase):
